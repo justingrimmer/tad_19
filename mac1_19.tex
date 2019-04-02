@@ -1,0 +1,565 @@
+\documentclass{beamer}
+
+%\usepackage[table]{xcolor}
+\mode<presentation> {
+  \usetheme{Boadilla}
+%  \usetheme{Pittsburgh}
+%\usefonttheme[2]{sans}
+\renewcommand{\familydefault}{cmss}
+%\usepackage{lmodern}
+%\usepackage[T1]{fontenc}
+%\usepackage{palatino}
+%\usepackage{cmbright}
+  \setbeamercovered{transparent}
+\useinnertheme{rectangles}
+}
+%\usepackage{normalem}{ulem}
+%\usepackage{colortbl, textcomp}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg= black}
+\definecolor{trial}{cmyk}{1,0,0, 0}
+\definecolor{trial2}{cmyk}{0.00,0,1, 0}
+\definecolor{darkgreen}{rgb}{0,.4, 0.1}
+\usepackage{array}
+\beamertemplatesolidbackgroundcolor{white}  \setbeamercolor{alerted
+text}{fg=red}
+
+\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}
+
+%\usepackage{color}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{colortbl}
+%\usepackage[usenames, dvipsnames]{color}
+%\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}c
+%\newcolumntype{Y}{\columncolor[cmyk]{0, 0, 1, 0}\raggedright}
+%\newcolumntype{C}{\columncolor[cmyk]{1, 0, 0, 0}\raggedright}
+%\newcolumntype{G}{\columncolor[rgb]{0, 1, 0}\raggedright}
+%\newcolumntype{R}{\columncolor[rgb]{1, 0, 0}\raggedright}
+
+%\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{Block}
+%$A = B$.
+%\end{beamerboxesrounded}}
+\renewcommand{\familydefault}{cmss}
+%\usepackage[all]{xy}
+
+\usepackage{tikz}
+\usepackage{lipsum}
+
+ \newenvironment{changemargin}[3]{%
+ \begin{list}{}{%
+ \setlength{\topsep}{0pt}%
+ \setlength{\leftmargin}{#1}%
+ \setlength{\rightmargin}{#2}%
+ \setlength{\topmargin}{#3}%
+ \setlength{\listparindent}{\parindent}%
+ \setlength{\itemindent}{\parindent}%
+ \setlength{\parsep}{\parskip}%
+ }%
+\item[]}{\end{list}}
+\usetikzlibrary{arrows}
+%\usepackage{palatino}
+%\usepackage{eulervm}
+\usecolortheme{lily}
+
+\newtheorem{com}{Comment}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+ \numberwithin{equation}{section}
+
+
+\title[Machine Learning] % (optional, nur bei langen Titeln nötig)
+{Machine Learning for Social Sciences}
+
+\author{Justin Grimmer}
+\institute[Stanford University]{Professor\\Department of Political Science \\  University of Chicago}
+\vspace{0.3in}
+
+\date{April 2nd, 2019}
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+
+
+\begin{frame}
+
+\huge 
+
+Machine Learning in the Social Sciences 
+
+\begin{itemize}
+\item[-] Discovery 
+\item[-] Measurement
+\item[-] Causal Inference
+\end{itemize}  
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Course Evaluation Plan}
+
+Three (Equal) Parts to Evaluation 
+
+\begin{itemize}
+  \item[1)] 5 homeworks. 
+  \begin{itemize}
+    \item[-] Collaborate with folks in class
+    \item[-] But write up your own work
+    \item[-] Goal: (1) deeper understanding of the statistical methods (2) develop programming skills and (3) learn how to apply techniques from class to your own work
+  \end{itemize}
+  \item[2)] Class Participation 
+  \item[3)] Poster Session + Paper
+\end{itemize}  
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Poster Session + Paper}
+
+Goal: create \emph{publishable} research output\\
+Work in groups (2-3 people), apply methods from the class \\
+Sequence:
+\begin{itemize}
+\item[-] Initial project selection/question: April 16th.  
+\item[-] Data set collected, ready to analyze: May 7th
+\item[-] Initial analyses/Write Up: May 16th
+\item[-] Final Meeting with me to discuss project:  May 28th
+\item[-] \alert{Poster Session}: June 4th
+\item[-] Paper due by the end of final exam period
+\end{itemize} 
+
+
+\alert{I want to work with you to make publishable research}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Course Content}
+
+Prerequisites:
+\begin{itemize}
+\item[1)] Must have: Linear Regression, Mathematical Statistics, background in {\tt R}, {\tt Python} or related language
+\item[2)] (Very) Nice to have: Likelihood Theory, Causal Inference, and related courses
+\end{itemize}  
+
+Technical class:
+\begin{itemize}
+\item[-] Hard work: time spent on programming, problem sets, and research
+\item[-] Time consuming: please set aside time to work on this class
+\item[-] \alert{Everyone can succeed}
+\end{itemize}  
+
+Questions: Smartest person in the room rule
+
+
+
+\end{frame}
+
+\begin{frame}
+
+\huge
+
+Machine learning $\leadsto$ powerful, but important to recognize limitations
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Online Advertisements}
+
+
+
+\begin{itemize}
+\item[-] Online ads: \alert{billions} of revenue
+\item[-] Last click attribution: ads ``get credit" if last thing you see before you buy
+\item[-] Goal: optimize probability my ad is the last one clicked
+\end{itemize}
+
+Optimized, but for the task you choose
+
+
+\end{frame}  
+
+
+
+\begin{frame}
+\frametitle{Voter Targeting Decisions}
+
+Campaigns: exert effort to mobilize voters
+\begin{itemize}
+\item[-] Voter lists, consumer data, and proprietary surveys to target
+\item[-] Hersh 2015: limitations to voter file, depends on state
+\item[-] \alert{Merge}: hard to combine data from different sources
+\item[-] \alert{Clean}: hard to know if someone has moved or just not voting
+\item[-] \alert{Target}: hard to run experiment during campaign to determine who to target
+\end{itemize}  
+
+You work with the data you have 
+
+
+
+
+
+\end{frame}
+
+
+ \begin{frame}
+ \frametitle{Twitter and the 280 Character Experiment}
+
+
+ \begin{itemize}
+ \item[-] {\tt Twitter.com} increase engagement with longer tweets
+ \item[-] \alert{Experiment}: limited roll out, observe effect with small (1\%) treated group
+ \item[-] Now:\emph{no one notices} the 280 characters
+ \end{itemize}  
+
+
+ \scalebox{0.5}{\includegraphics{bears1.png}}
+
+ Experiments (and analysis) provide specific information that may not relate to actual quantity of interest
+
+
+
+
+ \end{frame}
+
+
+\begin{frame}
+\frametitle{Machine Learning and ``Bias"}
+
+Machine learning methods can mitigate bias in decision making
+\begin{itemize}
+\item[-] Kleinberg et al ``Human Decisions and Machine Predictions" $\leadsto$ Make better bail decisions using machine learing
+\item[-] Bansak et al $\leadsto$ machine learning places refugees in better areas
+\end{itemize}
+
+Machine learning methods can inherent (and amplify) biases in decision making
+\begin{itemize}
+\item[-] Caliskan et al ``Semantics derived automatically from language corpora contain human-like biases" $\leadsto$ machine learning can inherent human biases
+\end{itemize}  
+
+Machine learning is not a panacea for human biases
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Text and Political Science}
+
+A pre-2000's view of text in social science
+\begin{itemize}
+\item[-] Social interaction often occurs in texts \pause
+\invisible<1>{\item[-] Social Scientists avoided studying texts/speech} \pause
+\invisible<1-2>{\item[-] Why?} \pause
+\begin{itemize}
+\invisible<1-3>{\item[-] Hard to find} \pause
+\invisible<1-4>{\item[-] Time Consuming} \pause
+\invisible<1-5>{\item[-]  Not generalizable (each new data set...new coding scheme)} \pause
+\invisible<1-6>{\item[-]  Difficult to store/search} \pause
+\invisible<1-7>{\item[-] Idiosyncratic to coders/researcher} \pause
+\invisible<1-8>{\item[-] Statistical methods/algorithms, computationally intensive}
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+A post-2000's view of text in social science:
+\vspace{0.25in}
+
+\invisible<1>{ Massive collections of texts are increasingly used as a data source in social science: }
+
+
+\begin{itemize}
+\invisible<1-2>{\item[-] Congressional speeches, press releases, newsletters, ...}
+\invisible<1-3>{\item[-]  Facebook posts, tweets, emails, cell phone records, ...}
+\invisible<1-4>{\item[-]  Newspapers, magazines, news broadcasts, ...  }
+\invisible<1-5>{\item[-] Foreign news sources, treaties, sermons, fatwas, ...}
+\end{itemize}
+
+\pause \pause \pause \pause \pause
+
+
+\end{frame}
+
+\begin{frame}
+%
+\footnotesize
+Why? \pause
+\begin{itemize}
+\invisible<1>{\item[-] Massive increase in availability of unstructured text (10 minutes of worldwide email = 1 LOC )} \pause
+\invisible<1-2>{\item[-] Cheap storage: 1956: \$10,000 megabyte.  2019: $<<<<<<<$ \$0.0001 per megabyte  (Unless you're sending an SMS)  } \pause
+\invisible<1-3>{\item[-] Explosion in methods and programs to analyze texts} \pause
+\begin{itemize}
+\invisible<1-4>{\item[-] Generalizable:  one method can be used across many methods and to unify collections of texts} \pause
+\invisible<1-5>{\item[-] Systematic: parameters/statistics demonstrate how models make coding decisions} \pause
+\invisible<1-6>{\item[-] Cheap: easily applied to many new collections of texts, computing power is inexpensive} \pause
+\end{itemize}
+\invisible<1-7>{\item[-] \alert{Unchanged Demand}: Social life (politics, economic exchanges, social interactions) occurs in \alert{texts} } \pause
+\begin{itemize}
+\invisible<1-8>{\item[-] Laws} \pause
+\invisible<1-9>{\item[-] Treaties } \pause
+\invisible<1-10>{\item[-] News media} \pause
+\invisible<1-11>{\item[-] Campaigns} \pause
+\invisible<1-12>{\item[-] Political pundits} \pause
+\invisible<1-13>{\item[-] Petitions } \pause
+\invisible<1-14>{\item[-] Press Releases} \pause
+\invisible<1-15>{\item[-] ...}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{What Can Text Methods Do?}
+
+Haystack metaphor:\pause  \invisible<1>{\alert{ Improve Reading}} \pause
+\begin{itemize}
+\invisible<1-2>{\item[-]  Interpreting the meaning of a sentence or phrase $\leadsto$ Analyzing a straw of hay} \pause
+\begin{itemize}
+\invisible<1-3>{\item[-]Humans: amazing (Straussian political theory, analysis of English poetry)
+\item[-] Computers: struggle } \pause
+\end{itemize}
+\invisible<1-4>{\item[-] Comparing, Organizing, and Classifying Texts$\leadsto$ Organizing hay stack} \pause
+\begin{itemize}
+\invisible<1-5>{\item[-] Humans: terrible.  Tiny active memories
+\item[-] Computers: amazing$\leadsto$ largely what we'll discuss today} \pause
+\end{itemize}
+\end{itemize}
+\invisible<1-6>{What automated text methods don't do:} \pause
+\begin{itemize}
+\invisible<1-7>{\item[-] Develop a comprehensive statistical model of language
+\item[-] Replace the need to read
+\item[-] Develop a single tool + evaluation for all tasks }
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Texts are Deceptively Complex}
+
+
+{\tt We've got some difficult days ahead.  But it doesn't matter with me now. Because I've been to the mountaintop. And I don't mind. Like anybody, I would like to live a long life. Longevity has its place. But I'm not concerned about that now. }
+
+\pause
+
+\begin{itemize}
+\invisible<1>{\item[-] Who is the {\tt I} ?} \pause
+\invisible<1-2>{\item[-] Who is the {\tt We}? } \pause
+\invisible<1-3>{\item[-] What is the {\tt mountaintop} (literal?)} \pause
+\end{itemize}
+
+\invisible<1-4>{Texts$\leadsto$ high dimensional, not self contained}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Texts are Surprisingly Simple}
+
+(Lamar Alexander (R-TN) Feb 10, 2005)
+\begin{table}
+\begin{tabular}{ll}
+\hline
+ Word & No. Times Used in Press Release \\
+ \hline
+ department &     12\\
+  grant  &      9 \\
+  program &   7 \\
+  firefight &  7 \\
+  secure  &    5 \\
+  homeland  &  4 \\
+  fund   &    3 \\
+ award  &    2 \\
+ safety  &     2 \\
+ service &    2 \\
+ AFGP   &    2 \\
+ support &   2 \\
+equip  &    2 \\
+applaud  &  2\\
+ assist  &   2\\
+prepared &  2 \\
+\hline
+\end{tabular}
+\end{table}
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Texts are Surprisingly Simple (?)}
+
+{\tt US  Senators Bill Frist  (R-TN)  and Lamar Alexander (R-TN) today applauded the U S  Department of Homeland Security for awarding a \$8,190 grant to the Tracy City Volunteer Fire Department under the 2004 Assistance to Firefighters Grant Program's  (\alert{AFGP})  Fire Prevention and Safety Program...}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Not just for ``big data" }
+
+\pause
+
+\invisible<1>{Manually develop categorization scheme for partitioning small (100) set of documents} \pause
+
+  \begin{itemize}
+\invisible<1-2>{ \item[-] Bell$(n) = $ number of ways of partitioning $n$ objects}
+    \pause
+   \invisible<1-3>{ \item[-] Bell$(2)=2$ (AB, A B)}\pause
+  \invisible<1-4>{ \item[-] Bell$(3)=5$ (ABC, AB C, A BC, AC B, A B
+   C)} \pause
+   \invisible<1-5>{ \item[-] Bell$(5)=52$}\pause
+   \invisible<1-6>{ \item[-] Bell(100)}\pause \invisible<1-7>{$\approx 4.75 \times
+   10^{115}$ partitions} \pause
+   \invisible<1-8>{\item[-] \alert{Big Number}:}\pause  \\
+   \invisible<1-9>{7 Billion RAs} \pause  \\
+   \invisible<1-10>{ Impossibly Fast (enumerate one clustering every millisecond)} \pause  \\
+   \invisible<1-11>{ Working around the clock (24/7/365)}\pause  \\
+        \invisible<1-12>{$\approx 1.54\times 10^{84} \times $} \invisible<1-13>{($14,000,000,000$)} \invisible<1-14>{years}
+        \pause \pause\pause
+    \end{itemize}
+
+\invisible<1-15>{\alert{Machine Learning methods can help with even small problems}}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Course Plan}
+
+\begin{itemize}
+\item[-] Preliminaries: Acquiring Text and Feature Engineering
+\item[-] Discovery 
+\begin{itemize}
+\item[-] Regular Expressions and Vector Space Model of Text
+\item[-] Unsupervised Clustering 
+\item[-] Topic Models
+\item[-] Embeddings 
+\item[-] Fictitious Prediction Problems
+\end{itemize}  
+\item[-] Measurement
+\begin{itemize}
+  \item[-] Hand Coding
+  \item[-] Dictionary Methods
+  \item[-] LASSO and Ridge
+  \item[-] Naive Bayes and ReadMe
+  \item[-] Boosting, Bagging, and Ensembles
+  \item[-] Structural Topic Models for Measurement
+\end{itemize}
+\item[-] Causal Inference
+\begin{itemize}
+\item[-] Text as Intervention
+\item[-] Text as Response and as Covariate
+\end{itemize}  
+\end{itemize}  
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\huge
+Six principles for Machine Learning and Social Science
+
+\end{frame}
+
+
+\begin{frame}
+\huge 
+Social Science Theories Are the Starting Point For Analyis  \\
+
+\end{frame}
+
+\begin{frame}
+
+\huge 
+
+Text as Data Methods Do Not Replace Humans, They Augment Them
+
+
+\end{frame}
+
+
+\begin{frame}
+
+\huge 
+
+Building, Refining, and Testing Social Science Theories Requires Iteration and Sequence
+
+
+
+\end{frame}
+
+\begin{frame}
+
+\huge 
+Text as Data Methods Distill Generalizations from Language  
+
+
+\end{frame}
+
+
+\begin{frame}
+
+\huge 
+
+Different Text as Data Tasks Require Different Methods
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+\huge 
+
+Task specific and Theory Specific Validation
+\end{frame}
+
+
+
+\begin{frame}
+
+\huge 
+
+Thursday: Feature Representations
+
+
+\end{frame}
+
+
+
+\end{document}
