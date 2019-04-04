@@ -1,0 +1,989 @@
+\documentclass{beamer}
+
+%\usepackage[table]{xcolor}
+\mode<presentation> {
+  \usetheme{Boadilla}
+%  \usetheme{Pittsburgh}
+%\usefonttheme[2]{sans}
+\renewcommand{\familydefault}{cmss}
+%\usepackage{lmodern}
+%\usepackage[T1]{fontenc}
+%\usepackage{palatino}
+%\usepackage{cmbright}
+  \setbeamercovered{transparent}
+\useinnertheme{rectangles}
+}
+%\usepackage{normalem}{ulem}
+%\usepackage{colortbl, textcomp}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg= black}
+\definecolor{trial}{cmyk}{1,0,0, 0}
+\definecolor{trial2}{cmyk}{0.00,0,1, 0}
+\definecolor{darkgreen}{rgb}{0,.4, 0.1}
+\usepackage{array}
+\beamertemplatesolidbackgroundcolor{white}  \setbeamercolor{alerted
+text}{fg=red}
+
+\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}
+
+%\usepackage{color}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{colortbl}
+%\usepackage[usenames, dvipsnames]{color}
+%\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}c
+%\newcolumntype{Y}{\columncolor[cmyk]{0, 0, 1, 0}\raggedright}
+%\newcolumntype{C}{\columncolor[cmyk]{1, 0, 0, 0}\raggedright}
+%\newcolumntype{G}{\columncolor[rgb]{0, 1, 0}\raggedright}
+%\newcolumntype{R}{\columncolor[rgb]{1, 0, 0}\raggedright}
+
+%\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{Block}
+%$A = B$.
+%\end{beamerboxesrounded}}
+\renewcommand{\familydefault}{cmss}
+%\usepackage[all]{xy}
+
+\usepackage{tikz}
+\usepackage{lipsum}
+
+ \newenvironment{changemargin}[3]{%
+ \begin{list}{}{%
+ \setlength{\topsep}{0pt}%
+ \setlength{\leftmargin}{#1}%
+ \setlength{\rightmargin}{#2}%
+ \setlength{\topmargin}{#3}%
+ \setlength{\listparindent}{\parindent}%
+ \setlength{\itemindent}{\parindent}%
+ \setlength{\parsep}{\parskip}%
+ }%
+\item[]}{\end{list}}
+\usetikzlibrary{arrows}
+%\usepackage{palatino}
+%\usepackage{eulervm}
+\usecolortheme{lily}
+
+\newtheorem{com}{Comment}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+ \numberwithin{equation}{section}
+
+
+\title[Machine Learning] % (optional, nur bei langen Titeln nötig)
+{Machine Learning for Social Sciences}
+
+\author{Justin Grimmer}
+\institute[Stanford]{Professor\\Department of Political Science \\  Stanford University}
+\vspace{0.3in}
+
+\date{April 4th, 2019}
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Goal for Today: Document-Term Matrices}
+
+\begin{eqnarray}
+\boldsymbol{X} & = & \begin{pmatrix}
+1 & 0 & 0 & \hdots & 3 \\
+0 & 2 & 1 & \hdots & 0 \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & 0 & 0 & \hdots & 5 \\
+\end{pmatrix} \nonumber
+\end{eqnarray}
+
+
+$\boldsymbol{X} = \alert<2>{N} \times \alert<3>{J}$ matrix
+
+\begin{itemize}
+\invisible<1>{\item[-] $N = $ Number of documents}
+\invisible<1-2>{\item[-] $J = $ Number of features}
+\end{itemize}
+
+
+\pause \pause
+
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+\frametitle{Learning From Text}
+
+
+A plan for using texts
+\begin{itemize}
+\item[1)] Acquiring text data
+\item[2)] Regular expression search in text
+\item[3)] Creating document-term matrices (term-document matrices)
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+\frametitle{Finding Text Data }
+Many places to find text  \pause
+
+
+\invisible<1>{Goal: plain text (.txt) file. (UTF-8, ASCII) \\} \pause
+\invisible<1-2>{(May also want to create an {\tt XML} or {\tt JSON} file) }
+\end{frame}
+
+
+\begin{frame}
+\frametitle<1>{Plain Text}
+\frametitle<2>{XML}
+\only<1>{
+{\tt
+                    September 19, 2010 Sunday 10:46 AM  EST\\
+                    REP. FOXX VISITS LOCAL SCHOOLS, TALKS WITH STUDENTS ON CONSTITUTION DAY \\
+                    LENGTH: 320  words\\
+                    CLEMMONS, N.C., Sept. 17 -- Rep. Virginia Foxx, R-N.C. (5th CD), issued the following press release:\\
+                    Congresswoman Virginia Foxx is celebrating Constitution Day today by visiting several schools in her district to talk with students about the Constitution and the individuals who helped create our charter document. She will visit Davie County High School, Forbush High School in Yadkin County and Piney Creek School in Alleghany County.
+}
+}
+
+\only<2>{
+{\tt
+$<$DOC$>$\\
+$<$DOCNO$>$101-levin-mi-1-19901027$<\//$DOCNO$>$\\
+$<$TEXT$>$\\
+Mr. LEVIN. Mr. President, today the House passed and sent to the President the Great Lakes Critical Programs Act. ... Mr. President, I commend and thank Ms. Bean for her exceptional efforts on the Great Lakes Critical Programs Act\\
+$<\//$TEXT$>$\\
+$<\//$DOC$>$
+}
+}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{JSON}
+
+{\tt
+\{"id":"tag:search.twitter.com,2005:287886850381713411",\\"objectType":"activity"...displayName":"Linda Bowersox",\\"postedTime":"2010-03-10T05:16:14.000Z"...\\"body":"@JeffFlake thank you for standing firm and voting NO on the \#FiscalCliff (via \#PJNET)","object"...
+}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Prepackaged Data Sources}
+
+{\tt http://dfr.jstor.org}
+
+
+\scalebox{0.5}{\includegraphics{dfr.png}}
+
+
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{History of Home Style}
+
+\only<1>{\scalebox{0.4}{\includegraphics{Home1.pdf}} }
+\only<2>{\scalebox{0.4}{\includegraphics{Home2.pdf}} }
+\only<3>{\scalebox{0.4}{\includegraphics{Home3.pdf}} }
+\only<4>{\scalebox{0.4}{\includegraphics{Vote1.pdf}} }
+\only<5>{\scalebox{0.4}{\includegraphics{Vote2.pdf}} }
+\only<6>{\scalebox{0.4}{\includegraphics{Vote3.pdf}} }
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Prepackaged Data Sources}
+
+Lexis Nexis (and other data base sources) \pause
+
+\begin{itemize}
+\invisible<1>{\item[1)] Batch search and download} \pause
+\invisible<1-2>{\item[2)] \alert{Do not try to scrape Lexis Nexis(!!!!)}} \pause
+\end{itemize}
+
+
+\invisible<1-3>{Application Programming Interface (APIs)} \pause
+
+\begin{itemize}
+\invisible<1-4>{\item[-] Facilitate interaction with applications (like Twitter)} \pause
+\invisible<1-5>{\item[-] Download data (often in JSON format)$\leadsto$ Twitter, Data.gov, ...}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Books, Archives, and Other Non-Digital Material}
+
+
+\only<1>{\scalebox{0.35}{\includegraphics{ScannedBook.png}}}
+\only<2->{
+  \begin{itemize}
+\item[1)] Create images of texts
+\invisible<1-2>{\item[2)] \alert{O}ptical \alert{C}haracter \alert{R}ecognition}
+\begin{itemize}
+\invisible<1-3>{\item[-] Built in Adobe Pro}
+\invisible<1-4>{\item[-] Abbyy FineReader (Batch processing)}
+\invisible<1-5>{\item[-] Tesseract (Google, command line tool)}
+\end{itemize}
+\invisible<1-6>{\item[3)] Also use, e-book formats...}
+  \end{itemize}
+
+}
+
+\pause \pause \pause \pause \pause \pause
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Acquiring Data from Web: Automated Web Collection}
+
+
+\only<1>{\scalebox{0.5}{\includegraphics{tonko_press.png}}}
+\only<2>{\scalebox{0.3}{\includegraphics{TonkoSource.png}}}
+\only<3>{\begin{center}\scalebox{0.4}{\includegraphics{TonkoPyCode.png}}  \end{center}}
+\only<4-5>{\scalebox{0.35}{\includegraphics{TonkoPress.png}}}
+%07Nov2009Tonko6.txt
+
+\invisible<1-4>{Homework: Scraping a Presidential Speech:
+\begin{itemize}
+\item[-] {\tt http://www.crummy.com/software/BeautifulSoup/}
+\item[-] Parse paragraphs, label speakers
+\end{itemize}
+}
+\end{frame}
+
+\begin{frame}
+
+{\tt Scraping Demonstration}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Acquiring Data from Web: Distributed Human Computing}
+Amazon.com's \alert{Mechanical Turk}
+
+\begin{itemize}
+\item[-] Marketplace for \alert{H}uman \alert{I}tensive \alert{T}asks
+\item[-] Requester (you): create HITs, offer \$ (about \$0.05 per task)
+\item[-] Workers (bored + broke people): complete task
+\item[-] Requester: evaluate and pay
+\end{itemize}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\huge
+You have text, now what?
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Regular Expressions (from Jurafsky Slides) }
+
+\begin{center}
+\scalebox{0.35}{\includegraphics{RegExXKCD.png}}
+\end{center}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Systematic Searches}
+
+A language for searching texts:
+\begin{itemize}
+\item[-] Count mentions of a person
+\item[-] Calculate amount of money discussed
+\item[-] Prepare texts for analysis: Identify where to ``split" a document
+\item[-] ...
+\end{itemize}
+
+Provide a quick introduction here, with some examples
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Regular Expressions, Some Basics (from Jurafsky Slides) }
+
+%%Do the slides where there are the basics of how to computer regular expressions
+%%False Negative/ False positive rates.
+%%Include cheating detection as a closely related tool.
+%%Show how to apply this with a few examples before launching in earnest to the bag of words
+
+%%Then, show how to do this in both python and R
+%%python has the advantage of being easier to write files
+%%the R example can show how to count incidence of something happening
+
+%%wcopyfind for uptake and joint press releases
+
+\begin{itemize}
+\item[-] Disjunctions
+\end{itemize}
+\begin{center}
+\begin{tabular} {lll}
+\textbf{RE} & \textbf{Match} & \textbf{Example Patterns Matched}\\
+{\tt [mM]oney } & Money or money  & ``\underline{Money}" \\
+{\tt [abc] } & `a', `b', \emph{or} `c'  & ``Investing in Ir\underline{a}n" \\
+               &                              & ``is d\underline{a}ngerous \underline{b}usiness"\\
+{\tt [1234567890]} & any digit &     ``sitting on \$\underline{7}.\underline{5} billion dollars"      \\
+   &   & ``\underline{2}\underline{0}\underline{0}\underline{5} and \underline{2}\underline{0}\underline{0}\underline{6}, more than " \\
+   &  &   ``\$\underline{1}\underline{5}\underline{0} million  dollars"    \\
+{\tt [$\backslash$.] } & A period &`` `Run!', he screamed\underline{.}"
+\end{tabular}
+\end{center}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Regular Expressions, Some Basics (from Jurafsky Slides) }
+\begin{itemize}
+\item[-] Ranges
+\end{itemize}
+\begin{center}
+\begin{tabular} {lll}
+\textbf{RE} & \textbf{Match} & \textbf{Example Patterns Matched}\\
+{\tt [A-Z]}  & an upper case letter   & ``\underline{R}ep. \underline{A}nthony \underline{W}einer\\
+  &    &   (\underline{D}-\underline{B}rooklyn \& \underline{Q}ueens)" \\
+{\tt [a-z]}  & a lower case letter &   ``ACORN'\underline{s}" \\
+{\tt [0-9]}  & a single digit  & ``(\underline{9}th CD) "
+\end{tabular}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Regular Expressions, Some Basics (from Jurafsky Slides) }
+\begin{itemize}
+\item[-] Negations
+\end{itemize}
+\begin{center}
+\begin{tabular}{lll}
+\textbf{RE} & \textbf{Match} & \textbf{Example Patterns Matched}\\
+{\tt [\^{}A-Z] } & not an upper case letter &  ``ACORN\alert{\underline{'}\underline{s}}" \\
+{\tt[\^{}Ss] } & neither `S' nor `s' & ``\alert{\underline{ACORN'}}s" \\
+{\tt[\^{}\textbackslash.] } & not a period & `` `\underline{Run!', he screamed}." \\
+\end{tabular}
+\end{center}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Regular Expressions, Some Basics (from Jurafsky Slides) }
+\begin{itemize}
+\item[-] Optional Characters: {\tt ?}, {\tt *}, {\tt +}
+\end{itemize}
+\begin{center}
+\begin{tabular}{lll}
+\textbf{RE} & \textbf{Match} & \textbf{Example Patterns Matched}\\
+{\tt colou?r } &  Words with {\tt u}  0 or 1 times& ``\underline{color}"  or \\
+                   &                                & ``\underline{colour} " \\
+{\tt oo*h!}     & Words with {\tt o}  0 or more times & ``\underline{oh!}" or \\
+                      &                                                   &   ``\underline{ooh!}" or \\
+                       &                                                   &   ``\underline{oooh!}" \\
+{\tt o+h!} &   Words with {\tt o} 1 or more times & ``\underline{oh!}" or \\
+  &                                                   &   ``\underline{ooh!}" or \\
+    &                                                   &   ``\underline{oooooh!}" or \\
+\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Regular Expressions, Some Basics (from Jurafsky Slides) }
+\begin{itemize}
+\item[-] Wild Cards \alert{{\tt .} }
+\end{itemize}
+\begin{center}
+\begin{tabular}{lll}
+\textbf{RE} & \textbf{Match} & \textbf{Example Patterns Matched}\\
+{\tt beg\alert{.}n} & Any word with ``beg" then ``n" & ``beg\textcolor{blue}{i}n" or \\
+                          &                                            &  ``beg\textcolor{blue}{a}n" or \\
+                          &                                            &  ``beg\textcolor{blue}{u}n" or \\
+                          &                                            &  ``beg\textcolor{blue}{g}n" (Poor grammar!)
+
+ \end{tabular}
+ \end{center}
+
+ \end{frame}
+
+\begin{frame}
+\frametitle{Regular Expressions, Some Basics (from Jurafsky Slides) }
+
+\begin{itemize}
+\item[-] Start of the line anchor \alert{\^{}}, end of the line anchor \alert{\$}
+\end{itemize}
+
+
+\begin{center}
+\begin{tabular}{lll}
+\textbf{RE} & \textbf{Match} & \textbf{Example Patterns Matched}\\
+{\tt \alert{\^{}}[A-Z] } & Upper case start of line & ``\underline{P}alo Alto" \\
+                            &                                                        & ``the town of \textcolor{gray}{P}alo Alto" \\
+{\tt \alert{\^{}}[\^{}A-Z] } & Not upper case start of line &      ``\underline{t}he town of Palo Alto" \\
+                            &                                                        & ``\textcolor{gray}{P}alo Alto" \\
+{\tt \alert{\^{}}.} & Start of line  & ``\underline{P}alo Alto" \\
+                            &                                                        & ``\underline{t}he town of Palo Alto" \\
+{\tt .\alert{\$} }      & Identify character that ends a line &    ``Wait\alert{\underline{!}}" \\
+                              &                                                & ``This is the end\alert{\underline{.}}" \\
+
+ \end{tabular}
+ \end{center}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Regular Expressions, Some Basics (from Jurafsky Slides) }
+
+\begin{itemize}
+\item[-] ``Or"$|$ statements, Useful short hand
+\end{itemize}
+\begin{center}
+\begin{tabular}{lll}
+\textbf{RE} & \textbf{Match} & \textbf{Example Patterns Matched}\\
+yours$|$mine & Matches``yours" or ``mine" & ``it's either \underline{yours} or \underline{mine}"\\
+$\backslash$ d  & Any digit  & ``\underline{1}-Mississippi" \\
+$\backslash$ D  & Any non-digit & ``1\underline{-Mississippi}" \\
+$\backslash$ s & Any whitespace character & ``1,\underline{ }2"\\
+$\backslash$ S & Any non-whitespace character & ``\underline{1,} \underline{2}" \\
+$\backslash$ w & Any alpha-numeric  &  ``\underline{1}-\underline{Mississippi} " \\
+$\backslash$ W & Any non-alpha numeric & ``1\underline{-}Mississippi"  \\
+\end{tabular}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Regular Expressions, Some Basics (from Jurafsky Slides) }
+Quick Example to Illuminate Differences:
+
+
+A ``simple" example: identify all instances of \alert{{\tt the}}. \pause
+
+
+\begin{itemize}
+\invisible<1>{\item[-] \alert{{\tt the } }} \pause
+\invisible<1-2>{\item[] Misses capitalized examples} \pause
+\invisible<1-3>{\item[-] \alert{{\tt [tT]he}}} \pause
+\invisible<1-4>{\item[] Returns words that are too long ({\tt theocrat}, {\tt theme} )} \pause
+\invisible<1-5>{\item[-] \alert{[\^{}a-zA-Z][tT]he[\^{}a-zA-Z] }} \pause
+\invisible<1-6>{\item[] Misses the first ``the" in a sentence } \pause
+\invisible<1-7>{\item[-] \alert{(\^{} $|$ [\^{} a-zA-Z])[tT]he[\^{} a-zA-Z] } }
+\end{itemize}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{An Example: Searching for Tea Party Language}
+
+\only<1-4>{Grimmer, Westwood, and Messing (2014): Criticism and credit \\}
+\only<5>{Goodman, Grimmer, Parker, Zlotnik (2015): Criticism}
+
+
+\begin{center}
+\only<1-2>{\invisible<1, 3->{
+\scalebox{0.475}{\includegraphics{BigGovernment.pdf}}
+}}
+
+\only<3>{
+\scalebox{0.475}{\includegraphics{BudgetDeficit.pdf}}
+}
+
+\only<4>{
+\scalebox{0.475}{\includegraphics{AntiDemRepPlot.pdf}}
+}
+
+\only<5>{
+
+\scalebox{0.475}{\includegraphics{TeaPartShiftPress.pdf}}
+
+}
+
+\end{center}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Regular Expressions on Steroids: Cheating Detection Software}
+
+\begin{itemize}
+\item[-] WCopyFind:
+\begin{footnotesize}
+{\tt http://plagiarism.bloomfieldmedia.com/z-wordpress/software/wcopyfind/} \pause \end{footnotesize}
+\invisible<1>{\item[-] What constitutes \alert{plagiarism}?} \pause
+\invisible<1-2>{\item[-] \alert{Edit distance}: } \pause
+\begin{itemize}
+\invisible<1-3>{\item[-] Heuristically: how many letters to change from $a$ to $b$ } \pause
+\end{itemize}
+\invisible<1-4>{\item[-] Sets many parameters: } \pause
+\begin{itemize}
+\invisible<1-5>{\item[-] Number of differences between pair of ``strings"} \pause
+\invisible<1-6>{\item[-] Length of character strings to consider} \pause
+\invisible<1-7>{\item[-] Number of matching strings to constitute match} \pause
+\end{itemize}
+\invisible<1-8>{\item[-] Useful:} \pause
+\begin{itemize}
+\invisible<1-9>{\item[-] Media uptake} \pause
+\invisible<1-10>{\item[-] Joint Press Releases}
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Document Term Matrices}
+
+
+Regular expressions and search are useful \pause \\
+\invisible<1>{We want to use statistics/algorithms to characterize text}\pause  \\
+\invisible<1-2>{\alert{We'll put it in a document-term matrix} }
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Document Term Matrices}
+Preprocessing$\leadsto$\alert{Simplify} text, make it useful \pause \\
+\invisible<1>{\alert{Lower dimensionality} } \pause
+
+\begin{itemize}
+\invisible<1-2>{\item[-] \alert{For our purposes} } \pause
+\end{itemize}
+\invisible<1-3>{Remember: characterize the \alert{Hay stack} } \pause
+\begin{itemize}
+\invisible<1-4>{\item[-] If you want to analyze a straw of hay, these methods \alert{are unlikely to work}} \pause
+\invisible<1-5>{\item[-] But even if you want to closely read texts, characterizing hay stack can be useful }
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Preprocessing for Quantitative Text Analysis}
+
+{\huge \alert{One} (of many) }recipe for preprocessing: retain \alert{useful} information \pause
+\begin{itemize}
+\invisible<1>{\item[1)] Remove capitalization, punctuation} \pause
+\invisible<1-2>{\item[2)] \alert{Discard Word Order} (Bag of Words Assumption) } \pause
+\invisible<1-3>{\item[3)] \alert{Discard stop words} } \pause
+\invisible<1-4>{\item[4)] \alert{Create Equivalence Class}: Stem, Lemmatize, or synonym} \pause
+\invisible<1-5>{\item[5)] \alert{Discard less useful features}$\leadsto$ depends on application} \pause
+\invisible<1-6>{\item[6)] Other reduction, specialization} \pause
+\end{itemize}
+
+\invisible<1-7>{\alert{Output}: Count vector, each element counts occurrence of stems } \pause \\
+
+\invisible<1-8>{\alert{Provide tools to preprocess via this recipe} }
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Preprocessing Texts}
+
+We're going to use the {\tt Natural Language Toolkit} {\tt (nltk)} to work with texts \\
+\begin{itemize}
+\item[-] Built in functionality
+\item[-] Ensures we can customize our feature spaces
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Text Loaded into Python}
+
+
+{\tt mac\_2.py}
+
+Gettysburg Address
+
+\vspace{0.25in}
+\begin{footnotesize}
+
+{\tt
+from bs4 import BeautifulSoup
+from urllib import request 
+import re, os
+
+url  = request.urlopen('http://avalon.law.yale.edu/19th\_century/gettyb.asp').read()
+
+
+soup = BeautifulSoup(url)
+
+
+text = soup.p.contents$[$0$]$\\
+
+}
+
+\end{footnotesize}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Preprocessing Texts}
+
+Removing capitalization:
+\begin{itemize}
+\item[-] {\tt Python} : \alert{{\tt string.lower()}}
+\item[-] {\tt R} : \alert{{\tt tolower(`string')}}
+\end{itemize}
+Removing punctuation
+\begin{itemize}
+\item[-] {\tt Python}: \alert{{\tt re.sub(`$\backslash$W', ` ', string)}}
+\item[-] {\tt R} : \alert{{\tt gsub(`$\backslash\backslash$W', ` ', string)}}
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Preprocessing Texts}
+
+
+{\tt
+text\_1 = text.lower()
+
+
+text\_2 = re.sub(`$\backslash$W', ` ', text\_1)
+}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{The Bag of Words Assumption}
+\alert{Assumption: Discard Word Order}
+
+\only<1>{{\tt Now we are engaged in a great civil war, testing whether that nation, or any nation} }
+\only<2>{{\tt now we are engaged in a great civil war testing whether that nation or any nation}}
+\only<3>{\alert{Unigrams}
+\small
+\begin{tabular}{ll}
+Unigram & Count \\
+ a   &    1 \\
+ any &    1 \\
+ are   &  1\\
+ civil  & 1\\
+ engaged & 1 \\
+ great  & 1 \\
+ in   &   1 \\
+ nation &  2  \\
+ now  &   1   \\
+ or   &   1  \\
+ testing & 1  \\
+ that &    1  \\
+ war &     1  \\
+ we &      1  \\
+ whether & 1
+ \end{tabular}
+ }
+\only<4>{\alert{Bigrams}
+\small
+\begin{tabular}{ll}
+Bigram & Count \\
+now we & 1 \\
+we are & 1 \\
+are engaged & 1  \\
+engaged in & 1  \\
+in a & 1  \\
+a great & 1  \\
+great civil & 1  \\
+civil war & 1  \\
+war testing & 1  \\
+testing whether & 1  \\
+whether that & 1  \\
+that nation & 1  \\
+nation or & 1  \\
+or any & 1   \\
+any nation & 1
+\end{tabular}}
+\only<5>{\alert{Trigrams}
+\small
+\begin{tabular}{ll}
+Trigram & Count \\
+now we are & 1\\
+we are engaged & 1\\
+are engaged in & 1\\
+engaged in a & 1\\
+in a great & 1 \\
+a great civil & 1\\
+great civil war & 1\\
+civil war testing & 1 \\
+war testing whether & 1 \\
+whether that nation & 1 \\
+that nation or & 1 \\
+nation or any & 1 \\
+or any nation & 1
+\end{tabular}
+}
+
+
+\pause \pause \pause
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{How Could This Possibly Work?}
+
+
+Speech is:
+\begin{itemize}
+\item[-] Ironic
+\item[] {\tt A real strength of the Bears is their place kicking and I'm super glad they didn't give Robbie Gould a reasonable raise }
+\item[-] Subtle Negation (Source: Janyce Wiebe) :
+\item[] {\tt They have not succeeded, and will never succeed, in breaking the will of this valiant people}
+\item[-] Order Dependent (Source: Arthur Spirling):
+\item[]{\tt Peace, no more war}
+\item[]{\tt War, no more peace}
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{How Could This Possibly Work?}
+
+Three answers
+\begin{itemize}
+\item[1)] \alert{It might not}: Validation is critical (task specific)
+\item[2)] \alert{Central Tendency in Text}: Words often imply what a text is about
+{\tt war, civil, union} or tone {\tt consecrate, dead, died, lives}.
+\item[] Likely to be used repeatedly: create a theme for an article
+\item[3)] \alert{Human supervision}: Inject human judgement (coders): helps methods identify subtle relationships between words and outcomes of interest
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Discarding Word Order in {\tt Python}}
+
+{\tt
+from nltk import word\_tokenize \\
+from nltk import bigrams \\
+from nltk import trigrams \\
+from nltk import ngrams \\
+
+\vspace{0.25in}
+text\_3 = word\_tokenize(text\_2) \\
+text\_3\_bi = bigrams(text\_3) \\
+text\_3\_tri = trigrams(text\_3)\\
+text\_3\_n = ngrams(text\_3, 4)\\
+
+}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Stop Words}
+
+\begin{itemize}
+\item[-] \alert{Stop Words}: English Language place holding words  \pause
+\invisible<1>{\item[] {\tt the, it, if, a, able, at, be, because...}} \pause
+\invisible<1-2>{\item[-] Add ``noise" to documents (without conveying much information)} \pause
+\invisible<1-3>{\item[-] Discard stop words: focus on \alert{substantive} words} \pause
+\end{itemize}
+\invisible<1-4>{\alert{Note of Caution}: Monroe, Colaresi, and Quinn (2008)\\} \pause
+\invisible<1-5>{{\tt she, he, her, his}\\} \pause
+\invisible<1-6>{\alert{Many English language stop lists include gender pronouns}} \pause
+\begin{itemize}
+\invisible<1-7>{\item[-] Exercise caution when discarding stop words } \pause
+\invisible<1-8>{\item[-] You may need to customize your stop word list$\leadsto$ abbreviations, titles, etc} \pause
+\end{itemize}
+
+\invisible<1-9>{{\tt To the Python code!}}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Creating an Equivalence Class of Words}
+
+Reduce dimensionality further \pause \invisible<1>{$\leadsto$ create equivalence class between words} \pause
+\begin{itemize}
+\invisible<1-2>{\item[-] Words used to refer to same basic concept\\} \pause
+\invisible<1-3>{\item[] {\tt family, families, familial}$\rightarrow$ {\tt famili}} \pause
+\invisible<1-4>{\item[-] Stemming/Lemmatizing algorithms: Many-to-one mapping from words to stem/lemma}
+\end{itemize}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Comparing Stemming and Lemmatizing}
+
+Stemming algorithm: \pause
+\begin{itemize}
+\invisible<1>{\item[-] Simplistic algorithms} \pause
+\invisible<1-2>{\item[-] Chop off end of word} \pause
+\invisible<1-3>{\item[-] \alert{Porter} stemmer, \alert{Lancaster} stemmer, \alert{Snowball} stemmer} \pause
+\end{itemize}
+
+\invisible<1-4>{Lemmatizing algorithm:} \pause
+
+\begin{itemize}
+\invisible<1-5>{\item[-] Condition on part of speech (noun, verb, etc)} \pause
+\invisible<1-6>{\item[-] Verify result is a word} \pause
+\end{itemize}
+
+
+
+\invisible<1-7>{Key comparison: \alert{equivalence classes}} \pause
+
+\invisible<1-8>{{\tt Python Code!}}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{All together now...}
+
+\only<1-3>{{\tt Four score and seven years ago our fathers brought forth on this continent a new nation, conceived in liberty, and dedicated to the proposition that all men are created equal. } \\}\pause
+\invisible<1>{Step 1: Remove capitalization and punctuation}:\pause \\
+\only<3-5>{\invisible<1-2>{{\tt four score and seven years ago our fathers brought forth on this continent a new nation conceived in liberty and dedicated to the proposition that all men are created equal }}\pause \\}
+\invisible<1-3>{Step 2: Discard word order}: \pause \\
+\only<5-7>{\invisible<1-4>{ {\tt four, score, and, seven, years, ago, our, fathers, brought, forth, on, this, continent, a, new, nation, conceived, in, liberty, and, dedicated, to, the, proposition, that, all, men, are, created, equal } } \pause \\}
+\invisible<1-5>{Step 3: Remove stop words} : \pause \\
+\only<7-9>{\invisible<1-6>{ {\tt  four, score, seven, years, ago, fathers, brought, forth, continent, new, nation, conceived, liberty, dedicated, proposition, men, created, equal }  } \pause \\}
+\invisible<1-7>{Step 4: Applying Stemming Algorithm} \pause \\
+\only<9-10>{ {\tt four, score, seven, year, ago, father, brought, forth, contin, new, nation, conceiv, liberti, dedic, proposit, men, creat, equal} \pause \\ }
+\invisible<1-9>{Step 5: Create Count Vector ({\tt Python Code!}) } \\
+\only<10-11>{\begin{tabular}{ll}
+Stem & Count \\
+ago & 1\\
+brought & 1\\
+seven & 1\\
+creat & 1\\
+conceiv & 1\\
+men & 1\\
+father & 1 \\
+$\vdots$ & $\vdots$
+\end{tabular}}
+
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{This Can Actually Work!}
+
+  \includegraphics[width=5in]{future2b.pdf}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Evaluators' Rate Machine Choices Better Than Their
+    Own (Grimmer and King) }
+
+ Generate pairs of \alert{similar} documents: Humans vs Machines
+
+
+  \begin{itemize}
+  \item Scale: (1) unrelated, (2) loosely related, or (3)
+    closely related
+  \item Table reports: mean(scale)
+  \end{itemize}
+
+\vspace{.4in}
+
+%\rowcolors[]{1}{blue!20}{blue!10}
+  \begin{tabular}{llll}
+    \multicolumn{1}{l}{Pairs from}& \multicolumn{1}{c}{Overall Mean} & \multicolumn{1}{c}{Evaluator 1} & \multicolumn{1}{c}{Evaluator 2}   \\
+    \hline
+ \invisible<1>{  Random Selection &1.38&1.16&1.60}\pause\\
+\invisible<1-2>{ Hand-Coded Clusters &1.58&1.48&1.68}\pause\\
+\invisible<1-3>{ Hand-Coding &2.06&1.88&2.24}\pause\\
+\invisible<1-4>{\alert{Machine}  &\alert{2}.\alert{24}&\alert{2}.\alert{08}&\alert{2}.\alert{40}}\pause\\
+    \end{tabular}
+
+
+\pause
+\invisible<1-5>{\alert{p.s. The hand-coders did the evaluation!}}
+\end{frame}
+
+
+
+
+\end{document}
