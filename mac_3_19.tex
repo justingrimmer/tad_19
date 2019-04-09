@@ -1,0 +1,954 @@
+\documentclass{beamer}
+
+%\usepackage[table]{xcolor}
+\mode<presentation> {
+  \usetheme{Boadilla}
+%  \usetheme{Pittsburgh}
+%\usefonttheme[2]{sans}
+\renewcommand{\familydefault}{cmss}
+%\usepackage{lmodern}
+%\usepackage[T1]{fontenc}
+%\usepackage{palatino}
+%\usepackage{cmbright}
+  \setbeamercovered{transparent}
+\useinnertheme{rectangles}
+}
+%\usepackage{normalem}{ulem}
+%\usepackage{colortbl, textcomp}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg= black}
+\definecolor{trial}{cmyk}{1,0,0, 0}
+\definecolor{trial2}{cmyk}{0.00,0,1, 0}
+\definecolor{darkgreen}{rgb}{0,.4, 0.1}
+\usepackage{array}
+\newcommand{\argmin}{\arg\!\min}
+\beamertemplatesolidbackgroundcolor{white}  \setbeamercolor{alerted
+text}{fg=red}
+
+\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}
+
+%\usepackage{color}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{colortbl}
+%\usepackage[usenames, dvipsnames]{color}
+%\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}c
+%\newcolumntype{Y}{\columncolor[cmyk]{0, 0, 1, 0}\raggedright}
+%\newcolumntype{C}{\columncolor[cmyk]{1, 0, 0, 0}\raggedright}
+%\newcolumntype{G}{\columncolor[rgb]{0, 1, 0}\raggedright}
+%\newcolumntype{R}{\columncolor[rgb]{1, 0, 0}\raggedright}
+
+%\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{Block}
+%$A = B$.
+%\end{beamerboxesrounded}}
+\renewcommand{\familydefault}{cmss}
+%\usepackage[all]{xy}
+
+\usepackage{tikz}
+\usepackage{lipsum}
+
+ \newenvironment{changemargin}[3]{%
+ \begin{list}{}{%
+ \setlength{\topsep}{0pt}%
+ \setlength{\leftmargin}{#1}%
+ \setlength{\rightmargin}{#2}%
+ \setlength{\topmargin}{#3}%
+ \setlength{\listparindent}{\parindent}%
+ \setlength{\itemindent}{\parindent}%
+ \setlength{\parsep}{\parskip}%
+ }%
+\item[]}{\end{list}}
+\usetikzlibrary{arrows}
+%\usepackage{palatino}
+%\usepackage{eulervm}
+\usecolortheme{lily}
+\newtheorem{com}{Comment}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+ \numberwithin{equation}{section}
+
+%\usepackage[latin1]{inputenc}
+\title[Text as Data] % (optional, nur bei langen Titeln nötig)
+{Text as Data}
+
+\author{Justin Grimmer}
+\institute[Stanford University]{Professor\\Department of Political Science \\  Stanford University}
+\vspace{0.3in}
+
+
+\date{April 9th, 2019}%[Big Data Workshop] 
+%\date{\today}
+
+
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Texts and Geometry}
+
+Consider a document-term matrix 
+
+\begin{eqnarray}
+\boldsymbol{X} & = & \begin{pmatrix}
+1 & 2 & 0 & \hdots & 0 \\
+0 & 0 & 3 & \hdots & 0 \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+1 & 0 & 0 & \hdots & 3 \\
+\end{pmatrix}\nonumber 
+\end{eqnarray}
+
+
+\pause \invisible<1>{Suppose documents live in a \alert{space}}\pause\invisible<1-2>{ $\leadsto$ rich set of results from linear algebra} \pause 
+\begin{itemize}
+\invisible<1-3>{\item[-] Provides a \alert{geometry}}\pause\invisible<1-4>{$\leadsto$ modify with word weighting} \pause 
+\invisible<1-5>{\item[-] Natural notions of \alert{distance}} \pause 
+\invisible<1-6>{\item[-] \alert{Kernel Trick}: richer comparisons of large feature spaces} \pause 
+\invisible<1-7>{\item[-] Building block for clustering, supervised learning, and scaling} 
+\end{itemize}
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Texts in Space}
+\pause 
+\begin{eqnarray}
+\invisible<1>{\text{Doc1} & = & (1, 1, 3, \hdots, 5) \nonumber \\ } \pause 
+\invisible<1-2>{\text{Doc2} & = & (2, 0, 0, \hdots, 1) \nonumber \\} \pause
+\invisible<1-3>{\textbf{Doc1}, \textbf{Doc2} & \in & \Re^{J} \nonumber } \pause
+\end{eqnarray}
+
+
+
+\invisible<1-4>{\alert{Inner Product} between documents: } \pause 
+\begin{eqnarray} 
+\invisible<1-5>{\textbf{Doc1} \cdot \textbf{Doc2}  &  = &  (1, 1, 3, \hdots, 5)^{'} (2, 0, 0, \hdots, 1) \nonumber \\} \pause 
+\invisible<1-6>{  & = &  1 \times 2 + 1 \times 0 + 3 \times 0 + \hdots + 5 \times 1  \nonumber \\} \pause 
+\invisible<1-7>{   & = & 7 \nonumber} 
+   \end{eqnarray}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Vector Length}
+
+\begin{columns}[]
+
+\column{0.6\textwidth} 
+\only<1>{\scalebox{0.5}{\includegraphics{Length1.pdf}}}
+\only<2>{\scalebox{0.5}{\includegraphics{Length2.pdf}}}
+\only<3>{\scalebox{0.5}{\includegraphics{Length3.pdf}}}
+\only<4-5>{\scalebox{0.5}{\includegraphics{Length4.pdf}}}
+
+\column{0.4\textwidth} 
+\begin{itemize}
+\invisible<1>{\item[-] \alert{Pythogorean Theorem}: Side with length $a$} 
+\invisible<1-2>{\item[-] Side with length $b$ and right triangle}
+\invisible<1-3>{\item[-] $c = \sqrt{ a^2 + b^2} $ }
+\invisible<1-4>{\item[-] \alert{This is generally true} }
+\end{itemize}
+
+\end{columns}
+
+\pause \pause \pause \pause 
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Vector (Euclidean) Length} 
+
+\begin{defn} Suppose $\boldsymbol{v} \in \Re^{J}$. Then, we will define its \alert{length} as 
+\begin{eqnarray}
+||\boldsymbol{v}|| & = & (\boldsymbol{v} \cdot \boldsymbol{v} )^{1/2} \nonumber \\
+						   & = & (v_{1}^2 + v_{2}^{2} + v_{3}^{2} + \hdots + v_{J}^{2} )^{1/2} \nonumber 
+\end{eqnarray}						   
+\end{defn}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Measures of Dissimilarity}
+
+Initial guess$\leadsto$ \alert{Distance metrics} \\
+
+Properties of a metric: (distance function) $d(\cdot, \cdot)$.  Consider arbitrary documents $\boldsymbol{X}_{i}$, $\boldsymbol{X}_{j}$, $\boldsymbol{X}_{k}$ \pause 
+\begin{itemize}
+\invisible<1>{\item[1)] $d(\boldsymbol{X}_{i}, \boldsymbol{X}_{j}) \geq 0$} \pause 
+\invisible<1-2>{\item[2)] $d(\boldsymbol{X}_{i}, \boldsymbol{X}_{j} ) = 0 $ if and only if $\boldsymbol{X}_{i} = \boldsymbol{X}_{j}$} \pause 
+\invisible<1-3>{\item[3)] $d(\boldsymbol{X}_{i}, \boldsymbol{X}_{j} ) = d(\boldsymbol{X}_{j}, \boldsymbol{X}_{i} )$} \pause 
+\invisible<1-4>{\item[4)] $d(\boldsymbol{X}_{i}, \boldsymbol{X}_{k}) \leq d(\boldsymbol{X}_{i}, \boldsymbol{X}_{j})  + d(\boldsymbol{X}_{j}, \boldsymbol{X}_{k})$} \pause 
+\end{itemize}
+
+\vspace{0.5in}
+
+\invisible<1-5>{Explore \alert{distance} functions to compare documents}$\leadsto$\pause\invisible<1-6>{Do we want additional assumptions/properties?}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Measuring the Distance Between Documents}
+
+\alert{Euclidean Distance}
+
+
+\begin{center}
+\only<1>{\scalebox{0.5}{\includegraphics{Doc1.pdf}}}
+\only<2>{\scalebox{0.5}{\includegraphics{Doc2.pdf}}} 
+\only<3>{\scalebox{0.5}{\includegraphics{Doc3.pdf}}} 
+\end{center}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Measuring the Distance Between Documents}
+
+\begin{defn}
+The Euclidean distance between documents $\boldsymbol{X}_{i}$ and $\boldsymbol{X}_{j}$ as 
+
+\begin{eqnarray}
+||\boldsymbol{X}_{i} - \boldsymbol{X}_{j}||  & =  & \sqrt{\sum_{m=1}^{J} \left(x_{im} -  x_{jm} \right)^2} \nonumber 
+\end{eqnarray}
+
+\end{defn}
+
+\pause 
+\invisible<1>{Suppose $\boldsymbol{X}_{i} = (1, 4)$ and $\boldsymbol{X}_{j} = (2, 1)$.  The distance between the documents is:
+\begin{eqnarray}
+||(1, 4) - (2,1) || & = & \sqrt{ (1 -2 )^2 + (4 - 1)^2 } \nonumber\\
+   & = & \sqrt{10}  \nonumber  
+\end{eqnarray}
+}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Measuring the Distance Between Documents}
+
+
+\alert{Many distance metrics} \pause  \invisible<1>{ Consider the \alert{Minkowski} family \\} \pause 
+
+\invisible<1-2>{\begin{defn}
+The Minkowski Distance between documents $\boldsymbol{X}_{i}$ and $\boldsymbol{X}_{j}$ for value $p$ is 
+
+\begin{eqnarray}
+d_{p} (\textbf{X}_{i}, \textbf{X}_{j} )  & = & \left(\sum_{m=1}^{J}  |x_{im} - x_{jm}|^{p}  \right) ^{1/p} \nonumber
+\end{eqnarray}
+
+
+\end{defn}
+
+}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Members of the Minkowski Family}
+
+\pause 
+\invisible<1>{Manhattan metric} \pause 
+\begin{eqnarray}
+\invisible<1-2>{d_{1} (\textbf{X}_{i} , \textbf{X}_{j} ) & = & \sum_{m=1}^{J} | x_{im} - x_{jm} | \nonumber \\} \pause 
+\invisible<1-3>{d_{\text{1} } ( (1,4) , (2,1) )  & = & | 1| + |3| = 4\nonumber } \pause 
+\end{eqnarray}
+
+
+\invisible<1-4>{Minkowski (p) metric } \pause 
+\begin{eqnarray}
+\invisible<1-5>{d_{p} (\textbf{X}_{i}, \textbf{X}_{j} )  & = & \left(\sum_{m=1}^{J}  |x_{im} - x_{jm}|^{p}  \right) ^{1/p} \nonumber \\
+d_{p} ((1,4), (2,1) )  & = & \left( |1 - 2|^{p} + |4 - 1|^{p} \right)^{1/p} \nonumber } 
+\end{eqnarray}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{What Does $p$ Do?} 
+
+\pause 
+
+\invisible<1>{Increasing $p$ $\leadsto$ greater importance of coordinates with largest differences \\}\pause 
+
+\invisible<1-2>{If we let $p \rightarrow \infty$ Obtain maximum-metric (Chebyshev's Metric)} \pause 
+\invisible<1-3>{\begin{eqnarray}
+\lim_{p\rightarrow \infty} d_{p} (\textbf{X}_{i}, \textbf{X}_{j} ) & = & \max_{m=1}^{J} | x_{im} - x_{jm} | \nonumber
+\end{eqnarray} } \pause 
+
+
+\invisible<1-4>{In words: distance between documents only the biggest difference}  \\ \pause 
+\invisible<1-5>{\alert{All} other differences do not contribute to distance measure \\} \pause 
+% \invisible<1-6>{Decreasing $p \leadsto$ greater importance of coordinates with smallest differences \\} \pause 
+% \invisible<1-7>{\begin{eqnarray}
+% \lim_{p \rightarrow -\infty} d_{p}(\textbf{X}_{i}, \textbf{X}_{j} )  & = & \min_{m=1}^{J} | x_{im} - x_{jm} | \nonumber
+% \end{eqnarray}
+% }
+\end{frame}
+
+\begin{frame}
+\frametitle{Comparing the Metrics}
+
+
+
+Suppose $\boldsymbol{X}_{i} = (10,4, 3)$, $\boldsymbol{X}_{j} = (0, 4, 3)$, and $\boldsymbol{X}_{k} = (0, 0, 0)$ \pause \\
+\invisible<1>{Then:} \pause 
+\begin{eqnarray}
+\invisible<1-2>{d_{1} (\boldsymbol{X}_{i}, \boldsymbol{X}_{j} ) & = & 10 \nonumber \\} \pause 
+\invisible<1-3>{d_{1} (\boldsymbol{X}_{i}, \boldsymbol{X}_{k} ) & = & 10 + 4 + 3 = 17 \nonumber \\} \pause 
+\invisible<1-4>{d_{2} (\boldsymbol{X}_{i}, \boldsymbol{X}_{j} ) & = & 10 \nonumber \\} \pause 
+\invisible<1-5>{d_{2} (\boldsymbol{X}_{i}, \boldsymbol{X}_{k} ) & = & \sqrt{10^2 + 4^2 + 3^2} = \sqrt{125} = 11.18 \nonumber \\} \pause 
+\invisible<1-6>{d_{4} (\boldsymbol{X}_{i}, \boldsymbol{X}_{j} ) & = & 10 \nonumber \\} \pause 
+\invisible<1-7>{d_{4} (\boldsymbol{X}_{i}, \boldsymbol{X}_{k} ) & = & \sqrt{10^4 + 4^4 + 3^4} = (10337)^{1/4}= 10.08 \nonumber \\} \pause 
+\invisible<1-8>{d_{\infty} (\boldsymbol{X}_{i}, \boldsymbol{X}_{j} ) & = & 10 \nonumber \\} \pause 
+\invisible<1-9>{d_{\infty} (\boldsymbol{X}_{i}, \boldsymbol{X}_{k} ) & = & 10 \nonumber } 
+\end{eqnarray}
+
+
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Are all differences equal?}
+
+Previous metrics treat all dimensions as \alert{equal} \pause \\
+\invisible<1>{We may want to engage in some \alert{scaling}/reweighting \\} \pause 
+
+\invisible<1-2>{\alert{Mahalanobis Distance}\\} \pause 
+
+
+
+\invisible<1-3>{
+\begin{defn}
+
+Suppose that we have a covariance matrix $\boldsymbol{\Sigma}$}\pause\invisible<1-4>{. Then we can define the Mahalanobis Distance between documents $\boldsymbol{X}_{i}$ and $\boldsymbol{X}_{j}$ as} \pause , 
+\begin{eqnarray}
+\invisible<1-5>{d_{\text{Mah}}(\boldsymbol{X}_{i}, \boldsymbol{X}_{j}) & = & \sqrt{(\boldsymbol{X}_{i} - \boldsymbol{X}_{j})^{'}\boldsymbol{\Sigma}^{-1} (\boldsymbol{X}_{i} - \boldsymbol{X}_{j}) } \nonumber }
+\end{eqnarray}
+\end{defn}
+\pause 
+\invisible<1-6>{More generally: $\boldsymbol{\Sigma}$ could be symmetric and positive-definite} \pause 
+
+
+\invisible<1-7>{\alert{What does $\boldsymbol{\Sigma}$ do?}} 
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Some Intuition: The Unit Circle} 
+
+\begin{columns}[]
+\column{0.5\textwidth} 
+\only<1>{\scalebox{0.35}{\includegraphics{Unit1.pdf}} } 
+\only<2>{\scalebox{0.35}{\includegraphics{Unit2.pdf}} } 
+\only<3>{\scalebox{0.35}{\includegraphics{Unit3.pdf}} }
+\only<4-6>{\scalebox{0.35}{\includegraphics{Unit4.pdf}}} 
+
+\column{0.5\textwidth} 
+\Huge
+\only<1>{$\boldsymbol{\Sigma}  = \begin{pmatrix} 1 & 0 \\ 
+										0 & 1\end{pmatrix} $} 
+\only<2>{$\boldsymbol{\Sigma}  = \begin{pmatrix} 1 & 0 \\ 
+										0 & 0.5\end{pmatrix} $} 
+										
+\only<3>{$\boldsymbol{\Sigma}  = \begin{pmatrix} 0.5 & 0 \\ 
+										0 & 1\end{pmatrix} $} 		
+\only<4-6>{$\boldsymbol{\Sigma}  = \begin{pmatrix} 1 & 0.3 \\ 
+										0.3 & 0.5\end{pmatrix} $} 										
+										
+																		
+\end{columns} 
+
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Measuring Distance with Mahalanobis}
+
+Special Case 1: Identity Matrix \pause 
+\invisible<1>{\begin{eqnarray}
+\boldsymbol{\Sigma} & = & \begin{pmatrix} 1 & 0 \\
+0 & 1 \\
+\end{pmatrix} \nonumber 
+\end{eqnarray}
+} \pause 
+
+\invisible<1-2>{Then distance is \alert{Euclidean}} \pause \\
+
+\invisible<1-3>{Special Case 2: Diagonal Matrix
+\begin{eqnarray}
+\boldsymbol{\Sigma} & = & \begin{pmatrix} \sigma_{1}^{2} & 0 & \hdots &  0 \\
+0 & \sigma_{2}^{2}& \hdots & 0  \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \hdots & \sigma^{2}_{J} \\
+\end{pmatrix} \nonumber 
+\end{eqnarray}
+} \pause 
+\invisible<1-4>{Then 
+\begin{eqnarray}
+d_{\text{Mah}}(\boldsymbol{X}_{i}, \boldsymbol{X}_{j} ) & = & \sqrt{\sum_{m=1}^{J} \frac{(x_{im} - x_{jm})^2}{\sigma_{m}^2}    } \nonumber 
+\end{eqnarray}
+}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Measuring Similarity} 
+
+
+
+\pause 
+
+\invisible<1>{What properties should similarity measure have?} \pause 
+\begin{itemize}
+\invisible<1-2>{\item[-] Maximum: document with itself} \pause 
+\invisible<1-3>{\item[-] Minimum: documents have no words in common (\alert{orthogonal} ) } \pause 
+\invisible<1-4>{\item[-] Increasing when \alert{more} of same words used } \pause 
+%\invisible<1-5>{\item[-] \alert{?} $s(a, b)  = s(b,a)$.  }  \pause 
+\end{itemize}
+
+\invisible<1-5>{How should additional words be treated?} 
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Measuring Similarity}
+
+\begin{center}
+\scalebox{0.35}{\includegraphics{Fig1.pdf}}
+\end{center}
+
+
+Measure 1: Inner product \pause  \\
+\begin{eqnarray}
+\invisible<1>{(2, 1)^{'} \cdot (1, 4) & = & 6 }   \nonumber 
+\end{eqnarray}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\begin{center}
+\only<1-3>{\scalebox{0.35}{\includegraphics{Fig2.pdf}}} 
+\only<4>{\scalebox{0.35}{\includegraphics{Fig3.pdf}}}
+\end{center}
+
+
+
+\invisible<1>{\alert{Problem}(?): length dependent } 
+\begin{eqnarray}
+\invisible<1-2>{(4,2)^{'} (1,4) & = & 12 } \nonumber \\ 
+\invisible<1-3>{a \cdot b & = & ||a|| \times ||b|| \times \cos \theta \nonumber }
+\end{eqnarray}
+
+\pause \pause \pause 
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Cosine Similarity}
+
+
+\begin{center}
+\only<7->{\scalebox{0.35}{\includegraphics{Fig4.pdf}}}
+\end{center}
+
+
+\only<7->{
+$\cos \theta$: removes document length from similarity measure\\ \pause 
+\invisible<1-7>{Projects texts to unit length representation$\leadsto$ onto sphere}
+} 
+
+
+\only<1-6>{\begin{eqnarray}
+\invisible<1>{\cos \theta & = & \left(\frac{a} {||a||}\right)  \cdot \left(\frac{b} {||b||}  \right) \nonumber \\} 
+\invisible<1-2>{\frac{(4,2)}{||(4,2) ||} & = & (0.89, 0.45) \nonumber \\} 
+\invisible<1-3>{\frac{(2,1)}{||(2,1) || } & = & (0.89, 0.45) \nonumber \\}
+\invisible<1-4>{\frac{(1,4)} {||(1,4)||}  & = & (0.24, 0.97) \nonumber } \\
+\invisible<1-5>{(0.89, 0.45)^{'} (0.24, 0.97) & = & 0.65 \nonumber } 
+\end{eqnarray}
+}
+
+\pause \pause \pause \pause \pause \pause \pause 
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Von Mises-Fisher Distribution}
+
+Consider document $\boldsymbol{X}_{i}$. \pause 
+\begin{eqnarray}
+\invisible<1>{\boldsymbol{X}_{i}^{*} & = & \frac{\boldsymbol{X}_{i}}{||\boldsymbol{X}_{i} ||} \nonumber } \pause 
+\end{eqnarray}
+
+\invisible<1-2>{Then we might suppose: } \pause 
+\begin{eqnarray}
+\invisible<1-3>{\boldsymbol{X}_{i}^{*} & \sim & \text{von Mises-Fisher}(\kappa, \boldsymbol{\mu}) \nonumber \\} \pause 
+\invisible<1-4>{p(\boldsymbol{x}_{i} | \kappa, \boldsymbol{\mu}) & = & c(\kappa) \exp\left( \kappa \boldsymbol{x}_{i}^{*} \boldsymbol{\mu}   \right) \nonumber } \pause 
+\end{eqnarray}
+
+
+\invisible<1-5>{\alert{Normal distribution}, on a sphere} \pause 
+\begin{itemize}
+\invisible<1-6>{\item[-] Straightforward to Maximize} \pause 
+\invisible<1-7>{\item[-] Conjugate to itself} \pause 
+\invisible<1-8>{\item[-] Useful for clustering, hierarchies of topics} 
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Kernel Similarity}
+
+\begin{defn}
+
+Suppose we have documents $\boldsymbol{X}_{i}$ and $\boldsymbol{X}_{j}$.  Define the \alert{Gaussian} kernel as 
+
+\begin{eqnarray}
+k(\boldsymbol{X}_{i}, \boldsymbol{X}_{j} ) & = & \exp\left( - \frac{||\boldsymbol{X}_{i} - \boldsymbol{X}_{j}||^2}{\sigma^2}   \right) \nonumber 
+\end{eqnarray}
+
+\end{defn}
+\pause 
+
+\begin{itemize}
+\invisible<1>{\item[] \alert{Kernel} of the \alert{Gaussian} distribution} \pause 
+\invisible<1-2>{\item[] $\sigma^2$ = determines sensitivity of the kernel} \pause 
+\invisible<1-3>{\item[] If $\boldsymbol{X}_{i} = \boldsymbol{X}_{j}$ then $k(\boldsymbol{X}_{i}, \boldsymbol{X}_{j}) = 1$} \pause
+\invisible<1-4>{\item[] As $\boldsymbol{X}_{i} $ and $\boldsymbol{X}_{j}$ become more dissimilar, then $k(\boldsymbol{X}_{i}, \boldsymbol{X}_{j}) = 0$} \pause 
+\invisible<1-5>{\item[] Result$\leadsto$ often justify setting some kernel weights to zero} 
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{The Kernel Trick}
+
+Suppose all of our documents $\boldsymbol{X}_{i} \in \Re^{J}$\\ \pause 
+\invisible<1>{There may be some mapping $\phi:\Re^{J} \rightarrow \Re^{M}$ where $M>J$ that improves our performance ``lift" to higher dimension\\} \pause 
+\invisible<1-2>{We might want, then, } \pause 
+\begin{eqnarray}
+\invisible<1-3>{s(\phi(\boldsymbol{X}_{i}), \phi(\boldsymbol{X}_{j})) & = & < \phi(\boldsymbol{X}_{i}), \phi(\boldsymbol{X}_{j}) > \nonumber } \pause 
+\end{eqnarray}
+
+
+\begin{itemize}
+\invisible<1-4>{\item[-] The only thing we care about, though is \alert{inner product} of transformed variables\\} \pause 
+\invisible<1-5>{\item[-] $\leadsto$ So long as we can calculate inner product, we need not make explicit transformation\\} \pause 
+\invisible<1-6>{\item[-] $\leadsto$ \alert{Kernels} provide methods for capture wide array of transformations.  \\} \pause 
+\invisible<1-7>{\item[-] \alert{Kernel Trick}$\leadsto$ calculate inner products on \alert{untransformed} data (Gaussian Kernel), implicitly use wide array of $\phi$'s.  } 
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Weighting Words}
+
+Are all words created equal?  \pause 
+\begin{itemize}
+\invisible<1>{\item[-] Treat all words equally} \pause 
+\invisible<1-2>{\item[-] \alert{Lots of noise} } \pause 
+\invisible<1-3>{\item[-] Reweight words} \pause 
+\begin{itemize}
+\invisible<1-4>{\item[-] Accentuate words that are likely to be \alert{informative}} \pause 
+\invisible<1-5>{\item[-] Make specific assumptions about characteristics of \alert{informative} words} \pause 
+\end{itemize}
+\end{itemize}
+
+\invisible<1-6>{How to generate weights?} \pause 
+\begin{itemize}
+\invisible<1-7>{\item[-] Assumptions about separating words} \pause 
+\invisible<1-8>{\item[-] Use \alert{training} set to identify separating words (Monroe, Ideology measurement)} 
+\end{itemize}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Weighting Words: TF-IDF Weighting} 
+
+What properties do words need to separate concepts? \pause 
+\begin{itemize}
+\invisible<1>{\item[-] Used frequently} \pause 
+\invisible<1-2>{\item[-] But not too frequently} \pause 
+\end{itemize}
+\invisible<1-3>{\alert{Ex.} If all statements about OBL contain {\tt Bin Laden} than this contributes nothing to similarity/dissimilarity measures\\} \pause
+
+\invisible<1-4>{\alert{Inverse document frequency}:} \pause
+\begin{eqnarray}
+\invisible<1-5>{\text{n}_{j} & = & \text{No. documents in which word $j$ occurs} \nonumber \\} \pause
+\invisible<1-6>{\text{idf}_{j} & = & \log \frac{N} {n_j} \nonumber  \\ } \pause
+\invisible<1-7>{\textbf{idf} & = & (\text{idf}_{1} , \text{idf}_{2}, \hdots, \text{idf}_{J} ) \nonumber } 
+\end{eqnarray}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Weighting Words: TF-IDF Weighting} 
+
+
+Why $\log$ ? \pause 
+\begin{itemize}
+\invisible<1>{\item[-] Maximum at $n_j$ = 1} \pause 
+\invisible<1-2>{\item[-] Decreases at rate $\frac{1}{n_j} \Rightarrow$ diminishing ``penalty" for more common use} \pause 
+\invisible<1-3>{\item[-] Other functional forms are fine, embed assumptions about penalization of common use} 
+\end{itemize}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Weighting Words: TF-IDF} 
+
+\pause 
+\begin{eqnarray}
+\invisible<1>{\textbf{X}_{i, \text{idf}}  \equiv \underbrace {\textbf{X}_{i}}_{\text{tf} } \times \textbf{idf} & = & (X_{i1} \times \text{idf}_1 , X_{i2} \times \text{idf}_2 , \hdots, X_{iJ} \times \text{idf}_J) \nonumber \\} \pause 
+\invisible<1-2>{\textbf{X}_{j,\text{idf}}\equiv \textbf{X}_{j} \times \textbf{idf} & = & (X_{j1} \times \text{idf}_1 , X_{j2} \times \text{idf}_2 , \hdots, X_{jJ} \times \text{idf}_J ) \nonumber} \pause 
+\end{eqnarray}
+
+\invisible<1-3>{How Does This Matter For Measuring Similarity/Dissimilarity? \\} \pause 
+
+\invisible<1-4>{\alert{Inner Product} } \pause 
+\begin{eqnarray}
+\invisible<1-5>{\textbf{X}_{i, \text{idf}} \cdot \textbf{X}_{j, \text{idf}} & = &(\textbf{X}_{i} \times \textbf{idf} )^{'} ( \textbf{X}_{j} \times \textbf{idf})  \nonumber \\} \pause 
+\invisible<1-6>{ & = & (\text{idf}_1^2 \times  X_{i1} \times X_{j1}) + (\text{idf}^{2}_2 \times X_{i2} \times X_{j2}) + \nonumber \\
+ & &  \hdots + (\text{idf}_J^{2} \times X_{iJ} \times X_{jJ}) \nonumber } 
+ \end{eqnarray}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Weighting Words: Inner Product} 
+
+Define: \pause \\
+\vspace{0.25in}
+
+
+\invisible<1>{$\boldsymbol{\Sigma}  = \begin{pmatrix}
+											\text{idf}_1^{2} & 0 & 0 &\hdots & 0 \\
+											0 & \text{idf}_2^{2} & 0 &\hdots &0 \\
+											\vdots & \vdots & \vdots & \ddots & \vdots \\
+											0 & 0 & 0 & \hdots & \text{idf}_J^{2}
+											\end{pmatrix} $} \pause 
+
+\vspace{0.25in}
+\invisible<1-2>{If we use tf-idf for our documents, then  } \pause 
+\begin{eqnarray}
+\invisible<1-3>{d_{2}(\boldsymbol{X}_{i}, \boldsymbol{X}_{j} ) & = & \sqrt{\sum_{m=1}^{J}(x_{im, \text{idf}} - x_{jm, \text{idf}} )^{2} } \nonumber \\
+ & = & \sqrt{(\boldsymbol{X}_{i}  - \boldsymbol{X}_{j})^{'}\boldsymbol{\Sigma} (\boldsymbol{X}_{i}  - \boldsymbol{X}_{j})  } \nonumber }
+\end{eqnarray}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Final Product}
+
+Applying some measure of distance, similarity (if symmetric) yields:
+
+$\textbf{D} = \begin{pmatrix} 
+0 & d (1, 2)  & d(1, 3) & \hdots & d(1, N) \\
+\alert{d(2,1)} & 0 &  d(2,3)  & \hdots & d(2, N) \\
+\alert{d(3,1)} & \alert{d(3,2)} & 0 & \hdots & d(3, N ) \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+\alert{d(N,1)} & \alert{d(N,2)} & \alert{d(N,3)}   & \alert{\hdots}  & 0  
+\end{pmatrix} $
+
+
+\vspace{0.5in}
+
+\alert{Lower Triangle} contains unique information $N(N-1)/2$ 
+
+
+
+\end{frame}
+
+
+\begin{frame}
+
+
+\huge 
+{\tt R} Code!!
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Spirling and Indian Treaties}
+
+
+\alert{Spirling (2013)}: model Treaties between US and Native Americans \pause \\
+\invisible<1>{Why?} \pause 
+\begin{itemize}
+\invisible<1-2>{\item[-] American political development} \pause 
+\invisible<1-3>{\item[-] IR Theories of Treaties and Treaty Violations} \pause 
+\invisible<1-4>{\item[-] Comparative studies of indigenous/colonialist interaction} \pause 
+\invisible<1-5>{\item[-] \alert{Political Science question}: how did Native Americans lose land so quickly?} \pause 
+\end{itemize}
+
+\invisible<1-6>{Paper does \alert{a lot}.  We're going to focus on } \pause 
+\begin{itemize}
+\invisible<1-7>{\item[-] Today: Text representation and similarity calculation} \pause 
+\invisible<1-8>{\item[-] Tuesday: Projecting to low dimensional space} 
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Spirling and Indian Treaties}
+
+
+How do we preserve word order and semantic language? \\
+
+After stemming, stopping, bag of wording: 
+\begin{itemize}
+\item[-] {\tt Peace Between Us} 
+\item[-] {\tt No Peace Between Us} 
+\end{itemize}
+  
+ are identical.  \\
+ 
+ Spirling uses complicated representation of texts to preserve word order$\leadsto$ broad application\\
+\only<1>{\tt \alert{Peac}e Between Us} 
+\only<2>{\tt P\alert{eace} Between Us } 
+\only<3>{\tt Pe\alert{ace }Between Us }
+\only<4>{\tt Pea\alert{ce B}etween Us }
+\only<5>{\tt Peac\alert{e Be}tween Us }
+\only<6>{\tt Peace\alert{ Bet}ween Us }
+\only<7>{\tt Peace \alert{Betw}een Us }
+\only<8>{\tt Peace B\alert{etwe}en Us }
+\only<9>{\tt Peace Be\alert{twee}n Us }
+\only<10>{\tt Peace Bet\alert{ween} Us }
+\only<11>{\tt Peace Betw\alert{een }Us }
+\only<12>{\tt Peace Betwe\alert{en U}s }
+\only<13>{\tt Peace Betwee\alert{n Us} }
+
+
+
+\alert{Analyzes K-substrings} 
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{\alert{Kernel Trick} } 
+
+
+
+\pause
+
+\begin{itemize}
+\invisible<1>{\item[-] \alert{Kernel Methods}: Represent texts, measure similarity} \pause \invisible<1-2>{ \alert{simultaneously}} \pause
+\invisible<1-3>{\item[-] Compare only \alert{substrings} in both documents (without explicitly quantifying entire documents)} \pause 
+\invisible<1-4>{\item[-] Problem solved:} \pause 
+\begin{itemize}
+\invisible<1-5>{\item[-] \textcolor{blue}{Arthur} gives all his money to \alert{Justin}} \pause 
+\invisible<1-6>{\item[-] \alert{Justin} gives all his money to \textcolor{blue}{Arthur}} \pause 
+\invisible<1-7>{\item[-] Discard word order: same sentence } \pause \invisible<1-8>{Kernel : different sentences.  } 
+\end{itemize}
+\end{itemize}
+\invisible<1-9>{Uses Kernel methods to measure \alert{similarity}}
+
+\pause \pause \pause \pause \pause 
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Similarity and Dissimilarity of Many Things}
+
+Throughout the course we'll measure \alert{similarity} between documents\\
+We'll also (implicitly) study \alert{similarity of probability distributions}\\
+Develop a measure of distribution dissimilarity\\
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Similarity of Probability Distributions}
+
+\begin{defn}
+Suppose $P$ is a continuous random variable with density $p:\Re \rightarrow \Re$ and $Q$ is a continuous random variable with 
+density $q:\Re \rightarrow q$.  \\
+
+We can define the KL-Divergence between $P$ and $Q$ as
+\begin{eqnarray}
+KL(P||Q) & = & \int_{-\infty}^{\infty} p(x) \log \frac{p(x)}{q(x)} dx \nonumber 
+\end{eqnarray}
+\end{defn}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Assessing Similarity of Other Things}
+
+ KL-divergence measures \alert{dissimilarity}
+between two distributions.
+\end{frame}
+
+
+
+\begin{frame}
+%Functions vs \alert{Functionals} \pause \\
+Consider a function. $f(x) = - x^2$. \pause \\
+\invisible<1>{ Maps numbers to other numbers.} \pause
+\begin{center}
+\invisible<1-2>{\scalebox{0.5}{\includegraphics{Function1.pdf}}}
+\end{center}
+\end{frame}
+
+\begin{frame}
+Take some input (-2 here)
+\begin{center}
+\scalebox{0.5}{\includegraphics{Function2.pdf}}
+\end{center}
+\end{frame}
+
+\begin{frame}
+Then obtain the value of $f(-2)$
+\begin{center}
+\scalebox{0.5}{\includegraphics{Function3.pdf}}
+\end{center}
+\end{frame}
+
+\begin{frame}
+Then obtain the value of $f(-2) = -4$
+\begin{center}
+\scalebox{0.5}{\includegraphics{Function4.pdf}}
+\end{center}
+\end{frame}
+
+
+\begin{frame}
+KL$(q||p)$ is a \alert{functional}.  \pause \invisible<1>{ A
+functional takes \alert{functions} as inputs,
+returns a real number.} \pause \\
+\invisible<1-2>{KL$(q||p)$ maps from sets of distributions $q \in \mathcal{Q}$ and $p \in \mathcal{P}$ to positive real numbers.}\pause \\
+\invisible<1-3>{For example, we could set $q$ = \alert{Uniform(0,1)}
+and $p$ = \textcolor{blue}{Normal(0, 1)} } \pause \\
+\invisible<1-4>{KL($\alert{\text{Uniform(0,1)}}||\textcolor{blue}{\text{Normal(0,1)}}$)
+= 1.09}
+\begin{center}
+\invisible<1-3>{\scalebox{0.4}{\includegraphics{Functional.pdf}}}
+\end{center}
+\end{frame}
+
+
+\begin{frame}
+If $q$ and $p$ are the \alert{same} distribution then KL$(q||p) =
+0$.
+\pause \\
+\invisible<1>{Variational Approximation (topic models!): \alert{approximate} one
+distribution $p$, with another, simpler distribution $q$.} \pause \\
+\invisible<1-2>{Then make this approximation the \alert{best}
+possible--minimize the KL-divergence.}
+\end{frame}
+
+
+\begin{frame}
+A simple example.\\ \pause \invisible<1>{ Approximate a
+\textcolor{blue}{Normal(0,1)} with symmetric \alert{Uniform} distribution, \alert{Uniform(-b, b)}.} \pause \\
+\invisible<1-2>{Choose $b$ to min. KL(\alert{Uniform(-b, b)}$||$
+\textcolor{blue}{Normal(0,1)})} \pause \invisible<1-3>{
+\begin{center}
+ \scalebox{0.45}{\includegraphics{Functional2.pdf}}
+\end{center}
+}
+\end{frame}
+
+\begin{frame}
+Answer: \pause \\
+\invisible<1>{$b = \sqrt{3}$} \pause
+\begin{center}
+\invisible<1-2>{ \scalebox{0.55}{\includegraphics{Functional3.pdf}}}
+\end{center}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\begin{itemize}
+\item[1)] Documents in vector space $\leadsto$ geometry of texts
+\item[2)] Many methods to measure similarity and dissimilarity
+\end{itemize}
+
+
+
+\end{frame}
+
+
+
+
+
+
+
+\end{document}
