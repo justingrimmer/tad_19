@@ -1,0 +1,737 @@
+\documentclass{beamer}
+
+%\usepackage[table]{xcolor}
+\mode<presentation> {
+  \usetheme{Boadilla}
+%  \usetheme{Pittsburgh}
+%\usefonttheme[2]{sans}
+\renewcommand{\familydefault}{cmss}
+%\usepackage{lmodern}
+%\usepackage[T1]{fontenc}
+%\usepackage{palatino}
+%\usepackage{cmbright}
+  \setbeamercovered{transparent}
+\useinnertheme{rectangles}
+}
+%\usepackage{normalem}{ulem}
+%\usepackage{colortbl, textcomp}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg= black}
+\definecolor{trial}{cmyk}{1,0,0, 0}
+\definecolor{trial2}{cmyk}{0.00,0,1, 0}
+\definecolor{darkgreen}{rgb}{0,.4, 0.1}
+\usepackage{array}
+\newcommand{\argmin}{\arg\!\min}
+\beamertemplatesolidbackgroundcolor{white}  \setbeamercolor{alerted
+text}{fg=red}
+
+\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}
+
+%\usepackage{color}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{colortbl}
+%\usepackage[usenames, dvipsnames]{color}
+%\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}c
+%\newcolumntype{Y}{\columncolor[cmyk]{0, 0, 1, 0}\raggedright}
+%\newcolumntype{C}{\columncolor[cmyk]{1, 0, 0, 0}\raggedright}
+%\newcolumntype{G}{\columncolor[rgb]{0, 1, 0}\raggedright}
+%\newcolumntype{R}{\columncolor[rgb]{1, 0, 0}\raggedright}
+
+%\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{Block}
+%$A = B$.
+%\end{beamerboxesrounded}}
+\renewcommand{\familydefault}{cmss}
+%\usepackage[all]{xy}
+
+\usepackage{tikz}
+\usepackage{lipsum}
+
+ \newenvironment{changemargin}[3]{%
+ \begin{list}{}{%
+ \setlength{\topsep}{0pt}%
+ \setlength{\leftmargin}{#1}%
+ \setlength{\rightmargin}{#2}%
+ \setlength{\topmargin}{#3}%
+ \setlength{\listparindent}{\parindent}%
+ \setlength{\itemindent}{\parindent}%
+ \setlength{\parsep}{\parskip}%
+ }%
+\item[]}{\end{list}}
+\usetikzlibrary{arrows}
+%\usepackage{palatino}
+%\usepackage{eulervm}
+\usecolortheme{lily}
+\newtheorem{com}{Comment}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+ \numberwithin{equation}{section}
+
+%\usepackage[latin1]{inputenc}
+\title[Machine Learning] % (optional, nur bei langen Titeln nötig)
+{Machine Learning}
+
+\author{Justin Grimmer}
+\institute[Stanford University]{Professor\\Department of Political Science \\  Stanford University}
+\vspace{0.3in}
+
+
+\date{April 11th, 2019}%[Big Data Workshop] 
+%\date{\today}
+
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}
+
+\huge 
+
+Last class: vector space model of text (tf-idf)\\
+
+This class: statistical model of text \\
+
+Goal: Discovery (some new conceptualization)
+
+
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Building Models vs Algorithms}
+
+\Large
+
+Today we're building statistical models \pause \\
+\invisible<1>{ \alert{algorithms}$\leadsto$ models without a data generating process\\} \pause 
+
+\invisible<1-2>{False debate.  Both are useful\\} \pause 
+
+\invisible<1-3>{We will often use statistics, because:} \pause 
+
+\begin{itemize}
+\invisible<1-4>{\item[1)] Clarity of assumptions} \pause 
+\invisible<1-5>{\item[2)] Machinery to think about optimization, uncertainty, and sensitivity$\leadsto$ automatic objective function} \pause 
+\invisible<1-6>{\item[3)] Easier to extend---leverage technology to generalize the model} \pause 
+\end{itemize}
+
+
+
+\invisible<1-7>{Probability model$\leadsto$ form basis of statistical approaches} 
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Unigram Model of Language}
+
+\Large 
+
+Assume we have a $3$ word \alert{vocabulary}\pause \invisible<1>{$\leadsto$ $3$ words that we might speak. } \pause \\
+\invisible<1-2>{\alert{Bag of Words}$\leadsto$ each word is an independent draw over $3$ words} \pause 
+\begin{itemize}
+\invisible<1-3>{\item[-] \alert{Improbable model of language creation}} \pause 
+\invisible<1-4>{\item[-] Complex dependency structure of text} \pause 
+\invisible<1-5>{\item[-] Improbable $\neq$ useless} 
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Unigram Model of Language}
+
+Suppose we are drawing a word $\boldsymbol{X}_{i} = (X_{i1}, X_{i2}, X_{i3}) $ \pause 
+\begin{eqnarray}
+\invisible<1>{p(\boldsymbol{X}_{i}  =   (1, 0, 0)) &= &  \theta_{1} \nonumber}\pause  \\
+\invisible<1-2>{p(\boldsymbol{X}_{i}  =   (0, 1, 0)) & =&  \theta_{2} \nonumber}\pause  \\
+\invisible<1-3>{p(\boldsymbol{X}_{i} =  (0,0,1)) &= & \theta_{3} = 1 - \theta_{2} - \theta_{1} \nonumber }\pause 
+\end{eqnarray}
+
+\invisible<1-4>{The pmf for $\boldsymbol{X}_{i}$ is, }\pause 
+
+\begin{eqnarray}
+\invisible<1-5>{p(\boldsymbol{x}_{i}| \boldsymbol{\theta}) & = & \prod_{j=1}^{3} \theta_{j}^{x_{ij}} \nonumber \\}\pause 
+\invisible<1-6>{\boldsymbol{X}_{i} & \sim & \text{Multinomial}(1, \boldsymbol{\theta}) \nonumber \\}\pause 
+\invisible<1-7>{\boldsymbol{X}_{i} & \sim & \text{Categorical}(\boldsymbol{\theta}) \nonumber }
+\end{eqnarray}
+
+
+
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Unigram Model of Language}
+
+
+\begin{eqnarray}
+p(\boldsymbol{x}_{i}| \boldsymbol{\theta}) & = & \prod_{j=1}^{3} \theta_{j}^{x_{ij}} \nonumber \\
+\boldsymbol{X}_{i} & \sim & \text{Multinomial}(1, \boldsymbol{\theta}) \nonumber \pause \\
+\invisible<1>{E[x_{ij}] & = & \theta_{j}  \nonumber \\} \pause
+\invisible<1-2>{\text{Var}(X_{ij}) & = & \theta_{j} (1 - \theta_{j} ) \nonumber \\} \pause 
+\invisible<1-3>{\text{Cov}(x_{ij}, x_{ik}) & = &  - \theta_{j} \theta_{k} \nonumber } 
+\end{eqnarray}
+
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Unigram Model of Language}
+
+Suppose we make $N$ independent draws:
+\begin{eqnarray}
+\boldsymbol{X}_{i} & \sim & \text{Multinomial}(1, \boldsymbol{\theta})  \nonumber 
+\end{eqnarray}
+
+Then:
+\begin{eqnarray}
+\boldsymbol{X} & = &  \sum_{i=1}^{N}\boldsymbol{X}_{i} \nonumber \\
+& = &   (\sum_{i=1}^{N} X_{i1}, \sum_{i=1}^{N}X_{i2}, \sum_{i=1}^{N} X_{i3} ) \nonumber \\
+\boldsymbol{X} & \sim & \text{Multinomial}(N, \boldsymbol{\theta}) \nonumber \\
+p(\boldsymbol{x}|\boldsymbol{\theta} ) & \propto & \prod_{j=1}^{3} \theta_{j}^{x_{j}} \nonumber 
+\end{eqnarray}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Unigram Model of Language}
+
+Obtaining maximum-likelihood estimates:
+
+\begin{eqnarray}
+\mathcal{L}(\boldsymbol{\theta}| \boldsymbol{x} ) & \propto & \prod_{j=1}^{3} \theta_{j}^{x_{j} } \nonumber \\
+\log \mathcal{L}(\boldsymbol{\theta}| \boldsymbol{x} ) & =  & \sum_{j=1}^{3} x_{j} \log \theta_{j} + c  \nonumber 
+\end{eqnarray}
+
+Include constraint that $\sum_{j=1}^{3} \theta_{j} = 1$ 
+
+\begin{eqnarray}
+\log \mathcal{L}(\boldsymbol{\theta}| \boldsymbol{x} ) & =  & \sum_{j=1}^{3} x_{j} \log \theta_{j} + \lambda(\sum_{j=1}^{3} \theta_{j} - 1)   + c\nonumber 
+\end{eqnarray}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Unigram Model of Language}
+
+\begin{eqnarray}
+\log \mathcal{L}(\boldsymbol{\theta}| \boldsymbol{x} ) & =  & \sum_{j=1}^{3} x_{j} \log \theta_{j} + \lambda(\sum_{j=1}^{3} \theta_{j} - 1)   + c \nonumber \\
+\frac{\partial \log \mathcal{L}(\boldsymbol{\theta}| \boldsymbol{x} )}{\partial \theta_{1}} & = & \frac{x_{1}}{\theta_{1}} + \lambda \nonumber \\
+\frac{\partial \log \mathcal{L}(\boldsymbol{\theta}| \boldsymbol{x} )}{\partial \theta_{2}} & = & \frac{x_{2}}{\theta_{2}} + \lambda \nonumber \\
+\frac{\partial \log \mathcal{L}(\boldsymbol{\theta}| \boldsymbol{x} )}{\partial \theta_{3}} & = & \frac{x_{3}}{\theta_{3}} + \lambda \nonumber \\
+\frac{\partial \log \mathcal{L}(\boldsymbol{\theta}| \boldsymbol{x} )}{\partial \lambda} & = & \sum_{j=1}^{3}\theta_{j} - 1 \nonumber 
+\end{eqnarray}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Unigram Model of Language}
+
+\Large 
+
+\only<1>{
+\begin{eqnarray}
+0 & = & \frac{x_{1}}{\theta_{1}^{*}} + \lambda^{*} \nonumber \\
+0 & = & \frac{x_{2}}{\theta_{2}^{*}} + \lambda^{*} \nonumber \\
+0 & = & \frac{x_{3}}{\theta_{3}^{*}} + \lambda^{*} \nonumber \\
+0 & = & \sum_{j=1}^{3}\theta_{j}^{*} - 1 \nonumber 
+\end{eqnarray}}
+
+\only<2->{
+\begin{eqnarray}
+\theta_{1}^{*} & = & \frac{x_{1}}{x_{1} + x_{2} + x_{3} } \nonumber \\
+\theta_{2}^{*} & = & \frac{x_{2}}{x_{1} + x_{2} + x_{3} } \nonumber \\
+\theta_{3}^{*} & = & \frac{x_{3}}{x_{1} + x_{2} + x_{3} } \nonumber 
+\end{eqnarray}	
+\invisible<1-2>{Maximum likelihood estimates$\leadsto$ Rates words are used}
+}
+\pause \pause 
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Unigram Model of Language}
+
+
+\begin{eqnarray}
+p(\boldsymbol{x}|\boldsymbol{\theta} ) & \propto & \prod_{j=1}^{3} \theta_{j}^{x_{j}} \nonumber 
+\end{eqnarray}
+\pause 
+
+\invisible<1>{$\alert{\boldsymbol{\theta}}$: encodes information about word rates$\leadsto$ our summary of the document/speaker} \pause 
+\begin{itemize}
+\invisible<1-2>{\item[-] $\sum_{j=1}^{3} \theta_{j} = 1$} \pause 
+\invisible<1-3>{\item[-] $\theta_{j}\geq 0$ } \pause 
+\end{itemize}
+
+\invisible<1-4>{$\boldsymbol{\theta} \in \Delta^{2}$ (2-dimensional simplex )} 
+
+
+\end{frame}
+
+
+\begin{frame}
+
+
+\begin{center}
+\only<1>{\scalebox{0.55}{\includegraphics{Simplex3d.pdf}}}
+\end{center}
+
+
+\end{frame}
+
+
+\begin{frame}
+
+\begin{tikzpicture}
+\node (empty) at (-8, 5) [] {} ; 
+
+\node (figure) at (-7, 7) [] {\scalebox{0.55}{\includegraphics{TernaryPlot1.pdf}}}; 
+
+\invisible<1, 3->{\node (corner) at (-9.75, 4.3) [] {}; 
+\node (corner2) at (-11, 5) [] {}; 
+
+\draw[->, line width = 2pt]  (corner2) to [out = 180, in = 90] (corner) ; 
+\node(corner1) at (-11, 6.25) [] {\scalebox{0.25}{\includegraphics{Corner2.pdf}}}; 
+}
+
+\invisible<1-2, 4->{\node (corner3) at (-6.65, 9.7) [] {}; 
+\node (corner4) at (-4.75, 10.2) [] {}; 
+
+\draw[->, line width = 2pt]  (corner4) to [out = 180, in = 90] (corner3) ; 
+\node(corner_pic) at (-4, 10.25) [] {\scalebox{0.25}{\includegraphics{Corner1.pdf}}}; 
+}
+
+\invisible<1-3, 5->{\node (corner5) at (-3.7, 4.3) [] {}; 
+\node (corner6) at (-2.5, 5) [] {}; 
+
+\draw[->, line width = 2pt]  (corner6) to [out = 180, in = 90] (corner5) ; 
+\node(corner_pic2) at (-2.5, 6.25) [] {\scalebox{0.25}{\includegraphics{Corner3.pdf}}}; 
+}
+
+
+\invisible<1-4>{\node (corner7) at (-6.7, 6.3) [] {}; 
+\node (corner8) at (-10.5, 10) [] {}; 
+
+\draw[->, line width = 2pt]  (corner8) to [out = 270, in = 90] (corner7) ; 
+\node(corner_center) at (-10.5, 10.25) [] {\scalebox{0.25}{\includegraphics{Corner4.pdf}}}; 
+}
+
+\end{tikzpicture}
+\pause \pause \pause \pause 
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Senate Press Releases 2005}
+\begin{center}
+\scalebox{0.5}{\includegraphics{OverallMLE.pdf}}
+\end{center}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Unigram Model of Language}
+
+\Large 
+
+Suppose we have several speakers (authors/clusters/topics/categories/ ...)\\
+
+Speaker $i$ produces document $\boldsymbol{X}_{i}$, 
+\begin{eqnarray}
+\boldsymbol{X}_{i} & \sim & \text{Multinomial}(N_{i}, \alert{\boldsymbol{\theta}_{i}} ) \nonumber 
+\end{eqnarray}
+
+where $\boldsymbol{\theta}_{i} \leadsto$ Speaker specific word rates\\
+
+Build hierarchical model: 
+\begin{eqnarray}
+\boldsymbol{\theta}_{i} & \sim & \text{Distribution on Simplex} \nonumber 
+\end{eqnarray}
+
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Hierarchical Models as a Modeling Paradigm}
+
+
+Why Build a Hierarchical Model?
+
+\begin{itemize}
+\item[1)] Borrow strength across documents$\leadsto$ Improved and granular inferences
+\item[2)] Shrink estimates$\leadsto$ regularization
+\item[3)] Incorporate further covariate information
+\begin{itemize}
+\item[i)] Author
+\item[ii)] Time
+\item[iii)] ...
+\end{itemize}
+\item[3)] Learn additional structure 
+\begin{itemize}
+\item[i)] Hierarchies of word rates
+\item[ii)] Clusters of similar word rates
+\item[iii)] Low dimensional approximations of word rates
+\end{itemize}
+\item[4)] Encodes complicated dependencies between documents/speakers
+
+\end{itemize}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Dirichlet-Multinomial Unigram Language Model}
+
+For $N$ observations we observe a $3$-element long count vector 
+\begin{eqnarray}
+\boldsymbol{x}_{i} & = &  (x_{i1}, x_{i2}, x_{i3}) \nonumber 
+\end{eqnarray}
+
+
+Where $N_{i} = \sum_{j=1}^{3} x_{ij}$ .\\
+
+Suppose 
+
+
+\begin{eqnarray}
+\boldsymbol{\theta}_{i} & \sim & \text{Dirichlet}(\boldsymbol{\alpha}) \nonumber \\
+\boldsymbol{x}_{i} | \boldsymbol{\theta}_{i} & \sim & \text{Multinomial}(N_{i}, \boldsymbol{\theta}_{i} ) \nonumber 
+\end{eqnarray}
+
+\begin{itemize}
+\item[-] Dirichlet distribution$
+\leadsto$ assumption about \alert{population} of word rates
+\item[-] $\boldsymbol{\alpha}= (\alpha_{1}, \alpha_{2}, \alpha_{3})$ describes population use of words and variation
+\item[-] \alert{Just one distribution simplex}
+\end{itemize}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\only<1>{\scalebox{0.5}{\includegraphics{Dirichlet1.pdf}}}
+\only<2>{\scalebox{0.5}{\includegraphics{Dirichlet2.pdf}}}
+\only<3>{\scalebox{0.5}{\includegraphics{Dirichlet3.pdf}}}
+\only<4>{\scalebox{0.5}{\includegraphics{Dirichlet4.pdf}}}
+\only<5>{\scalebox{0.5}{\includegraphics{Dirichlet5.pdf}}}
+\only<6>{\scalebox{0.5}{\includegraphics{Dirichlet6.pdf}}}
+\only<7>{\scalebox{0.5}{\includegraphics{Dirichlet7.pdf}}}
+\only<8>{\scalebox{0.5}{\includegraphics{Dirichlet8.pdf}}}
+\only<9>{\scalebox{0.5}{\includegraphics{Dirichlet9.pdf}}}
+\only<10>{\scalebox{0.5}{\includegraphics{Dirichlet10.pdf}}}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Dirichlet Distribution}
+
+Suppose 
+\begin{eqnarray}
+\boldsymbol{\theta}_{i} & \sim & \text{Dirichlet}(\boldsymbol{\alpha}) \nonumber 
+\end{eqnarray}
+
+Then, 
+\begin{eqnarray}
+p(\boldsymbol{\theta}|\boldsymbol{\alpha}) & = & \frac{\Gamma(\sum_{j=1}^{3} \alpha_{j})}{\prod_{j=1}^{3} \Gamma(\alpha_{j})} \prod_{j=1}^{3}  \theta_{ij}^{\alpha_{j} - 1}  \nonumber 
+\end{eqnarray}
+
+\begin{itemize}
+\item[-] If $\boldsymbol{\alpha} = (1, 1, 1)$ \alert{Uniform distribution}
+\end{itemize}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Dirichlet Distribution}
+
+\begin{itemize}
+\item[-] Important Facts
+\begin{eqnarray}
+E[\boldsymbol{\theta}_{i}] & = &  \left(\frac{\alpha_{1} }{\sum_{j=1}^{3} \alpha_{j} }, \frac{\alpha_{2} }{\sum_{j=1}^{3} \alpha_{j} }, \frac{\alpha_{3} }{\sum_{j=1}^{3} \alpha_{j} }\right) \nonumber \\
+\text{var}(\theta_{ij} ) & = & \frac{\alpha_{i}\left(\sum_{j=1}^{3} \alpha_{j} - \alpha_{i} \right)}{\left(\sum_{j=1}^{3} \alpha_{j}\right)^{2} \left(\sum_{j=1}^{3} \alpha_{j} + 1 \right)} \nonumber \\
+\text{cov}(\theta_{ik}, \theta_{ij} ) & = & \frac{-\alpha_{k} \alpha_{j} }{ \left(\sum_{j=1}^{3} \alpha_{j}\right)^{2} \left(\sum_{j=1}^{3} \alpha_{j} + 1 \right)  } \nonumber \\
+\text{Mode}(\theta_{j}) & = & \frac{\alpha_{j}  - 1}{\sum_{k=1}^{3} \alpha_{k} - 3} \nonumber 
+\end{eqnarray}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Dirichlet-Multinomial Unigram Model of Language}
+
+\begin{eqnarray}
+\boldsymbol{\theta}_{i} & \sim & \text{Dirichlet}(\boldsymbol{\alpha}) \nonumber \\
+\boldsymbol{x}_{i} | \boldsymbol{\theta}_{i} & \sim & \text{Multinomial}(N_{i}, \boldsymbol{\theta}_{i}) \nonumber 
+\end{eqnarray}
+\pause 
+
+\begin{eqnarray}
+\invisible<1>{p(\boldsymbol{\theta}_{i}| \boldsymbol{\alpha}, \boldsymbol{x}_{i} ) &  \propto & p(\boldsymbol{\theta}_{i} | \boldsymbol{\alpha}) \ p(\boldsymbol{x}_{i}| \boldsymbol{\theta}_{i}) \nonumber \\} \pause 
+\invisible<1-2>{& \propto &  \frac{\Gamma(\sum_{j=1}^{3} \alpha_{j}) }{\prod_{j=1}^{3} \Gamma(\alpha_{j})} \prod_{j=1}^{3} \theta_{j}^{\alpha_{j} - 1 }  \prod_{j=1}^{3} \theta_{ij}^{x_{ij}}  \nonumber \\} \pause 
+\invisible<1-3>{& \propto &  \frac{\Gamma(\sum_{j=1}^{3} \alpha_{j}) }{\prod_{j=1}^{3} \Gamma(\alpha_{j})} \underbrace{\prod_{j=1}^{3} \theta_{j}^{\alpha_{j} + x_{ij}  - 1 }}_{\text{Dirichlet Kernel}} \nonumber }
+\end{eqnarray}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Dirichlet-Multinomial Unigram Model of Language}
+
+
+\begin{eqnarray}
+\boldsymbol{\theta}_{i}| \boldsymbol{\alpha}, \boldsymbol{x}_{i} & \sim & \text{Dirichlet}(\boldsymbol{\alpha} + \boldsymbol{x} ) \nonumber \\
+\text{E}[\theta_{ij}| \boldsymbol{\alpha}, \boldsymbol{x}_{i}] & = & \frac{\alpha_{j} + x_{ij} }{\sum_{j=1}^{3} (x_{ij} + \alpha_{j} ) } \nonumber 
+\end{eqnarray}
+
+\begin{itemize}
+\item[-] $\alpha_{j} \leadsto$ ``pseudo" data that smooth the estimates toward $\frac{\alpha_{j} }{\alpha_{1} + \alpha_{2} + \alpha_{3} }$
+\item[-] as $N_{i} \rightarrow \infty$ data ($\boldsymbol{x}_{i}$) \alert{overwhelm} $\boldsymbol{\alpha}$ 
+\end{itemize}
+
+
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Senate Press Releases}
+\begin{center}
+\only<1>{\scalebox{0.5}{\includegraphics{ObamaMcCainMLE.pdf}}}
+\only<2>{\scalebox{0.5}{\includegraphics{ObamaClintonMLE.pdf}}}
+\end{center}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Dirichlet-Multinomial Unigram Model of Language}
+
+Data generation process suggests new probability mass function for $\boldsymbol{x}_{i} \leadsto $ marginalize over $\boldsymbol{\theta}$ 
+
+\begin{eqnarray}
+\boldsymbol{\theta}_{i}  & \sim & \text{Dirichlet}(\boldsymbol{\alpha}) \nonumber \\
+\boldsymbol{x}_{i}| \boldsymbol{\theta}_{i} & \sim  & \text{Multinomial}(N_{i}, \boldsymbol{\theta}_{i}) \nonumber
+\end{eqnarray}
+
+\pause 
+\invisible<1>{This implies:} \pause 
+\begin{eqnarray}
+\invisible<1-2>{p(\boldsymbol{x}_{i} | \boldsymbol{\alpha}) & =  & \int_{\Delta^{2}} p(\boldsymbol{x}_{i}, \boldsymbol{\theta}_{i}|\boldsymbol{\alpha})d\boldsymbol{\theta} \nonumber \\}\pause 
+ \invisible<1-3>{& =  & \int_{\Delta^{2}} p(\boldsymbol{x}_{i} | \boldsymbol{\theta}_{i} ) p(\boldsymbol{\theta}_{i}| \boldsymbol{\alpha} ) d\boldsymbol{\theta} \nonumber \\} \pause 
+ \invisible<1-4>{& = & {{N_{i}}\choose{n_{1}!n_{2}!n_{3}!}} \frac{\Gamma(\sum_{j=1}^{3} \alpha_{j} )}{\prod_{j=1}^{3} \Gamma(\alpha_{j}) }  \int_{\Delta^{2}} \prod_{j=1}^{3} \theta_{ij}^{x_{ij}} \theta_{ij}^{\alpha_{j} - 1} d\boldsymbol{\theta}  \nonumber }
+\end{eqnarray}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\begin{eqnarray}
+\invisible<1>{p(\boldsymbol{x}_{i} | \boldsymbol{\alpha}) & =  & {{N_{i}}\choose{n_{1}!n_{2}!n_{3}!}} \frac{\Gamma(\sum_{j=1}^{3} \alpha_{j} )}{\prod_{j=1}^{3} \Gamma(\alpha_{j}) }  \int_{\Delta^{2}} \underbrace{\prod_{j=1}^{3} \theta_{ij}^{x_{ij}} \theta_{ij}^{\alpha_{j} - 1} d\boldsymbol{\theta} }_{\text{Dirichlet Kernel}} \nonumber \\}
+\invisible<1-2>{& = & {{N_{i}}\choose{n_{1}!n_{2}!n_{3}!}} \frac{\Gamma(\sum_{j=1}^{3} \alpha_{j} )}{\prod_{j=1}^{3} \Gamma(\alpha_{j}) } \frac{\prod_{j=1}^{3} \Gamma(x_{ij} + \alpha_{j} )}{\Gamma(\sum_{j=1}^{3} (x_{ij} + \alpha_{j})   )    }\nonumber \\} 
+\invisible<1-3>{& = & {{N_{i}}\choose{n_{1}!n_{2}!n_{3}!}} \frac{\Gamma(\sum_{j=1}^{3} \alpha_{j} )  }{ \Gamma(\sum_{j=1}^{3} (x_{ij} + \alpha_{j} )  )  } \prod_{j=1}^{3} \frac{ \Gamma(x_{ij} + \alpha_{j} )   }{ \Gamma(\alpha_{j} )  }  \nonumber }
+\end{eqnarray}
+
+\pause \pause \pause \pause 
+
+\invisible<1-4>{Has some intuitive properties  } \pause 
+
+\begin{eqnarray}
+\invisible<1-5>{\text{E}[X_{ij}] & = & N \frac{\alpha_{j} }{\sum_{k=1}^{3} \alpha_{k} } \nonumber } 
+\end{eqnarray}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Dirichlet-Multinomial Unigram Model}
+
+We can also generate a predictive distribution$\leadsto$ probability next word is $j$ 
+\begin{eqnarray}
+P(\tilde{x} = 1| \boldsymbol{x}_{i}, \boldsymbol{\alpha} ) & = & \int_{\Delta^{2}} p(\tilde{x} = 1 | \boldsymbol{\theta}) p(\boldsymbol{\theta}| \boldsymbol{\alpha}, \boldsymbol{x}_{i} ) d\boldsymbol{\theta} \nonumber \\
+& = & \int_{\Delta^{2}} \theta_{j} \text{Dir}(\boldsymbol{\theta}| \boldsymbol{x}_{i} + \boldsymbol{\alpha})d\boldsymbol{\theta}  \nonumber \\
+& = & \frac{x_{ij} + \alpha_{j} }{ \sum_{j=1}^{3}(x_{ij} + \alpha_{j})  } \nonumber 
+\end{eqnarray}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Dirichlet-Multinomial Unigram Model}
+
+Where does $\boldsymbol{\alpha}$ come from?\\
+Extend the model$\leadsto$ \alert{infer} it
+
+\begin{eqnarray}
+\alpha_{j} & \sim & \text{Gamma}(0.25, 1) \nonumber \\
+\boldsymbol{\theta}_{i}|\boldsymbol{\alpha} & \sim & \text{Dirichlet}(\boldsymbol{\theta}_{i}) \nonumber \\
+\boldsymbol{x}_{i}| \boldsymbol{\theta}_{i} & \sim & \text{Multinomial}(N_{i}, \boldsymbol{\theta}_{i} ) \nonumber 
+\end{eqnarray}
+
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Dirichlet-Multinomial Unigram Model}
+
+Which yields
+\begin{footnotesize}
+\begin{eqnarray}
+p(\boldsymbol{\theta}, \boldsymbol{\alpha} | \boldsymbol{X}) & \propto &  p(\boldsymbol{\alpha}) \prod_{i=1}^{N} p(\boldsymbol{\theta}_{i} | \boldsymbol{\alpha}) p(\boldsymbol{x}_{i} | \boldsymbol{\alpha})  \nonumber \\
+p(\boldsymbol{\alpha}|\boldsymbol{X}) & = & \int_{\Delta^{2}} p(\boldsymbol{\theta}, \boldsymbol{\alpha} | \boldsymbol{X})  d\boldsymbol{\theta}  \nonumber \\
+& \propto & 
+p(\boldsymbol{\alpha}) \prod_{i=1}^{N} \int_{\Delta^{2}} p(\boldsymbol{\theta}_{i} | \boldsymbol{\alpha}) p(\boldsymbol{x}_{i} |\boldsymbol{\theta}_{i}, \boldsymbol{\alpha})d\boldsymbol{\theta} \nonumber \\
+& \propto & \prod_{j=1}^{3} 4 \exp\left( - 4 \alpha_{j}  \right)  \times \prod_{i=1}^{N}\left[\frac{\Gamma(\sum_{j=1}^{3} \alpha_{j} )}{\Gamma(\sum_{j=1}^{3} (x_{ij} + \alpha_{j} ))}\times \prod_{j=1}^{3} \frac{\Gamma(x_{ij} + \alpha_{j}) }{\Gamma(\alpha_{j} )   }\right] \nonumber 
+\end{eqnarray}
+\end{footnotesize}
+
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Unigram Model of Language}
+
+Suppose $\boldsymbol{x}_{i} = (x_{i1}, x_{i2}, \hdots, x_{iJ})$ \\
+\begin{itemize}
+\item[-] $x_{ij} = $ Number of times word $j$ occurs in document $i$.  
+\item[-] $N_{i} = \sum_{j=1}^{J} x_{ij}$ total number of words in document $i$
+\end{itemize}
+
+Assume a generation process
+\begin{eqnarray}
+\boldsymbol{x}_{i} & \sim & \text{Multinomial}(N_{i}, \boldsymbol{\theta}) \nonumber \\
+\boldsymbol{\theta} & = & (\theta_{1}, \theta_{2}, \hdots, \theta_{J}) \nonumber \\
+p(\boldsymbol{x}_{i}| \boldsymbol{\theta}) & \propto & \prod_{j=1}^{J} \theta_{j}^{x_{ij}} \nonumber 
+\end{eqnarray}
+
+
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Alternative Priors on the Simplex}
+
+Dirichlet distribution
+\begin{itemize}
+\item[-] Imposes specific form on variance
+\item[-] Imposes negative correlation between all components.
+\item[-] We might expect some word rates to positively covary. \end{itemize}
+
+Alternative$\leadsto$ \alert{Logistic-Normal} distribution
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Logistic-Normal Distribution}
+
+Suppose $\boldsymbol{x}_{i} = (x_{i1}, x_{i2}, x_{i3})$.  
+
+Define: 
+
+\begin{eqnarray}
+\boldsymbol{y}_{i} & = & \left(\log\left(\frac{x_{i1}}{x_{i3}}\right), \log\left(\frac{x_{i2}}{x_{i3}} \right)  \right ) \nonumber \\
+\boldsymbol{y}_{i} & \sim & \text{Normal}(\boldsymbol{\mu}, \boldsymbol{\Sigma} )  \nonumber \\
+\boldsymbol{\mu} & =  & (\mu_{1}, \mu_{2} ) \nonumber \\
+\boldsymbol{\Sigma} &  = &  \begin{pmatrix} \sigma_{1}^{2} & \text{cov}(y_{i1}, y_{i2} ) \\
+ \text{cov}(y_{i1}, y_{i2} ) & \sigma_{2}^{2}  \end{pmatrix}\nonumber 
+\end{eqnarray} 
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Logistic-Normal Distribution}
+
+To get back original data apply:
+
+\begin{eqnarray}
+x_{i1} & = & \left(\frac{\exp(y_{i1})}{\exp(y_{i1}) + \exp(y_{i2}) + 1}  \right) \nonumber \\
+x_{i2} & = & \left(\frac{\exp(y_{i2})}{\exp(y_{i1}) + \exp(y_{i2}) + 1}  \right) \nonumber \\
+x_{i3} & = & \left(\frac{1}{\exp(y_{i1}) + \exp(y_{i2}) + 1}  \right) \nonumber \\
+\boldsymbol{x}_{i} & = & g(\boldsymbol{y}_{i} ) \nonumber 
+\end{eqnarray}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Logistic-Normal Distribution}
+
+An alternative hierarchical model:
+\begin{eqnarray}
+\boldsymbol{\eta}_{i} & \sim & \text{MVN}(\boldsymbol{\mu}, \boldsymbol{\Sigma}) \nonumber \\
+\boldsymbol{\theta}_{i} & = & g(\boldsymbol{\eta}_{i} ) \nonumber \\
+\boldsymbol{x}_{i} & \sim & \text{Multinomial}(N_{i}, \boldsymbol{\theta}_{i}) \nonumber 
+\end{eqnarray}
+
+Widely used:
+\begin{itemize}
+\item[-] Correlated models
+\item[-] Natural way to encode \alert{regressions} in prior
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}
+
+Next week: clustering!
+
+\end{frame}
+
+
+\end{document}
