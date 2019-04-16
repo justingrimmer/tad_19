@@ -1,0 +1,631 @@
+\documentclass{beamer}
+
+%\usepackage[table]{xcolor}
+\mode<presentation> {
+  \usetheme{Boadilla}
+%  \usetheme{Pittsburgh}
+%\usefonttheme[2]{sans}
+\renewcommand{\familydefault}{cmss}
+%\usepackage{lmodern}
+%\usepackage[T1]{fontenc}
+%\usepackage{palatino}
+%\usepackage{cmbright}
+  \setbeamercovered{transparent}
+\useinnertheme{rectangles}
+}
+%\usepackage{normalem}{ulem}
+%\usepackage{colortbl, textcomp}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg= black}
+\definecolor{trial}{cmyk}{1,0,0, 0}
+\definecolor{trial2}{cmyk}{0.00,0,1, 0}
+\definecolor{darkgreen}{rgb}{0,.4, 0.1}
+\usepackage{array}
+\newcommand{\argmin}{\arg\!\min}
+\beamertemplatesolidbackgroundcolor{white}  \setbeamercolor{alerted
+text}{fg=red}
+
+\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}
+
+%\usepackage{color}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{colortbl}
+%\usepackage[usenames, dvipsnames]{color}
+%\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}c
+%\newcolumntype{Y}{\columncolor[cmyk]{0, 0, 1, 0}\raggedright}
+%\newcolumntype{C}{\columncolor[cmyk]{1, 0, 0, 0}\raggedright}
+%\newcolumntype{G}{\columncolor[rgb]{0, 1, 0}\raggedright}
+%\newcolumntype{R}{\columncolor[rgb]{1, 0, 0}\raggedright}
+
+%\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{Block}
+%$A = B$.
+%\end{beamerboxesrounded}}
+\renewcommand{\familydefault}{cmss}
+%\usepackage[all]{xy}
+
+\usepackage{tikz}
+\usepackage{lipsum}
+
+ \newenvironment{changemargin}[3]{%
+ \begin{list}{}{%
+ \setlength{\topsep}{0pt}%
+ \setlength{\leftmargin}{#1}%
+ \setlength{\rightmargin}{#2}%
+ \setlength{\topmargin}{#3}%
+ \setlength{\listparindent}{\parindent}%
+ \setlength{\itemindent}{\parindent}%
+ \setlength{\parsep}{\parskip}%
+ }%
+\item[]}{\end{list}}
+\usetikzlibrary{arrows}
+%\usepackage{palatino}
+%\usepackage{eulervm}
+\usecolortheme{lily}
+\newtheorem{com}{Comment}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+ \numberwithin{equation}{section}
+
+%\usepackage[latin1]{inputenc}
+\title[Machine Learning] % (optional, nur bei langen Titeln nötig)
+{Machine Learning}
+
+\author{Justin Grimmer}
+\institute[Stanford University]{Professor\\Department of Political Science \\  Stanford University}
+\vspace{0.3in}
+
+
+\date{April 16th, 2019}%[Big Data Workshop] 
+%\date{\today}
+
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Discovery}
+
+Search for new ways to organize text 
+
+\begin{itemize}
+\item[-] Complement, Not Replace, Organizations of Text
+\item[-] There is No Ground Truth Conceptualization
+\item[-] Once you have a conceptualization it is yours
+\end{itemize}	
+
+
+\end{frame}
+
+\begin{frame}
+
+Clustering: partition of documents
+\begin{itemize}
+	\item[-] Discover categories
+	\item[-] Assign documents to categories 
+\end{itemize}
+
+\alert{Fully Automated Clustering}
+\begin{itemize}
+\item[1)] Notion of distance
+\item[2)] Definition of ``good" clustering
+\item[3)] Optimization method
+\end{itemize}	
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{K-Means$\leadsto$ Objective Function}
+
+$N$ documents $\boldsymbol{x}_{i} = (x_{i1}, x_{i2}, \hdots, x_{iJ})$ (normalized) \pause \\
+\invisible<1>{Goal$\leadsto$ Partition documents into $K$ clusters. } \pause  \\
+\invisible<1-2>{Two parameters to estimate} \pause 
+\begin{itemize}
+\invisible<1-3>{\item[1)] $K\times J$ matrix of cluster centers $\Theta$. } \pause \\
+\invisible<1-4>{Cluster $k$ has center } \pause 
+\begin{eqnarray}
+\invisible<1-5>{\boldsymbol{\theta}_{k} & = & (\theta_{1k}, \theta_{2k}, \hdots, \theta_{Jk}) \nonumber }\pause
+\end{eqnarray}
+\invisible<1-6>{$\boldsymbol{\theta}_{k} = $ \alert{exemplar} for cluster $k$} \pause 
+
+\invisible<1-7>{\item[2)] $\boldsymbol{T}$ is an $N \times K$ matrix. Each row is an indicator vector.\\} \pause
+\invisible<1-8>{If observation $i$ is from cluster $k$, then  } \pause 
+\begin{eqnarray}
+\invisible<1-9>{\boldsymbol{\tau}_{i} & = & (0, 0, \hdots, 0, \underbrace{1}_{k^{th}}, 0, \hdots, 0) \nonumber }\pause
+\end{eqnarray}
+\invisible<1-10>{\alert{Hard Assignment}} 
+
+\end{itemize}
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{K-Means$\leadsto$ Objective Function}
+
+Assume squared euclidean distance \pause 
+
+\begin{eqnarray}
+\invisible<1>{f(\boldsymbol{X},\boldsymbol{T}, \boldsymbol{\Theta}) & = & \sum_{i=1}^{N} \sum_{k=1}^{K} \overbrace{\tau_{ik}}^{\text{cluster indicator}} \underbrace{\left(\sum_{j=1}^{J} (x_{ij} - \theta_{kj})^2 \right)}_{\text{Squared Euclidean Distance}} \nonumber }\pause
+\end{eqnarray}
+
+\begin{itemize}
+\invisible<1-2>{\item[-] Calculate squared euclidean distance from center} \pause 
+\invisible<1-3>{\item[-] \alert{Only} for the assigned cluster} \pause
+\invisible<1-4>{\item[-] Two trivial solutions} \pause 
+\begin{itemize}
+\invisible<1-5>{\item[-] If $K = N$ then $f( \boldsymbol{X}, \boldsymbol{T}, \boldsymbol{\Theta})  = 0 $ (Minimum)} \pause 
+\begin{itemize}
+\invisible<1-6>{\item[-] Each observation in its own cluster} \pause 
+\invisible<1-7>{\item[-] $\boldsymbol{\theta}_{i} = \boldsymbol{x}_{i}$} \pause 
+\end{itemize}
+\invisible<1-8>{\item[-] If $K = 1$, $f(\boldsymbol{X}, \boldsymbol{T}, \boldsymbol{\Theta}) = N \times \sum_{j=1}^{J} \sigma^2_{j} w$} \pause 
+\begin{itemize}
+\invisible<1-9>{\item[-] Each observation in same cluster} \pause 
+\invisible<1-10>{\item[-] $\boldsymbol{\theta}_{1} = $ Average across documents} 
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{K-Means$\leadsto$ Optimization}
+
+\alert{Coordinate descent}\pause \invisible<1>{$\leadsto$ iterate between labels and centers. } \pause  \\
+\invisible<1-2>{Iterative algorithm: each iteration $t$} \pause 
+\begin{itemize}
+\invisible<1-3>{\item[-] Conditional on $\boldsymbol{\Theta}^{t-1}$ (from previous iteration), choose $\boldsymbol{T}^{t}$ } \pause 
+\invisible<1-4>{\item[-] Conditional on $\boldsymbol{T}^{t}$, choose $\boldsymbol{\Theta}^{t}$} \pause 
+\end{itemize}
+
+\invisible<1-5>{Repeat until convergence$\leadsto$ as measured as change in $f$ dropping below threshold $\epsilon$} \pause 
+\begin{eqnarray}
+\invisible<1-6>{\text{Change} & = & f(\boldsymbol{X}, \boldsymbol{T}^{t}, \boldsymbol{\Theta}^{t} ) - f(\boldsymbol{X}, \boldsymbol{T}^{t-1}, \boldsymbol{\Theta}^{t-1} ) \nonumber } 
+\end{eqnarray}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{K-Means$\leadsto$ Optimization}
+
+\pause 
+\begin{itemize}
+\invisible<1>{\item[1)] initialize $K$ cluster centers $\boldsymbol{\theta}_{1}^{t}, \boldsymbol{\theta}_{2}^{t}, \hdots, \boldsymbol{\theta}_{K}^{t}$.  } \pause 
+\end{itemize}
+
+\begin{itemize}
+\invisible<1-2>{\item[2)] Choose $\boldsymbol{T}^{t} $} \pause 
+\end{itemize}
+
+\begin{equation}
+\invisible<1-3>{\tau_{im}^{t} =  \left \{ \begin{array} {ll}
+1 \text{ if } m = \arg\min_{k} \sum_{j=1}^{J} (x_{ij} - \theta_{kj}^{t} )^2 \\
+0  \text{ otherwise } ,
+\end{array} \right. . \nonumber} \pause 
+\end{equation}
+
+
+
+\invisible<1-4>{In words: Assign each document $\boldsymbol{x}_{i}$ to the closest center $\boldsymbol{\theta}_{m}^{t}$}
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{K-Means$\leadsto$ Optimization}
+
+\pause 
+\begin{itemize}
+\invisible<1>{\item[3)] Choose $\Theta^{t} \leadsto$ Focus on the center for cluster $k$ } \pause 
+\end{itemize}
+\begin{eqnarray}
+\invisible<1-2>{f(\boldsymbol{X}, \boldsymbol{T}^{t}, \boldsymbol{\Theta})_{k}  & = & \sum_{i=1}^{N} \tau_{ik}^{t} \left(\sum_{j=1}^{J} (x_{ij} - \theta_{jk})^{2}  \right) \nonumber \\} \pause 
+\invisible<1-3>{\frac{\partial f(\boldsymbol{X}, \boldsymbol{T}^{t}, \boldsymbol{\Theta})_{k} }{\partial \theta_{kj} } & = & - 2 \sum_{i=1}^{N} \tau_{ij}^{t} \left(x_{ij} - \theta_{jk} \right) \nonumber \\} \pause 
+\invisible<1-4>{0 & = &- 2 \sum_{i=1}^{N} \tau_{ij}^{t} \left(x_{ij} - \theta_{jk}^{*} \right) \nonumber\\}\pause 
+\invisible<1-5>{& = & \sum_{i=1}^{N} \tau_{ij}^{t} x_{ij} - \theta_{jk}^{*} \sum_{i=1}^{N} \tau_{ij}^{t} \nonumber \\} \pause 
+\invisible<1-6>{\frac{\sum_{i=1}^{N} \tau_{ik}^{t} x_{ij} }{ \sum_{i=1}^{N} \tau_{ik}^{t} } & = & \theta_{jk}^{*} \nonumber }
+\end{eqnarray}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{K-Means$\leadsto$ Optimization}
+
+\begin{eqnarray}
+\boldsymbol{\theta}^{t+1} & = & \frac{ \sum_{i=1}^{N} \tau_{ik} \boldsymbol{x}_{i} }{ \sum_{i=1}^{N} \tau_{ik}  } \pause \invisible<1>{ \propto \sum_{i=1}^{N} \tau_{ik} \boldsymbol{x}_{i} \nonumber }\pause 
+\end{eqnarray}
+
+\invisible<1-2>{In words: $\boldsymbol{\theta}^{t+1}$ is the average of the documents assigned to $k$.  \\}\pause
+
+\invisible<1-3>{Optimization algorithm:} \pause 
+\begin{itemize}
+\invisible<1-4>{\item Initialize centers}\pause 
+\invisible<1-5>{\item Do until converged:}\pause
+\begin{itemize}
+\invisible<1-6>{\item For each document, find closest center$\leadsto \boldsymbol{\tau}^{t}_{i}$}\pause
+\invisible<1-7>{\item For each center, take average of assigned documents$\leadsto \boldsymbol{\theta}^{t}_{k}$ }\pause
+\invisible<1-8>{\item Update change $f(\boldsymbol{X}, \boldsymbol{T}^{t}, \boldsymbol{\Theta}^{t} ) -  f(\boldsymbol{X}, \boldsymbol{T}^{t-1}, \boldsymbol{\Theta}^{t-1}) $}
+\end{itemize}
+\end{itemize}
+
+\invisible<1-9>{Guaranteed convergence to \alert{local} minimum$\leadsto$ Each step decreases $f$ and there is an optimal partition$\leadsto$ close connection to EM-algorithms (see appendix to slides)}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Visual Example} 
+
+
+\only<1>{\scalebox{0.5}{\includegraphics{BlankPoints.pdf}}}
+\only<2>{\scalebox{0.5}{\includegraphics{KMeans1.pdf}}}
+\only<3>{\scalebox{0.5}{\includegraphics{KMeans2.pdf}}}
+\only<4>{\scalebox{0.5}{\includegraphics{KMeans3.pdf}}}
+\only<5>{\scalebox{0.5}{\includegraphics{KMeans4.pdf}}}
+\only<6>{\scalebox{0.5}{\includegraphics{KMeans5.pdf}}}
+\only<7>{\scalebox{0.5}{\includegraphics{KMeans6.pdf}}}
+\only<8>{\scalebox{0.5}{\includegraphics{KMeans7.pdf}}}
+\only<9>{\scalebox{0.5}{\includegraphics{KMeans8.pdf}}}
+\only<10>{\scalebox{0.5}{\includegraphics{KMeans9.pdf}}}
+\only<11>{\scalebox{0.5}{\includegraphics{KMeans10.pdf}}}
+\only<12>{\scalebox{0.5}{\includegraphics{KMeans11.pdf}}}
+\only<13>{\scalebox{0.5}{\includegraphics{KMeansFinal.pdf}}}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{An Example: Jeff Flake}
+
+{\tt To the R Code!}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Interpreting Cluster Components}
+
+Unsupervised methods\pause\invisible<1>{$\leadsto$ low startup costs, high post-model costs} \pause 
+
+\begin{itemize}
+\invisible<1-2>{\item[-] Apply clustering methods, we have groups of documents} \pause
+\invisible<1-3>{\item[-] How to interpret the groups?} \pause 
+\invisible<1-4>{\item[-] Two (broad) methods:} \pause 
+\begin{itemize}
+\invisible<1-5>{\item[-] Manual identification (Quinn et al 2010)} \pause 
+\begin{itemize}
+\invisible<1-6>{\item[-] Sample set of documents from same cluster} \pause 
+\invisible<1-7>{\item[-] Read documents} \pause 
+\invisible<1-8>{\item[-] Assign cluster label} \pause 
+\end{itemize}
+\invisible<1-9>{\item[-] Automatic identification} \pause 
+\begin{itemize}
+\invisible<1-10>{\item[-] Know label classes} \pause 
+\invisible<1-11>{\item[-] Use methods to identify separating words} \pause 
+\invisible<1-12>{\item[-] Use these to help infer differences across clusters} \pause 
+\end{itemize}
+\end{itemize}
+\invisible<1-13>{\item[-] \alert{Transparency}} \pause 
+\begin{itemize}
+\invisible<1-14>{\item[-] Debate what clusters are} \pause 
+\invisible<1-15>{\item[-] Debate what they mean} \pause 
+\invisible<1-16>{\item[-] Provide documents + organizations} \pause 
+\end{itemize}
+\end{itemize}
+
+\invisible<1-17>{{\tt back to the R code!}} 
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{How Do We Choose $K$?} 
+
+\pause 
+
+\begin{itemize}
+\invisible<1>{\item[-] Previous Analysis Assumed We Know Number of Clusters} \pause 
+\invisible<1-2>{\item[-] How Do We Choose Cluster Number? } \pause 
+\invisible<1-3>{\item[-] Cannot Compare $f$ across clusters  } \pause 
+\begin{itemize}
+\invisible<1-4>{\item[-] Sum squared errors decreases as $K$ increases } \pause 
+\invisible<1-5>{\item[-] Trivial answer: each document in own cluster (useless) } \pause 
+\invisible<1-6>{\item[-] Modeling problem: Fit often increases with features} \pause
+\end{itemize}
+\invisible<1-7>{\item[-] How do we choose number of clusters?} \pause 
+\end{itemize}
+\Huge
+\invisible<1-8>{\alert{Think!}}\pause 
+\normalsize
+\begin{itemize}
+\invisible<1-9>{\item[-] No one statistic captures how you want to use your data} \pause 
+\invisible<1-10>{\item[-] But, can help guide your selection} \pause 
+\invisible<1-11>{\item[-] Combination statistic +  manual search}\pause\invisible<1-12>{$\leadsto$discuss statistical methods/experimental methods on Thursday}
+\invisible<1-12>{\item[-] \alert{Humans should be the final judge}  } \pause 
+\begin{itemize}
+\invisible<1-13>{\item[-] Compare insights across clusterings}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Mixture of Unigram Models (Mixture of Multinomials)}
+
+Mixture models$\leadsto$ wide range of applications \pause \\
+
+\invisible<1>{Single distribution data generating process:} \pause 
+\begin{eqnarray}
+\invisible<1-2>{\boldsymbol{x}_{i} & \sim & \text{Distribution(parameters)} \nonumber } \pause 
+\end{eqnarray}
+
+
+\invisible<1-3>{Mixture of distribution data generating process:} \pause 
+\begin{eqnarray}
+\invisible<1-4>{\boldsymbol{\tau}_{i}| \boldsymbol{\pi} & \sim & \text{Multinomial}(1, \boldsymbol{\pi}) \nonumber \\} \pause
+\invisible<1-5>{\boldsymbol{x}_{i} | \tau_{ik} = 1 & \sim & \text{Distribution(parameters$_{k}$)} \nonumber }\pause
+\end{eqnarray}
+
+\invisible<1-6>{In words:} \pause 
+\begin{itemize}
+\invisible<1-7>{\item[-] Draw a cluster label} \pause 
+\invisible<1-8>{\item[-] Given distribution, draw realization} 
+\end{itemize}
+
+
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Mixture of Unigram Models (Mixture of Multinomials)}
+
+A mixture of unigram-language models
+
+\begin{eqnarray}
+\boldsymbol{\pi} & \sim & \text{Dirichlet}(\boldsymbol{1}) \nonumber \\
+\boldsymbol{\theta} & \sim & \text{Dirichlet}(\boldsymbol{1}) \nonumber \\
+\boldsymbol{\tau}_{i} | \boldsymbol{\pi} & \sim & \text{Multinomial}(1, \boldsymbol{\pi}) \nonumber \\
+\boldsymbol{x}_{i}| \tau_{ik} = 1, \boldsymbol{\theta}_{k} & \sim & \text{Multinomial}(N_{i}, \boldsymbol{\theta}_{k} ) \nonumber 
+\end{eqnarray}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Mixture of Unigram Models (Mixture of Multinomials)}
+
+This implies the following posterior distribution:
+
+
+\begin{eqnarray}
+p(\boldsymbol{T}, \boldsymbol{\Theta}, \boldsymbol{\pi} | \boldsymbol{X})\pause\invisible<1>{ & \propto & \overbrace{p(\boldsymbol{\pi}) p(\boldsymbol{\theta})}^{1} \underbrace{p(\boldsymbol{X}, \boldsymbol{T}| \boldsymbol{\pi}, \boldsymbol{\theta})}_{\text{Complete data likelihood}} \nonumber } \pause  \\
+\invisible<1-2>{& \propto & \underbrace{\prod_{i=1}^{N} p(\boldsymbol{\tau}_{i} , \boldsymbol{x}_{i}| \boldsymbol{\theta}, \boldsymbol{\pi})}_{\text{Complete data likelihood}} \nonumber \\} \pause 
+\invisible<1-3>{& \propto & \prod_{i=1}^{N} p(\boldsymbol{\tau}_{i} |\boldsymbol{\pi} ) p(\boldsymbol{x}_{i}| \boldsymbol{\theta}, \boldsymbol{\tau}_{i}) \nonumber \\} \pause 
+\invisible<1-4>{& \propto & \prod_{i=1}^{N} \prod_{k=1}^{K} \left[ \pi_{k} \prod_{j=1}^{J} \theta_{jk}^{x_{ik}}  \right]^{\tau_{ik}} \nonumber } 
+\end{eqnarray}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Mixture of Unigram Models (Mixture of Multinomials)}
+
+Obtain MAP estimates$\leadsto$ EM Algorithm \pause 
+\begin{itemize}
+\invisible<1>{\item[1)] Initialize parameters $\boldsymbol{\Theta}^{t}$, $\boldsymbol{\pi}^{t}$} \pause 
+\invisible<1-2>{\item[2)] \alert{Expectation step}: compute $p(\boldsymbol{\tau}_{i} | \boldsymbol{\Theta}^{t}, \boldsymbol{\pi}^{t}, \boldsymbol{X})\leadsto \boldsymbol{r}_{i}^{t}$  } \pause 
+\invisible<1-3>{\item[3)] \alert{Maximization step}: maximize with respect to $\boldsymbol{\Theta}$ and $\boldsymbol{\pi}$:} \pause 
+\begin{eqnarray}
+\invisible<1-4>{\text{E}[\log \text{Complete data} | \boldsymbol{\theta}_{k}, \boldsymbol{\pi}] & = & \sum_{i=1}^{N}\sum_{k=1}^{K} \log p(\boldsymbol{x}_{i}, \tau_{ik}^{t} | \boldsymbol{\theta}_{k}, \pi_{k} ) p(\tau_{ik}^{t} | \boldsymbol{\Theta}, \pi_{k} )  \nonumber } \pause 
+\end{eqnarray}
+\invisible<1-5>{Obtain $\boldsymbol{\Theta}^{t+1}$, $\boldsymbol{\pi}^{t+1}$}\pause
+\invisible<1-6>{\item[4)] Assess change} \pause 
+\begin{eqnarray}
+\invisible<1-7>{\text{Change} & =& \text{E}[\log \text{Complete data} | \boldsymbol{\Theta}^{t+1} , \boldsymbol{\pi}^{t+1} ] \nonumber \\
+&&  - \text{E}[\log \text{Complete data} | \boldsymbol{\Theta}^{t}, \boldsymbol{\pi}^{t} ]\nonumber } \pause 
+\end{eqnarray}
+\end{itemize}
+
+\invisible<1-8>{Our update steps will be strikingly similar to the K-Means algorithm} \pause 
+
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Mixture of Unigram Models (Mixture of Multinomials)}
+\begin{itemize}
+\item[1)] Initialize parameters $\boldsymbol{\Theta}^{t}$ and $\boldsymbol{\pi}^{t}$  \pause \\
+\invisible<1>{\item[2)] \alert{E-Step} } \pause 
+\end{itemize}
+
+\begin{eqnarray}
+\invisible<1-2>{p(\tau_{ik} | \boldsymbol{\Theta}^{t}, \boldsymbol{\pi}^{t}, \boldsymbol{X}) }\pause \invisible<1-3>{ & =  & \overbrace{\frac{p(\tau_{ik} |\boldsymbol{\pi}^{t}) p(\boldsymbol{x}_{i} | \boldsymbol{\theta}_{k}^{t} )}{ \sum_{m=1}^{K} \left(p(\tau_{im} |\boldsymbol{\pi}^{t}) p(\boldsymbol{x}_{i} | \boldsymbol{\theta}_{m}^{t} ) \right) }}^{\text{general form}} \nonumber}\pause   \\
+\invisible<1-4>{& = & \frac{ \pi_{k}^{t} \prod_{j=1}^{J} (\theta_{jk}^{t})^{x_{ij}}}{ \sum_{m=1}^{K} \left( \pi_{m}^{t} \prod_{j=1}^{J} (\theta_{jm}^{t})^{x_{ij}}\right) } \nonumber } \pause 
+\end{eqnarray}
+
+\invisible<1-5>{Define:} \pause \invisible<1-7>{Avoid underflow}
+\begin{eqnarray}
+\only<1-7>{\invisible<1-6>{r_{ik}^{t} &\equiv &  \frac{ \pi_{k}^{t} \prod_{j=1}^{J} (\theta_{jk}^{t})^{x_{ij}}}{ \sum_{m=1}^{K} \left( \pi_{m}^{t} \prod_{j=1}^{J} (\theta_{jm}^{t})^{x_{ij}}\right) } \nonumber } }
+\only<8>{r_{ik}^{t} & = & \left[ 1 + \sum_{k^{'} \neq k} \frac{\pi_{k^{'}}\prod_{j=1}^{J} (\theta_{jk^{'}}^{t})^{x_{ij}}    }{\pi_{k} \prod_{j=1}^{J} (\theta_{jk}^{t})^{x_{ij}}}   \right]^{-1} \nonumber }
+\end{eqnarray}
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Mixture of Unigram Models (Mixture of Multinomials)}
+
+\begin{itemize}
+\item[3)] \alert{M-Step}: \pause 
+\end{itemize}
+
+
+\begin{eqnarray}
+\invisible<1>{\text{E}[\log \text{Complete data} | \boldsymbol{\theta}, \boldsymbol{\pi}] & = & \sum_{i=1}^{N} \sum_{k=1}^{K} E[\tau_{ik}] \log \left(\pi_{k}\prod_{j=1}^{J} \theta_{jk}^{x_{ik}} \right) \nonumber \\}\pause
+\invisible<1-2>{& = & \sum_{i=1}^{N}\sum_{k=1}^{K} r_{ik}^{t} \log \pi_{k}  + \sum_{i=1}^{N}\sum_{k=1}^{K} \sum_{j=1}^{J} r_{ik}^{t} x_{ij}\log\theta_{jk} \nonumber  } \pause 
+\end{eqnarray}
+
+\invisible<1-3>{Introducing constraints, differentiating, setting equal to zero and algebra yields:} \pause 
+\begin{eqnarray}
+\invisible<1-4>{\pi^{t+1}_{k} & = & \frac{\sum_{i=1}^{N} r_{ik}^{t}}{N} \nonumber \\} \pause
+\invisible<1-5>{\theta_{jk}^{t+1} & = & \frac{\sum_{i=1}^{N} r_{ik}^{t} x_{ij}}{ \sum_{m=1}^{J} \sum_{i=1}^{N} r_{ik}^{t} x_{im}   }}\pause \invisible<1-6>{ \propto \sum_{i=1}^{N} r_{ik}^{t} \boldsymbol{x}_{i} \nonumber } 
+\end{eqnarray}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Example: Jeff Flake Again!}
+
+{\tt To the R Code!}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Fully Automated Clustering}
+
+\pause 
+\begin{itemize}
+\invisible<1>{\item[-] Notion of similarity and ``good" partition$\leadsto$ clustering} 
+\invisible<1-2>{\item[-] Many clustering methods:} 
+\begin{itemize}
+\invisible<1-3>{\item Spectral clustering}
+\invisible<1-4>{\item Affinity Propagation}
+\invisible<1-5>{\item Non-parametric statistical models}
+\invisible<1-6>{\item Hierarchical clustering }
+\invisible<1-7>{\item Biclustering}
+\invisible<1-8>{\item ...}
+\end{itemize}
+\invisible<1-9>{\item[-] How do we know we have something useful?}
+\begin{itemize}
+\invisible<1-10>{\item Validation: read the documents}
+\invisible<1-11>{\item Validation: experiments to assess cluster quality$\leadsto$ Thursday}
+\invisible<1-12>{\item Validation: model based fit statistics}
+\end{itemize}
+\invisible<1-13>{\item[-] How do we know we have the ``right" model?}
+\end{itemize}
+
+
+\begin{huge}
+\invisible<1-14>{\alert{YOU DON'T!}}\invisible<1-15>{$\leadsto$ And never will}\invisible<1-16>{$\leadsto$ but still useful(!!!!)}
+\end{huge}
+
+
+\pause \pause \pause \pause \pause \pause \pause \pause \pause \pause \pause \pause \pause \pause \pause \pause 
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Appendix: Why EM Works}
+
+Goal: 
+\begin{eqnarray}
+\text{argmax}_{\boldsymbol{\theta}} p(\boldsymbol{X}| \boldsymbol{\theta} ) & = & \sum_{\boldsymbol{T}} p(\boldsymbol{X}, \boldsymbol{T}|\boldsymbol{\theta}) \nonumber 
+\end{eqnarray}
+
+Define: 
+\begin{eqnarray}
+\mathcal{L}(q, \boldsymbol{\theta}) & = & \sum_{\boldsymbol{T}} q(\boldsymbol{T}) \log \left[ \frac{ p(\boldsymbol{X}, \boldsymbol{T}| \boldsymbol{\theta}) }{q(\boldsymbol{T} )}   \right] \nonumber \\
+K(q||p) & = & - \sum_{\boldsymbol{T}} q(\boldsymbol{T}) \log \left[ \frac{p(\boldsymbol{T}| \boldsymbol{X}, \boldsymbol{\theta}) }{q(\boldsymbol{T})}    \right] \nonumber 
+\end{eqnarray}
+
+Then: 
+\begin{eqnarray}
+\log p(\boldsymbol{X}| \boldsymbol{\theta}) & = & \mathcal{L}(q, \boldsymbol{\theta})  + K(q||p) \nonumber 
+\end{eqnarray}
+
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Appendix: Why EM Works}
+
+\begin{footnotesize}
+\begin{eqnarray}
+\mathcal{L}(q, \boldsymbol{\theta})  + K(q||p) & = & \sum_{\boldsymbol{T}} q(\boldsymbol{T}) \log \left[ \frac{ p(\boldsymbol{X}, \boldsymbol{T}| \boldsymbol{\theta}) }{q(\boldsymbol{T} )}   \right] - \sum_{\boldsymbol{T}} q(\boldsymbol{T}) \log \left[ \frac{p(\boldsymbol{T}| \boldsymbol{X}, \boldsymbol{\theta}) }{q(\boldsymbol{T})}    \right] \nonumber \\
+& =& \sum_{\boldsymbol{T} } q(\boldsymbol{T}) \log(p(\boldsymbol{X}|\boldsymbol{\theta}) ) + \sum_{\boldsymbol{T} } q(\boldsymbol{T}) \log (p(\boldsymbol{T}|\boldsymbol{X}, \boldsymbol{\theta}) )  \nonumber \\
+&&  - \sum_{\boldsymbol{T}} q(\boldsymbol{T}) \log q(\boldsymbol{T}) - \sum_{\boldsymbol{T}} q(\boldsymbol{T}) \log p(\boldsymbol{T}|\boldsymbol{X}, \boldsymbol{\theta}) + \sum_{\boldsymbol{T}} q(\boldsymbol{T}) \log q(\boldsymbol{T}) \nonumber \\
+& = & \log p(\boldsymbol{X}| \boldsymbol{\theta}) \nonumber 
+\end{eqnarray}
+\end{footnotesize}
+
+Collect terms that cancel and recognize $\sum_{\boldsymbol{T}} q(\boldsymbol{T}) = 1$ and we see equivalence
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Appendix: Why EM Works}
+
+$K(q||p)\geq0$ with $K(q||p) = 0$ only if $q = p$.  So, $\mathcal{L}(q, \boldsymbol{\theta})$ is a lower-bound on the log-likelihood.  \\
+E-step
+\begin{eqnarray}
+\log p(\boldsymbol{X}|\boldsymbol{\theta}) - K(q||p) & = & \mathcal{L}(q, \boldsymbol{\theta}) \nonumber 
+\end{eqnarray}
+
+$\mathcal{L}(q, \boldsymbol{\theta})\leadsto$ biggest when $K(q||p) = 0$, so set 
+\begin{eqnarray}
+q(\boldsymbol{T}) & = & p(\boldsymbol{T}| \boldsymbol{X}, \boldsymbol{\theta}) \nonumber 
+\end{eqnarray}
+
+
+M-step:\\
+Given the new value of $q$, maximize parameters (expectation of the log complete data likelihood)\\
+Change in log-likelihood will be greater$\leadsto$ because new maximum induces non-zero KL-divergence.  Changes in log-likelihood are greater than changes in lower bound.  
+
+
+\end{frame}
+
+
+\end{document}
