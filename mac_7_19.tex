@@ -1,0 +1,969 @@
+\documentclass{beamer}
+
+%\usepackage[table]{xcolor}
+\mode<presentation> {
+  \usetheme{Boadilla}
+%  \usetheme{Pittsburgh}
+%\usefonttheme[2]{sans}
+\renewcommand{\familydefault}{cmss}
+%\usepackage{lmodern}
+%\usepackage[T1]{fontenc}
+%\usepackage{palatino}
+%\usepackage{cmbright}
+  \setbeamercovered{transparent}
+\useinnertheme{rectangles}
+}
+%\usepackage{normalem}{ulem}
+%\usepackage{colortbl, textcomp}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg= black}
+\definecolor{trial}{cmyk}{1,0,0, 0}
+\definecolor{trial2}{cmyk}{0.00,0,1, 0}
+\definecolor{darkgreen}{rgb}{0,.4, 0.1}
+\usepackage{array}
+\beamertemplatesolidbackgroundcolor{white}  \setbeamercolor{alerted
+text}{fg=red}
+
+\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}
+
+%\usepackage{color}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{colortbl}
+%\usepackage[usenames, dvipsnames]{color}
+%\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}c
+%\newcolumntype{Y}{\columncolor[cmyk]{0, 0, 1, 0}\raggedright}
+%\newcolumntype{C}{\columncolor[cmyk]{1, 0, 0, 0}\raggedright}
+%\newcolumntype{G}{\columncolor[rgb]{0, 1, 0}\raggedright}
+%\newcolumntype{R}{\columncolor[rgb]{1, 0, 0}\raggedright}
+
+%\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{Block}
+%$A = B$.
+%\end{beamerboxesrounded}}
+\renewcommand{\familydefault}{cmss}
+%\usepackage[all]{xy}
+
+\usepackage{tikz}
+\usepackage{lipsum}
+
+ \newenvironment{changemargin}[3]{%
+ \begin{list}{}{%
+ \setlength{\topsep}{0pt}%
+ \setlength{\leftmargin}{#1}%
+ \setlength{\rightmargin}{#2}%
+ \setlength{\topmargin}{#3}%
+ \setlength{\listparindent}{\parindent}%
+ \setlength{\itemindent}{\parindent}%
+ \setlength{\parsep}{\parskip}%
+ }%
+\item[]}{\end{list}}
+\usetikzlibrary{arrows}
+%\usepackage{palatino}
+%\usepackage{eulervm}
+\usecolortheme{lily}
+\newtheorem{com}{Comment}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+ \numberwithin{equation}{section}
+%\usepackage[latin1]{inputenc}
+\title[Text as Data] % (optional, nur bei langen Titeln nötig)
+{Text as Data}
+
+\author{Justin Grimmer}
+\institute[Stanford University]{Professor\\Department of Political Science \\  Stanford University}
+\vspace{0.3in}
+
+
+\date{April 25th, 2019}%[Big Data Workshop]
+%\date{\today}
+
+
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+% \begin{frame}
+% \frametitle{Discovery and Measurement}
+
+% What is the research process? (Grimmer, Roberts, and Stewart 2018)
+
+% \begin{itemize}
+%   \item[1)] \alert{Discovery}: a hypothesis or view of the world
+%   \item[2)] \alert{Measurement} according to some organization
+%   \item[3)] \alert{Causal Inference}: effect of some intervention
+% \end{itemize}
+
+% Text as data methods assist at each stage of research process
+
+% \end{frame}
+
+
+
+
+\begin{frame}
+
+\huge
+
+Principal Component Analysis $\leadsto$ low-dimensional embedding
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{A Simple Two-Dimensional Example}
+
+Suppose we have the following observations:
+\begin{eqnarray}
+x_{1} & = & (0.54, 1.07) \nonumber \\
+x_{2} & = & (-1.20, -0.76) \nonumber \\
+x_{3} & = & (-0.63, -0.81)\nonumber \\
+x_{4} & = & (0.96, 0.75) \nonumber \\
+x_{5} & = & (1.64, 1.37) \nonumber
+\end{eqnarray}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\begin{center}
+\only<1>{\scalebox{0.6}{\includegraphics{Plot1.pdf}}}
+\only<2>{
+  Goal: find line that summarizes bivariate information
+\scalebox{0.5}{\includegraphics{Plot1.pdf}}
+}
+
+
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Vectors to Draw a Line}
+
+Suppose $\boldsymbol{w}_{1} = (1,1)$
+\only<1-4>{\invisible<1-3>{$2 \boldsymbol{w}_{1} = (2, 2)$ }}
+\only<5>{$\frac{1}{2} \boldsymbol{w}_{1} = (1/2, 1/2)$}
+\only<6>{$-2 \boldsymbol{w}_{1} = (-2, -2)$ }
+\only<7>{$-\frac{1}{2} \boldsymbol{w}_{1} = (-1/2, -1/2)$ }
+
+
+
+\begin{center}
+\only<1>{\scalebox{0.5}{\includegraphics{Plot2.pdf}}}
+\only<2>{\scalebox{0.5}{\includegraphics{Plot3.pdf}}}
+\only<3>{\scalebox{0.5}{\includegraphics{Plot4.pdf}}}
+\only<4>{\scalebox{0.5}{\includegraphics{Plot5.pdf}}}
+\only<5>{\scalebox{0.5}{\includegraphics{Plot6.pdf}}}
+\only<6>{\scalebox{0.5}{\includegraphics{Plot7.pdf}}}
+\only<7>{\scalebox{0.5}{\includegraphics{Plot8.pdf}}}
+\only<8>{
+$z_{i} = $ amount we shrink/flip $\boldsymbol{w}_{1}$ to approximate point $i$.
+
+\scalebox{0.3}{\includegraphics{Plot8.pdf}}}
+\end{center}
+
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+
+$\boldsymbol{w}_{1} = (0.75, 0.66)$
+\invisible<1>{$z_{1} = 1.12$}
+
+\begin{center}
+\only<1>{\scalebox{0.5}{\includegraphics{Plot9.pdf}}}
+\only<2>{\scalebox{0.5}{\includegraphics{Plot10.pdf}}}
+\only<3>{\scalebox{0.5}{\includegraphics{Plot11.pdf}}}
+\only<4>{\scalebox{0.5}{\includegraphics{Plot12.pdf}}}
+
+\end{center}
+
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Algebraic Representation}
+
+\begin{eqnarray}
+\boldsymbol{x}_{i} & = & z_{i} \boldsymbol{w}_{1}  + \boldsymbol{e}_{i} \nonumber \pause  \\
+\invisible<1>{(x_{i1}, x_{i2}) & = & (z_{i}w_{11} + e_{i1} , z_{i} w_{12} + e_{i2} )\nonumber} \pause
+\end{eqnarray}
+
+\invisible<1-2>{Find $\boldsymbol{w}_{1} = (w_{11}, w_{12}) $ and $z_{i}$ to minimize the error} \pause
+
+
+\begin{eqnarray}
+\invisible<1-3>{\text{error} & = & \frac{1}{N} \sum_{i=1}^{N} ((x_{i1}, x_{i2})  - z_{i}(w_{11}, w_{12}) )^{'} ((x_{i1}, x_{i2})  - z_{i}(w_{11}, w_{12}) ) \nonumber \\} \pause
+\invisible<1-4>{& = & \frac{1}{N} \sum_{i=1}^{N} (x_{i1} - z_{i} w_{11} )^{2} + (x_{i2} - z_{i} w_{12} )^{2} \nonumber }
+\end{eqnarray}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Three Dimensional Approximation}
+
+\begin{eqnarray}
+\boldsymbol{x}_{1} & = & (0.09, -1.02, -0.10) \nonumber \\
+\boldsymbol{x}_{2} & = & (0.09, 1.41, 0.67) \nonumber \\
+\boldsymbol{x}_{3} & = & (-0.81, -1.46, -0.54) \nonumber \\
+\boldsymbol{x}_{4} & = & (1.43, 0.26, 0.61)\nonumber \\
+\boldsymbol{x}_{5} & = & (1.23, 0.87, 1.33\nonumber
+\end{eqnarray}
+
+Find $\boldsymbol{w}_{1} = (w_{11}, w_{12}, w_{13})$ and $z_{i}$ to provide best one dimensional approximation.
+
+
+\end{frame}
+
+
+\begin{frame}
+
+{\tt Three-Dimensional Visualization}
+
+\only<2>{$\boldsymbol{w}_{1} = (0.48, 0.75, 0.46)$}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\begin{eqnarray}
+\boldsymbol{x}_{i} & = & z_{i} \boldsymbol{w}_{1}  + \boldsymbol{e}_{i} \nonumber \pause  \\
+\invisible<1>{(x_{i1}, x_{i2}, x_{i3}) & = & (z_{i}w_{11} + e_{i1} , z_{i} w_{12} + e_{i2}, z_{i} w_{13} + e_{i3} )\nonumber} \pause
+\end{eqnarray}
+
+\invisible<1-2>{Find $\boldsymbol{w}_{1} = (w_{11}, w_{12}, w_{13}) $ and $z_{i}$ to minimize the error} \pause
+
+
+\begin{eqnarray}
+\invisible<1-3>{\text{error} & = & \frac{1}{N} \sum_{i=1}^{N} ((x_{i1}, x_{i2}, x_{13})- z_{i}(w_{11}, w_{12}, w_{13}) )^{'} \nonumber \\
+&&   ((x_{i1}, x_{i2}, x_{i3})  - z_{i}(w_{11}, w_{12}, w_{13}) ) \nonumber} \pause  \\
+\invisible<1-4>{& = & \frac{1}{N} \sum_{i=1}^{N} (x_{i1} - z_{i} w_{11} )^{2} + (x_{i2} - z_{i} w_{12} )^{2} + (x_{i3} - z_{i} w_{13} )^{2}  \nonumber}
+\end{eqnarray}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Principal Component Analysis}
+
+\only<1>{\scalebox{0.5}{\includegraphics{PrCompExamp1.pdf}}}
+\only<2>{\scalebox{0.5}{\includegraphics{PrCompExamp2.pdf}}}
+\only<3>{\scalebox{0.5}{\includegraphics{PrCompExamp3.pdf}}}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{PCA Output}
+$\boldsymbol{x}_{i} = (x_{i1}, x_{i2}, \hdots, x_{iJ})$ \pause
+
+
+
+\invisible<1>{Principal Component Output:} \pause
+
+\begin{itemize}
+\invisible<1-2>{\item[1)] $K$ Principal Components $\boldsymbol{w}_{k}$ } \pause
+\begin{eqnarray}
+\invisible<1-3>{\boldsymbol{w}_{k} & = & (w_{1k}, w_{2k}, \hdots, w_{Jk})\nonumber } \pause
+\end{eqnarray}
+\invisible<1-4>{\item[2)] $K$ component vector describing loadings on principal components for each document } \pause
+\begin{eqnarray}
+\invisible<1-5>{\boldsymbol{z}_{i} & = & (z_{1i}, z_{2i}, \hdots, z_{Ki}) \nonumber }
+\end{eqnarray}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{An Introduction to Eigenvectors, Values, and Diagonalization}
+
+
+\begin{defn}
+Suppose $\boldsymbol{A}$ is an $N \times N$ matrix and $\lambda$ is a scalar.  \\
+
+If
+
+\begin{eqnarray}
+\boldsymbol{A}\boldsymbol{x} &= & \lambda \boldsymbol{x} \nonumber
+\end{eqnarray}
+
+Then $\boldsymbol{x}$ is an \alert{eigenvector} and $\lambda$ is the associated \alert{eigenvalue}
+
+
+\end{defn}
+
+\pause
+
+\begin{itemize}
+\invisible<1>{\item[-] $\boldsymbol{A}$ stretches the eigenvector $\boldsymbol{x}$ } \pause
+\invisible<1-2>{\item[-] $\boldsymbol{A}$ stretches $\boldsymbol{x}$ by $\lambda$ } \pause
+\invisible<1-3>{\item[-] To find eigenvectors/values: ({\tt eigen} in {\tt R} ) } \pause
+\begin{itemize}
+\invisible<1-4>{\item Find $\lambda$ that solves $\text{det}(\boldsymbol{A}- \lambda \boldsymbol{I}) = 0 $} \pause
+\invisible<1-5>{\item Find vectors in \alert{null space} of:} \pause
+\begin{eqnarray}
+\invisible<1-6>{(\boldsymbol{A} - \lambda \boldsymbol{I} ) &= & 0 \nonumber }
+\end{eqnarray}
+\end{itemize}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Finding a Lower Dimensional Space (Manifold Learning)}
+\begin{center}
+\only<1>{\scalebox{0.5}{\includegraphics{PrCompExamp1.pdf}}}
+\only<2>{\scalebox{0.5}{\includegraphics{PrCompExamp2.pdf}}}
+\only<3>{\scalebox{0.5}{\includegraphics{PrCompExamp3.pdf}}}
+\end{center}
+\only<4-7>{
+\begin{center}
+\scalebox{0.15}{\includegraphics{PrCompExamp3.pdf}}
+\end{center}
+Original data:
+\begin{eqnarray}
+\invisible<1-4>{\boldsymbol{x}_{i} & = &  (x_{i1}, x_{i2}) \nonumber }
+\end{eqnarray}
+
+\invisible<1-5>{Which we approximate with }
+\begin{eqnarray}
+\invisible<1-6>{\tilde{\boldsymbol{x}}_{i} & = & z_{i} \boldsymbol{w}_{1} \nonumber \\
+& =& z_{i} (w_{11}, w_{12}) \nonumber }
+\end{eqnarray}
+}
+
+\only<8->{
+\begin{center}
+\scalebox{0.15}{\includegraphics{PrCompExamp3.pdf}}
+\end{center}
+
+Original data $\boldsymbol{x}_{i} \in \Re^{J}$
+\begin{eqnarray}
+\boldsymbol{x}_{i} & = & (x_{i1}, x_{i2}, \hdots, x_{iJ}) \nonumber
+\end{eqnarray}
+
+Which we approximate with $L\leq J$ weights $z_{il}$ and vectors $\boldsymbol{w}_{l} \in \Re^{J}$
+\begin{eqnarray}
+\tilde{\boldsymbol{x}}_{i} & = & z_{i1} \boldsymbol{w}_{1} + z_{i2} \boldsymbol{w}_{2} + \hdots + z_{iL} \boldsymbol{w}_{L} \nonumber
+\end{eqnarray}
+
+Define $\boldsymbol{\theta} = (\underbrace{\boldsymbol{Z}}_{N \times L}, \underbrace{\boldsymbol{W}_{L}}_{L \times J} )$
+
+}
+\pause \pause \pause \pause \pause \pause
+
+
+
+
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}
+\frametitle{Principal Component Analysis$\leadsto$ Objective function}
+
+Consider 1-dimensional case ($L = 1$), centered data, and $||\boldsymbol{w}_{1}|| = 1$.  \pause  \\
+\begin{eqnarray}
+\invisible<1>{f(\boldsymbol{\theta},  \boldsymbol{X}) & = & \frac{1}{N} \sum_{i=1}^{N} ||\boldsymbol{x}_{i} - z_{i1}\boldsymbol{w}_{1} ||^2  } \pause  \nonumber \\
+\invisible<1-2>{& = & \frac{1}{N} \sum_{i=1}^{N} (\boldsymbol{x}_{i}  - z_{i1} \boldsymbol{w}_{1} )^{'}(\boldsymbol{x}_{i}  - z_{i1} \boldsymbol{w}_{1} ) \nonumber } \pause \\
+\invisible<1-3>{& = & \frac{1}{N}\sum_{i=1}^{N}\left(\boldsymbol{x}_{i}^{'}\boldsymbol{x}_{i} - 2 z_{i1}\boldsymbol{w}_{1}^{'}\boldsymbol{x}_{i} + z_{i1}^{2} \right ) \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-4>{$\boldsymbol{w}_{1}^{'}\boldsymbol{w}_{1} = 1$}
+\end{frame}
+
+\begin{frame}
+\frametitle{Principal Component Analysis$\leadsto$ Optimization}
+
+
+Optimization: \pause
+\begin{eqnarray}
+\invisible<1>{\frac{\partial f(\boldsymbol{\theta}, \boldsymbol{X})}{\partial z_{i1}}  & = &  - \frac{2 \boldsymbol{w}_{1}^{'} \boldsymbol{x}_{i} + 2 z_{i1}}{N} \nonumber \\} \pause
+\invisible<1-2>{0 & = & - \frac{2 \boldsymbol{w}_{1}^{'} \boldsymbol{x}_{i} + 2 z_{i1}^{*}}{N} \nonumber \\} \pause
+\invisible<1-3>{z_{i1}^{*} & = & \boldsymbol{w}_{1}^{'} \boldsymbol{x}_{i} \nonumber }
+\end{eqnarray}
+
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Principal Component Analysis$\leadsto$ Optimization}
+Substituting in $z_{i1}^{*}$ \pause
+
+\begin{eqnarray}
+\invisible<1>{& = & \frac{1}{N} \sum_{i=1}^{N} (\boldsymbol{x}_{i}  - z_{i1}^{*} \boldsymbol{w}_{1} )^{'}(\boldsymbol{x}_{i}  - z_{i1}^{*} \boldsymbol{w}_{1} ) \nonumber } \pause \\
+ \invisible<1-2>{& = & \frac{1}{N} \sum_{i=1}^{N} (\underbrace{\boldsymbol{x}_{i}^{'}\boldsymbol{x}_{i}}_{\text{Constant}}  - 2 z_{i1}^{*} \underbrace{\boldsymbol{w}_{1}^{'}\boldsymbol{x}_{i}}_{z_{i1}^{*}}  + \left(z_{i1}^{*}\right)^{2} \underbrace{\boldsymbol{w}_{1}^{'}\boldsymbol{w}_{1}}_{1} )   \nonumber } \pause \\
+ \invisible<1-3>{& = &  - \frac{1}{N} \sum_{i=1}^{N}   \left(z_{i1}^{*}\right)^{2} + c \nonumber } \pause \\
+ \invisible<1-4>{& = & - \frac{1}{N} \sum_{i=1}^{N} \boldsymbol{w}_{1}^{'}\boldsymbol{x}_{i}\boldsymbol{x}^{'}_{i}\boldsymbol{w}_{1} \nonumber } \pause \\
+ \invisible<1-5>{& = & -  \boldsymbol{w}_{1}^{'}\boldsymbol{\Sigma} \boldsymbol{w}_{1} \nonumber}
+\end{eqnarray}
+
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Principal Component Analysis$\leadsto$ Optimization}
+
+\begin{eqnarray}
+ & = & -   \boldsymbol{w}_{1}^{'}\boldsymbol{\Sigma} \boldsymbol{w}_{1} \nonumber \pause
+\end{eqnarray}
+
+
+\invisible<1>{where $\boldsymbol{\Sigma}$ is the :} \pause
+\begin{itemize}
+\invisible<1-2>{\item[-] Empirical covariance matrix$\leadsto \frac{1}{N} \boldsymbol{X}^{'}\boldsymbol{X}$} \pause
+\invisible<1-3>{\item[-] \alert{Variance} of the projected data.  Define } \pause
+\begin{eqnarray}
+\invisible<1-4>{\boldsymbol{z}_{1} & = & (\boldsymbol{w}_{1} \boldsymbol{x}_{1}, \boldsymbol{w}_{1} \boldsymbol{x}_{2}, \hdots, \boldsymbol{w}_{1}\boldsymbol{x}_{N}) \nonumber \\} \pause
+\invisible<1-5>{\text{var}(\boldsymbol{z}_{1}) & = & E[\boldsymbol{z}_{1}^{2} ]  - E[\boldsymbol{z}_{1}]^{2} \nonumber \\} \pause
+\invisible<1-6>{& = & \frac{1}{N} \sum_{i=1}^{N} z_{i1}^{2} - 0 \nonumber \\} \pause
+\invisible<1-7>{& = & \frac{1}{N} \sum_{i=1}^{N} \boldsymbol{w}_{1}^{'}\boldsymbol{x}_{i}\boldsymbol{x}_{i}^{'}\boldsymbol{w}_{1}  = \boldsymbol{w}_{1}^{'} \boldsymbol{\Sigma} \boldsymbol{w}_{1} \nonumber } \pause
+\end{eqnarray}
+
+\end{itemize}
+
+\invisible<1-8>{Minimize reconstruction error }\pause \invisible<1-9>{$\leadsto$ maximize variance of projected data}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Principal Component Analysis$\leadsto$ Optimization}
+
+Maximize variance, subject to constraints \pause
+
+
+\begin{eqnarray}
+\invisible<1>{g(\boldsymbol{z}^{*}, \boldsymbol{w}_{1}, \boldsymbol{X}) & = & \boldsymbol{w}_{1}^{'} \boldsymbol{\Sigma}\boldsymbol{w}_{1} - \lambda_{1}(\boldsymbol{w}_{1}^{'} \boldsymbol{w}_{1} - 1 ) \nonumber \\} \pause
+ \invisible<1-2>{\frac{\partial g(\boldsymbol{z}^{*}, \boldsymbol{w}_{1}, \boldsymbol{X})}{\partial \boldsymbol{w}_{1}} &= & 2 \boldsymbol{\Sigma}\boldsymbol{w}_{1}  - 2 \lambda_{1} \boldsymbol{w}_{1} \nonumber \\}\pause
+ \invisible<1-3>{\boldsymbol{\Sigma}\boldsymbol{w}_{1}^{*} & = &  \lambda_{1} \boldsymbol{w}_{1}^{*} \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-4>{$\alert{\boldsymbol{w}_{1}^{*}}$ = \alert{Eigenvector of $\boldsymbol{\Sigma}$}}\pause \invisible<1-5>{ (!!!!!!)} \pause \\
+\invisible<1-6>{
+We want $\boldsymbol{w}_{1}$ to maximize variance and } \pause
+\invisible<1-7>{
+  \begin{eqnarray}
+\boldsymbol{w}_{1}^{'} \boldsymbol{\Sigma} \boldsymbol{w}_{1} = \lambda_{1} \nonumber
+  \end{eqnarray}}\pause
+\invisible<1-8>{
+So $\boldsymbol{w}_{1}$ is eigenvector associated with the largest eigenvalue $\lambda_{1}$
+}
+
+
+
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{An Introduction to Eigenvectors, Values, and Diagonalization}
+
+
+\begin{thm}
+Suppose $\boldsymbol{A}$ is an \alert{invertible} $N \times N$ matrix with $N$ linearly independent eigenvectors.  Then we can write $\boldsymbol{A}$ as,
+
+\begin{eqnarray}
+\boldsymbol{A} &= & \boldsymbol{W}^{'}\begin{pmatrix}
+\lambda_{1} & 0 & \hdots & 0 \\
+0 & \lambda_{2} & \hdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0&  \hdots & \lambda_{N}\\
+\end{pmatrix}
+\boldsymbol{W} \nonumber
+\end{eqnarray}
+
+where $\boldsymbol{W} = \left(\boldsymbol{w}_{1}, \boldsymbol{w}_{2}, \hdots, \boldsymbol{w}_{N} \right)$ is an $N \times N$ matrix with the $N$ eigenvectors as column vectors.
+
+\end{thm}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{An Introduction to Eigenvectors, Values, and Diagonalization}
+
+
+\begin{defn}
+Suppose $A$ is a covariance matrix.  Then, we can write $A$ as
+
+\begin{eqnarray}
+\boldsymbol{A} &= & \boldsymbol{W}^{'}\begin{pmatrix}
+\lambda_{1} & 0 & \hdots & 0 \\
+0 & \lambda_{2} & \hdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0&  \hdots & \lambda_{N}\\
+\end{pmatrix}
+\boldsymbol{W} \nonumber
+\end{eqnarray}
+
+Where $\lambda_{1}>\lambda_{2} > \hdots > \lambda_{N} \geq 0$. \\
+We will call $\boldsymbol{w}_{1}$ the first eigenvector, $\boldsymbol{w}_{2}$ the second eigenvector, ..., $\boldsymbol{w}_{j}$ the $\text{j}^{th}$ eigenvector.
+
+\end{defn}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Back to Principal Components}
+
+
+\begin{thm}
+Suppose we want to approximate $N$ observations $\boldsymbol{x}_{i} \in \Re^{J}$ with $L < J$ orthogonal-unit length vectors $\boldsymbol{w}_{l} \in \Re^{J}$ with associated scores $z_{il}$ to minimize reconstruction error: \pause
+
+\begin{eqnarray}
+\invisible<1>{f(\boldsymbol{X}, \boldsymbol{\theta}) & = & \frac{1}{N} \sum_{i=1}^{N} || \boldsymbol{x}_{i}  - \sum_{l = 1}^{L} z_{il} \boldsymbol{w}_{l}||^{2} \nonumber  } \pause
+\end{eqnarray}
+
+\invisible<1-2>{The optimal solution sets each $\boldsymbol{w}_{l}$ to be the $l^{\text{th}}$ eigenvector of the empirical covariance matrix.}\pause \invisible<1-3>{Further $z_{il}^{*} = \boldsymbol{w}_{l}^{'}\boldsymbol{x}_{i}$ so that the $L$ dimensional representation is:} \pause
+\begin{eqnarray}
+\invisible<1-4>{\boldsymbol{x}^{L}_{i} & = & (\boldsymbol{w}_{1}^{'}\boldsymbol{x}_{i}, \boldsymbol{w}_{2}^{'}\boldsymbol{x}_{i}, \hdots, \boldsymbol{w}_{L}^{'}\boldsymbol{x}_{i} ) \nonumber }
+\end{eqnarray}
+
+\end{thm}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Application of Principal Components in {\tt R}}
+
+Consider press releases from 2005 US Senators \pause \\
+\invisible<1>{Define $\boldsymbol{x}_{i} = (x_{i1}, x_{i2}, \hdots, x_{iJ})$ as the rate senator $i$ uses $J$ words.  }\pause
+\begin{eqnarray}
+\invisible<1-2>{x_{ij} & = & \frac{\text{No. Times $i$ uses word $j$}}{\text{No. words $i$ uses}} \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-3>{{\tt  dtm}: $100 \times 2796$ matrix containing word rates for senators\\} \pause
+\invisible<1-4>{{\tt prcomp(dtm) } applies principal components}
+
+
+\end{frame}
+
+
+\begin{frame}
+
+\begin{semiverbatim}
+
+load("SenateTDM.RData")
+
+dtm<- t(tdm)
+
+for(z in 1:100)\{
+
+  dtm[z,]<- dtm[z,]/sum(dtm[z,])
+
+  \}
+
+
+store<- prcomp(dtm, \alert{scale = F})
+
+scores<- store\$x[,1]
+
+\end{semiverbatim}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Application of Principal Components in {\tt R}}
+
+
+\only<1>{\scalebox{0.5}{\includegraphics{FirstPrinComp.pdf}}}
+\only<2>{\scalebox{0.5}{\includegraphics{CreditClaimPrinComp.pdf}}}
+
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Probabilistic Principal Components (Tipping and Bishop 1999)}
+
+\begin{eqnarray}
+\boldsymbol{x}|\boldsymbol{w} & \sim & \text{Multivariate Normal}(\boldsymbol{Z}\boldsymbol{W} + \boldsymbol{\mu}, \sigma^2 \boldsymbol{I}) \nonumber \\
+\boldsymbol{w} & \sim & \text{Multivariate Normal} (\boldsymbol{0}, \boldsymbol{I}) \nonumber \\
+\boldsymbol{x} & \sim & \text{Multivariate Normal} (\boldsymbol{\mu}, \boldsymbol{\Sigma}) \nonumber \\
+\boldsymbol{\Sigma} & = & \boldsymbol{W}\boldsymbol{W}^{'} + \sigma^2\boldsymbol{I} \nonumber
+\end{eqnarray}
+
+\begin{itemize}
+\item[1)] Log-likelihood $\leadsto$ straightforward
+\item[2)] Optimization via \alert{EM}-Algorithm
+\item[3)] Corresponds to traditional PCA is $\lim_{\sigma^2} \rightarrow 0 $
+\item[4)] Closely related to Factor analysis.
+\end{itemize}
+
+
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{How do we select the number of dimensions $L$?$\leadsto$ \alert{Model}}
+
+We want to minimize reconstruction error \pause \invisible<1>{$\leadsto$ how well did we do? } \pause \\
+
+\begin{eqnarray}
+\invisible<1-2>{\text{error}(L) & = & \frac{1}{N} \sum_{i=1}^{N} ||\boldsymbol{x}_{i} - \sum_{l = 1}^{L} z_{il} \boldsymbol{w}_{l} ||^{2} } \pause \nonumber
+\end{eqnarray}
+
+\invisible<1-3>{Simplifying:} \pause
+\begin{eqnarray}
+\invisible<1-4>{\text{error}(L)  & = & \frac{1}{N} \sum_{i=1}^{N} (\boldsymbol{x}_{i} - \sum_{l = 1}^{L} z_{il}\boldsymbol{w}_l)^{'} (\boldsymbol{x}_{i} - \sum_{l = 1}^{L} z_{il}\boldsymbol{w}_l ) \nonumber \\} \pause
+\invisible<1-10>{& = & \frac{1}{N} \sum_{i=1}^{N} \left(\boldsymbol{x}_{i}^{'}\boldsymbol{x}_{i} - \sum_{l=1}^{L} z_{il}^{2} \right)\nonumber }
+\end{eqnarray}
+
+
+
+\invisible<1-5>{Four types of terms:} \pause
+\begin{itemize}
+\invisible<1-6>{\item[1)] $\boldsymbol{x}_{i}^{'}\boldsymbol{x}_{i} $} \pause
+\invisible<1-7>{\item[2)] $z_{ij}z_{ik} \boldsymbol{w}_{j}^{'}\boldsymbol{w}_{k} = z_{ij}z_{ik} 0  = 0 $} \pause
+\invisible<1-8>{\item[3)] $z_{ij}z_{ij} \boldsymbol{w}_{j}^{'}\boldsymbol{w}_{j} = z_{ij}^2$ } \pause
+\invisible<1-9>{\item[4)] $\boldsymbol{x}_{i}^{'}\sum_{l=1}^{L} z_{il} \boldsymbol{w}_{l} = \sum_{l=1}^{L} z_{il}^{2} $}\pause
+\end{itemize}
+
+
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{How do we select the number of dimensions $L$?$\leadsto$ \alert{Model}}
+
+
+\begin{small}
+\begin{eqnarray}
+\text{error}(L) & = & \frac{1}{N} \sum_{i=1}^{N} \left(\boldsymbol{x}_{i}^{'}\boldsymbol{x}_{i} - \sum_{l=1}^{L} z_{il}^{2} \right)\nonumber \pause \\
+\invisible<1>{& = & \frac{1}{N} \sum_{i=1}^{N} \left(\boldsymbol{x}_{i}^{'}\boldsymbol{x}_{i} - \sum_{l=1}^{L} \boldsymbol{w}_{l} \boldsymbol{x}_{i} \boldsymbol{x}_{i}^{'}\boldsymbol{w}_{l} \right) \nonumber } \pause \\
+\invisible<1-2>{& = & \frac{1}{N} \sum_{i=1}^{N} \left(\boldsymbol{x}_{i}^{'}\boldsymbol{x}_{i}\right)  - \frac{1}{N} \sum_{l=1}^{L} \sum_{l=1}^{N} \boldsymbol{w}_{i}^{'}\boldsymbol{x}_{i} \boldsymbol{x}_{i}^{'} \boldsymbol{w}_{i} \nonumber } \pause \\
+\invisible<1-3>{& = & \frac{1}{N} \sum_{i=1}^{N} \left(\boldsymbol{x}_{i}^{'}\boldsymbol{x}_{i}\right)  - \sum_{l=1}^{L} \boldsymbol{w}_{l}^{'} \boldsymbol{\Sigma} \boldsymbol{w}_{l}  \nonumber } \pause \\
+\invisible<1-4>{& = & \frac{1}{N} \sum_{i=1}^{N} \left(\boldsymbol{x}_{i}^{'}\boldsymbol{x}_{i}\right) - \sum_{l=1}^{L} \lambda_{l} \boldsymbol{w}_{l}^{'}\boldsymbol{w}_{l} \nonumber } \pause \\
+\invisible<1-5>{& = & \frac{1}{N} \sum_{i=1}^{N} \left(\boldsymbol{x}_{i}^{'}\boldsymbol{x}_{i}\right) - \sum_{l=1}^{L} \lambda_{l} \nonumber }
+\end{eqnarray}
+
+\end{small}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{How do we select the number of dimensions $L$?$\leadsto$ \alert{Model}}
+
+
+If $L = J$ \pause
+\begin{eqnarray}
+\invisible<1>{\text{error}(J) & = & \frac{1}{N} \sum_{i=1}^{N} \left(\boldsymbol{x}_{i}^{'}\boldsymbol{x}_{i}\right) - \sum_{l=1}^{J} \lambda_{l} = 0 \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-2>{So for $L < J$, } \pause
+
+\begin{eqnarray}
+\invisible<1-3>{0  & = & \frac{1}{N} \sum_{i=1}^{N} \left(\boldsymbol{x}_{i}^{'}\boldsymbol{x}_{i}\right) - (\sum_{l=1}^{L} \lambda_{l} + \sum_{j=L+1}^{J} \lambda_{l} ) \nonumber \\} \pause
+\invisible<1-4>{\sum_{j=L+1}^{J} \lambda_{l}  & = & \frac{1}{N} \sum_{i=1}^{N} \left(\boldsymbol{x}_{i}^{'}\boldsymbol{x}_{i}\right) - \sum_{l=1}^{L} \lambda_{l} \nonumber \\} \pause
+\invisible<1-5>{\sum_{j=L+1}^{J} \lambda_{l}  & = & \text{error}(L) \nonumber }
+\end{eqnarray}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{How do we select the number of dimensions $L$?$\leadsto$ \alert{Model}}
+
+\begin{eqnarray}
+\sum_{j=L+1}^{J} \lambda_{l}  & = & \text{error}(L) \nonumber  \pause
+\end{eqnarray}
+
+\begin{itemize}
+\invisible<1>{\item[-] Error = Sum of ``remaining" eigenvalues} \pause
+\invisible<1-2>{\item[-] Total variance explained =  (sum of included eigenvalues)/(sum of all eigenvalues) } \pause
+\end{itemize}
+
+\invisible<1-3>{Recommendation$\leadsto$ look for Elbow}
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{How do we select the number of dimensions $L$?$\leadsto$ \alert{Model}}
+
+\only<1>{\scalebox{0.425}{\includegraphics{ToyExamplePlot.pdf}}}
+\only<2>{\scalebox{0.5}{\includegraphics{EigenPlot1.pdf}}}
+\only<3>{\scalebox{0.5}{\includegraphics{EigenPlot2.pdf}}}
+\only<4>{\scalebox{0.5}{\includegraphics{EigenPlot3.pdf}}}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Non-model based evaluations: What's the point?}
+
+What is the true underlying dimensionality of $\boldsymbol{X}$?\pause\invisible<1>{ \alert{J}}\pause\invisible<1-2>{(!!!!!)} \pause \\
+
+\begin{itemize}
+\invisible<1-3>{\item[-] Attempts to assess dimensionality require a \alert{model}$\leadsto$ some way to tradeoff accuracy of reconstruction with simplicity} \pause
+\invisible<1-4>{\item[-] \alert{Any} answer (no matter how creatively obtained) supposes \alert{you have the right function to measure tradeoff}} \pause
+\invisible<1-5>{\item[-] The ``right" number of dimensions depends on the \alert{task} you have in mind} \pause
+\end{itemize}
+
+
+\invisible<1-6>{{\huge Mathematical model$\leadsto$ insufficient to make modeling decision}}
+
+\end{frame}
+
+
+\begin{frame}
+
+\huge
+
+Appendix
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Kernel Principal Component Analysis}
+Define a \alert{Kernel} ($N \times N$) matrix as:
+\begin{eqnarray}
+\boldsymbol{K} & = & \begin{pmatrix}
+k(\boldsymbol{x}_{1}, \boldsymbol{x}_{1}) & k(\boldsymbol{x}_{1}, \boldsymbol{x}_{2}) & \hdots & k(\boldsymbol{x}_{1}, x_{N}) \\
+k(\boldsymbol{x}_{2}, \boldsymbol{x}_{1}) & k(\boldsymbol{x}_{2}, \boldsymbol{x}_{2}) & \hdots & k(\boldsymbol{x}_{2}, \boldsymbol{x}_{N}) \\
+\vdots & \vdots & \ddots & \vdots \\
+k(\boldsymbol{x}_{N}, \boldsymbol{x}_{1}) & k(\boldsymbol{x}_{N}, \boldsymbol{x}_{2}) & \hdots & k(\boldsymbol{x}_{N}, \boldsymbol{x}_{N}) \\
+\end{pmatrix}\nonumber
+\end{eqnarray}
+
+where $k(\cdot, \cdot)$ is a function that behaves like a similarity function.
+\pause
+\invisible<1>{Where we suppose this matrix emerges from applying $\phi: \Re^{J} \rightarrow \Re^{M}$ to the data and then taking the inner product:} \pause
+\begin{eqnarray}
+\invisible<1-2>{\boldsymbol{K} & = & \boldsymbol{\Phi}\boldsymbol{\Phi}^{'} \text{ (The inner product matrix)} \nonumber \\} \pause
+\invisible<1-3>{& = & \begin{pmatrix}
+\phi(\boldsymbol{x}_{1})^{'}\phi(\boldsymbol{x}_{1}) & \phi(\boldsymbol{x}_{1})^{'}\phi(\boldsymbol{x}_{2}) & \hdots & \phi(\boldsymbol{x}_{1})^{'}\phi(\boldsymbol{x}_{N}) \nonumber \\
+\phi(\boldsymbol{x}_{2})^{'}\phi(\boldsymbol{x}_{1}) & \phi(\boldsymbol{x}_{2})^{'}\phi(\boldsymbol{x}_{2}) & \hdots & \phi(\boldsymbol{x}_{2})^{'}\phi(\boldsymbol{x}_{N})\\
+\vdots & \vdots & \ddots & \vdots \\
+\phi(\boldsymbol{x}_{N})^{'}\phi(\boldsymbol{x}_{1}) & \phi(\boldsymbol{x}_{N})^{'}\phi(\boldsymbol{x}_{2}) & \hdots & \phi(\boldsymbol{x}_{N})^{'}\phi(\boldsymbol{x}_{N}) \\
+\end{pmatrix} \nonumber } \pause
+\end{eqnarray}
+\invisible<1-4>{\alert{Compute PCA of $\boldsymbol{\Phi}$ from $\boldsymbol{\Phi}\boldsymbol{\Phi}^{'}$ }}
+\end{frame}
+
+\begin{frame}
+\frametitle{Kernel PCA}
+
+PCA of $\boldsymbol{X}$ \pause\invisible<1>{Eigenvectors of $\boldsymbol{X}^{'}\boldsymbol{X}$ ($\frac{1}{N}$ doesn't affect eigenvectors)} \pause  \\
+\invisible<1-2>{Suppose $\boldsymbol{u}_{1}$ is an eigenvector for $\boldsymbol{X}\boldsymbol{X}^{'}$, with value $\lambda_{1}$.}\pause \invisible<1-3>{  Then } \pause
+\begin{eqnarray}
+\invisible<1-4>{(\boldsymbol{X}\boldsymbol{X}^{'})\boldsymbol{u}_{1} & = & \lambda_{1} \boldsymbol{u}_{1} \nonumber \\} \pause
+\invisible<1-5>{(\boldsymbol{X}^{'}\boldsymbol{X}) (\boldsymbol{X}^{'} \boldsymbol{u}_{1})  & = & \lambda_{1} (\boldsymbol{X}^{'}\boldsymbol{u}_{1}) \nonumber \\} \pause
+ \invisible<1-6>{& = & \lambda_{1} \boldsymbol{v}_{1} \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-7>{But $\boldsymbol{v}_{1}$ needs unit length, and} \pause
+\begin{eqnarray}
+\invisible<1-8>{||\boldsymbol{v}_{1}||^{2}  = \boldsymbol{v}^{'}_{1} \boldsymbol{v}_{1}  \nonumber \\ } \pause
+\invisible<1-9>{& = & \boldsymbol{u}_{1}^{'}\boldsymbol{X}\boldsymbol{X}^{'}\boldsymbol{u}_{1} \nonumber \\} \pause
+\invisible<1-10>{& = & \lambda_{1} \boldsymbol{u}_{1}^{'}\boldsymbol{u}_{1} = \lambda_{1}  \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-11>{So first eigenvector of $\boldsymbol{X}^{'}\boldsymbol{X}$ is } \pause
+\begin{eqnarray}
+\invisible<1-12>{\boldsymbol{w}_{1} & = & \frac{1}{\sqrt{\lambda_{1}} } \boldsymbol{X}^{'}\boldsymbol{u}_{1} \nonumber}
+\end{eqnarray}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Kernel PCA}
+
+$\boldsymbol{K} = \boldsymbol{\Phi}\boldsymbol{\Phi}^{'}$ (assume $\boldsymbol{\Phi}$ is mean-centered, for now) \pause \\
+
+\invisible<1>{We can obtain $\boldsymbol{u}_{1}$ and $\lambda_{1}$ from $\boldsymbol{K}$.}\pause \invisible<1-2>{ We know that } \pause
+\begin{eqnarray}
+\invisible<1-3>{\boldsymbol{w}_{1} & = & \frac{1}{\sqrt{\lambda_{1}}} \underbrace{\boldsymbol{\Phi}^{'}}_{\text{Unknown}} \boldsymbol{u}_{1} \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-4>{But suppose we want to project a point $\phi(\boldsymbol{x}_{i})$, then } \pause
+\begin{eqnarray}
+\invisible<1-5>{\phi(\boldsymbol{x}_{i})^{'}\boldsymbol{w}_{1}  &= & \frac{1}{\sqrt{\lambda_{1}}} \phi(\boldsymbol{x}_{i})^{'} \boldsymbol{\Phi}^{'} \boldsymbol{u}_{1} \nonumber \\} \pause
+\invisible<1-6>{\phi(\boldsymbol{x}_{i})^{'} \boldsymbol{\Phi}^{'} & = & \left[\phi(\boldsymbol{x}_{i} )^{'}\phi(\boldsymbol{x}_{1}), \phi(\boldsymbol{x}_{i} )^{'}\phi(\boldsymbol{x}_{2}), \hdots, \phi(\boldsymbol{x}_{i} )^{'}\phi(\boldsymbol{x}_{N}) \right] \nonumber \\} \pause
+ \invisible<1-7>{&  = & \left[k(\boldsymbol{x}_{i}, \boldsymbol{x}_{1}) , k(\boldsymbol{x}_{i}, \boldsymbol{x}_{2}) , \hdots, k(\boldsymbol{x}_{i}, \boldsymbol{x}_{N}) \right]}\pause \invisible<1-8>{= \boldsymbol{k}(\boldsymbol{x}_{i}, * ) \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-9>{Then, we can obtain projection for observation $i$ using Kernel with } \pause
+\begin{eqnarray}
+\invisible<1-10>{\phi(\boldsymbol{x}_{i})^{'} \boldsymbol{w}_{1} & = & \frac{1}{\sqrt{\lambda_{1}} } \boldsymbol{k}(\boldsymbol{x}_{i}, *) \boldsymbol{u}_{1} \nonumber }
+\end{eqnarray}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Kernel PCA}
+
+Center $\boldsymbol{K}$?\\
+
+Use centering matrix $\boldsymbol{H}$
+\begin{eqnarray}
+\boldsymbol{H}  & = & \boldsymbol{I}_{N}  - \frac{(\boldsymbol{1}_{N} \boldsymbol{1}_{N}^{'})}{N} \nonumber \\
+\boldsymbol{K}_{\text{center}} & = & \boldsymbol{H} \boldsymbol{K} \boldsymbol{H} \nonumber
+\end{eqnarray}
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Spirling and Indian Treaties}
+
+
+\alert{Spirling (2013)}: model Treaties between US and Native Americans \pause \\
+\invisible<1>{Why?} \pause
+\begin{itemize}
+\invisible<1-2>{\item[-] American political development} \pause
+\invisible<1-3>{\item[-] IR Theories of Treaties and Treaty Violations} \pause
+\invisible<1-4>{\item[-] Comparative studies of indigenous/colonialist interaction} \pause
+\invisible<1-5>{\item[-] \alert{Political Science question}: how did Native Americans lose land so quickly?}
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Spirling and Indian Treaties}
+
+
+How do we preserve word order and semantic language? \pause \\
+
+\invisible<1>{After stemming, stopping, bag of wording: } \pause
+\begin{itemize}
+\invisible<1-2>{\item[-] {\tt Peace Between Us} } \pause
+\invisible<1-3>{\item[-] {\tt No Peace Between Us} } \pause
+\end{itemize}
+
+ \invisible<1-4>{are identical.  \\} \pause
+
+ \invisible<1-5>{Spirling uses complicated representation of texts to preserve word order}\pause \invisible<1-6>{$\leadsto$ broad application\\} \pause
+\invisible<1-7>{\only<8>{\tt \alert{Peac}e Between Us}
+\only<9>{\tt P\alert{eace} Between Us }
+\only<10>{\tt Pe\alert{ace }Between Us }
+\only<11>{\tt Pea\alert{ce B}etween Us }
+\only<12>{\tt Peac\alert{e Be}tween Us }
+\only<13>{\tt Peace\alert{ Bet}ween Us }
+\only<14>{\tt Peace \alert{Betw}een Us }
+\only<15>{\tt Peace B\alert{etwe}en Us }
+\only<16>{\tt Peace Be\alert{twee}n Us }
+\only<17>{\tt Peace Bet\alert{ween} Us }
+\only<18>{\tt Peace Betw\alert{een }Us }
+\only<19>{\tt Peace Betwe\alert{en U}s }
+\only<20->{\tt Peace Betwee\alert{n Us} }
+}
+
+
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Spirling and Indian Treaties}
+
+Consider documents $\boldsymbol{x}_{i}$ and $\boldsymbol{x}_{j}$, where we have preserved order, punctuation, and all else. \pause \\
+\invisible<1>{We say $\boldsymbol{x}_{i} \in \mathcal{X}$ } \pause \\
+\invisible<1-2>{Spirling examines $5$-character strings, $s \in \mathcal{A}$} \pause \\
+\invisible<1-3>{Define:} \pause \\
+\invisible<1-4>{$\phi_{s}:\mathcal{X}\rightarrow\Re$ as a function that counts the number of times string $s$ occurs in document $\boldsymbol{x}$.\\} \pause
+
+\invisible<1-5>{Define \alert{string kernel} to be, } \pause
+\begin{eqnarray}
+\invisible<1-6>{k(\boldsymbol{x}_{i}, \boldsymbol{x}_{j} ) & = & \sum_{s \in \mathcal{A}} w_{s} \phi_{s}(\boldsymbol{x}_{i})\phi_{s}(\boldsymbol{x}_{j}) \nonumber  } \pause
+\end{eqnarray}
+
+\invisible<1-7>{$\boldsymbol{\phi}(\boldsymbol{x}_{i}) \approx {{32}\choose{5}}$ element long count vector }
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Spirling and Indian Treaties}
+
+\begin{center}
+\only<1>{\scalebox{0.5}{\includegraphics{Scree.png}}}
+\only<2>{\scalebox{0.5}{\includegraphics{HarshFig.png}}}
+\end{center}
+
+
+\end{frame}
+
+
+
+\end{document}
