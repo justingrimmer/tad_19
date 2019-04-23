@@ -1,0 +1,146 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage{graphicx,textcomp}
+\usepackage{natbib}
+\usepackage{setspace}
+\usepackage{fullpage}
+\usepackage{color}
+\usepackage[reqno]{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb,enumerate}
+\usepackage[all]{xy}
+\usepackage{endnotes}
+\usepackage{lscape}
+\newtheorem{com}{Comment}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+\usepackage[compact]{titlesec}
+\usepackage{dcolumn}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{multirow}
+\usepackage{xcolor}
+\newcolumntype{.}{D{.}{.}{-1}}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+\definecolor{light-gray}{gray}{0.65}
+\usepackage{url}
+\newcommand{\Sref}[1]{Section~\ref{#1}}
+\newtheorem{hyp}{Hypothesis}
+
+\title{Text as Data: Homework 2}
+\date{Assigned 4/23, Due 2/7}
+
+\begin{document}
+\maketitle
+
+
+In this homework assignment we're going to use a regular expression to search and cluster the press releases of two senators---Richard Shelby, a current Republican senator from Alabama, and Jeff Sessions, now the Attorney General, but previously Shelby's colleague.  To make this comparison, we're going to download a bigger collection of Senate press releases and then focus on the releases from Shelby and Sessions.  \\
+
+We encourage you to spend some time processing these texts this week, because we will use this collection for the next homework assignment as well.  
+
+\subsubsection*{Downloading the Data}
+
+The press release collection are stored here:\\
+{\tt https://github.com/lintool/GrimmerSenatePressReleases} \\
+
+Download the collection as a {\tt .zip} file, unzip the file on your computer.  
+
+
+\subsubsection*{Creating a Document-Term Matrix}
+
+We're going to use the files from Richard Shelby and Jeff Sessions to make two different kinds of Document-Term Matrices. The first will consider only the 1000 most used unigrams, while the second (separate) DTM will use the 500 most common trigrams. To create the document-term matrices, use the following recipe.
+
+\begin{itemize}
+\item[1)] Create two nested dictionaries for both the Shelby and Sessions press releases.  The nested dictionary should contain, for each press release:
+\begin{itemize}
+\item Month of release
+\item Year of release
+\item Day of release
+\item Author (either Shelby or Sessions)
+\item The text of the press release
+\end{itemize}
+To create the nested dictionary:
+\begin{itemize}
+\item[i)] Use {\tt os.listdir} to create lists of both the Sessions and Shelby press releases
+\item[ii)] The file names are formatted as {\tt DayMonthYearAuthorNumber.txt}.  Devise a parsing rule to extract the month, year, day, of the releases
+\item[iii)] Store all the information in a nested dictionary
+\end{itemize}
+
+\item[2)] We are first going to search for terms used in Shelby and Sessions' press releases. Specifically we are going to look for the terms {\tt fire department}, {\tt immigration}, and {\tt nomination}
+
+\begin{itemize}
+\item[-] Using {\tt re.findall} write a regular expression to identify {\tt fire department}, {\tt immigration}, and {\tt nomination} in each press release. Be sure to catch all instances and only those instances.  
+\item[-] Create a csv.  The csv should have five columns, those should be: (1) author of press release (2) press release date (3) Number of times {\tt fire department} appears in press release (4) Number of times {\tt immigration} appears in press release and (5) Number of times {\tt nomination} appears.  
+\item[-] For each press release, record (1) author of press release, (2) press release date, (3) Number of times {\tt fire department} appears, (4) Number of times {\tt immigration} appears, and (5) Number of times {\tt nomination} appears. 
+\item[-] Load your data set into {\tt R} and calculate the average number of times Shelby and Sessions use each term.  What differences do you notice? 
+\end{itemize}	
+
+
+\item[3)] Next, we will find the 1000 most used unigrams and the 500 most used trigrams, after removing/simplifying a set of words
+\begin{itemize}
+\item[i)] discard punctuation, capitalization, and use {\tt word\_tokenize} to split the text on white space
+\item[ii)] Apply the Porter Stemmer to the tokenized documents.  
+\item[iii)] Use the stop words from \\
+{\tt `http://www.ai.mit.edu/projects/jmlr/papers/volume5/lewis04a/a11-smart-stop-list/english.stop'}
+Append to the list:
+\begin{itemize}
+\item shelby
+\item sessions
+\item richard
+\item jeff
+\item email
+\item press 
+\item room
+\item member 
+\item senate
+\end{itemize}
+Apply the Porter Stemmer to this list of stop words and discard all stemmed stop words from the press releases. 
+\item[iv)] Form the list of trigrams using the {\tt trigrams} function from {\tt NLTK}
+\item[v)] Use a python dictionary to count the number of times each unigram is used and a second dictionary to count the number of times each trigram is used. These should be counts over the \textit{whole corpus} (that is, both senators' press releases).
+\end{itemize}
+
+\item[4)] Identify the 1000 unigrams used most often and the 500 most often used trigrams.  If you're writing trigrams to a csv to analyze somewhere else, be sure to represent each {\tt tuple} without commas.  
+\item[5)] Write a document-term matrix, where each row contains \\
+{\tt Speaker, Count$_1$, Count$_2$, $\hdots$, Count$_{1000}$ }\\
+for unigrams, and \\
+{\tt Speaker, Count$_1$, Count$_2$, $\hdots$, Count$_{500}$ }\\
+for trigrams. \\
+
+Remember, if {\tt foo} is a list, you can count the number of times {\tt x} occurs with \\
+{\tt foo.count(x)}
+
+\item[6)] Write the document term matrix for the unigrams and trigrams to separate .csv files.  Remember that you'll need to reformat the trigram {\tt tuples} so that you don't end up with extra commas in your column names. We recommend defining a function in python that takes a {\tt tuple}, like \\
+{\tt `wabash', `college', `best'} \\
+and converts it to\\
+{\tt wabash.college.best}
+\end{itemize}
+
+
+
+\subsection*{Clustering Methods}
+
+\begin{itemize}
+\item[1)] Using the {\tt kmeans} function, create a plot of the {\tt kmeans} objective function as the number of clusters varies from 2 to $N - 1$.    
+\item[2)] Apply K-Means with 6 clusters, being sure to use {\tt set.seed} to ensure you can replicate your analysis
+\item[3)] Label each cluster using computer and hand methods:
+\begin{itemize}
+\item[i)] Suppose $\boldsymbol{\theta}_{k}$ is the cluster center for cluster $k$ and define $\bar{\boldsymbol{\theta}}_{-k} = \frac{\sum_{j \neq k} \boldsymbol{\theta_{j}}   }{K-1 }$ or the average of the centers not $k$.  Define 
+\begin{eqnarray}
+\text{Diff}_{k} & = & \boldsymbol{\theta}_{k} - \bar{\boldsymbol{\theta}}_{-k}\nonumber 
+\end{eqnarray}
+
+Use the top ten words from $\text{Diff}_{k}$ to label the clusters
+\item[ii)] Sample and read texts assigned to each cluster and produce a hand label
+\end{itemize}
+\item[4)] Using a mixture of multinomials (code provided), estimate a mixture with 6 components.  Be sure to set your seed.  
+\item[5)] Compare the mixture of multinomial clustering to the kmeans clustering.  Specifically create a {\tt Confusion} matrix.  Using the {\tt table} function in {\tt R}, compare the cluster assignments  of {\tt kmeans} and a mixture of multinomials. What do you notice?    
+\end{itemize}
+
+
+
+
+
+\end{document}
