@@ -1,0 +1,698 @@
+\documentclass{beamer}
+
+%\usepackage[table]{xcolor}
+\mode<presentation> {
+  \usetheme{Boadilla}
+%  \usetheme{Pittsburgh}
+%\usefonttheme[2]{sans}
+\renewcommand{\familydefault}{cmss}
+%\usepackage{lmodern}
+%\usepackage[T1]{fontenc}
+%\usepackage{palatino}
+%\usepackage{cmbright}
+  \setbeamercovered{transparent}
+\useinnertheme{rectangles}
+}
+%\usepackage{normalem}{ulem}
+%\usepackage{colortbl, textcomp}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg= black}
+\definecolor{trial}{cmyk}{1,0,0, 0}
+\definecolor{trial2}{cmyk}{0.00,0,1, 0}
+\definecolor{darkgreen}{rgb}{0,.4, 0.1}
+\usepackage{array}
+\beamertemplatesolidbackgroundcolor{white}  \setbeamercolor{alerted
+text}{fg=red}
+
+\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}
+
+%\usepackage{color}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{colortbl}
+%\usepackage[usenames, dvipsnames]{color}
+%\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}c
+%\newcolumntype{Y}{\columncolor[cmyk]{0, 0, 1, 0}\raggedright}
+%\newcolumntype{C}{\columncolor[cmyk]{1, 0, 0, 0}\raggedright}
+%\newcolumntype{G}{\columncolor[rgb]{0, 1, 0}\raggedright}
+%\newcolumntype{R}{\columncolor[rgb]{1, 0, 0}\raggedright}
+
+%\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{Block}
+%$A = B$.
+%\end{beamerboxesrounded}}
+\renewcommand{\familydefault}{cmss}
+%\usepackage[all]{xy}
+
+\usepackage{tikz}
+\usepackage{lipsum}
+
+ \newenvironment{changemargin}[3]{%
+ \begin{list}{}{%
+ \setlength{\topsep}{0pt}%
+ \setlength{\leftmargin}{#1}%
+ \setlength{\rightmargin}{#2}%
+ \setlength{\topmargin}{#3}%
+ \setlength{\listparindent}{\parindent}%
+ \setlength{\itemindent}{\parindent}%
+ \setlength{\parsep}{\parskip}%
+ }%
+\item[]}{\end{list}}
+\usetikzlibrary{arrows}
+%\usepackage{palatino}
+%\usepackage{eulervm}
+\usecolortheme{lily}
+\newtheorem{com}{Comment}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+ \numberwithin{equation}{section}
+%\usepackage[latin1]{inputenc}
+\title[Text as Data] % (optional, nur bei langen Titeln nötig)
+{Text as Data}
+
+\author{Justin Grimmer}
+\institute[Stanford University]{Professor\\Department of Political Science \\  Stanford University}
+\vspace{0.3in}
+
+
+\date{April 30th, 2019}%[Big Data Workshop]
+%\date{\today}
+
+
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Stylometry$\leadsto$ Who Wrote Disputed Federalist Papers?}
+
+
+Federalist papers $\leadsto$ Mosteller and Wallace (1963)
+\begin{itemize}
+\item[-] Persuade citizens of New York State to adopt constitution
+\item[-] Canonical texts in study of American politics
+\item[-] 77 essays
+\begin{itemize}
+\item[-] Published from 1787-1788 in Newspapers
+\item[-] And under the name \alert{Publius}, anonymously
+\end{itemize}
+\end{itemize}
+\alert{Who Wrote the Federalist papers}?
+\begin{itemize}
+\item[-] Jay wrote essays 2, 3, 4,5, and 64
+\item[-] Hamilton: wrote 43 papers
+\item[-] Madison: wrote 12 papers
+\end{itemize}
+\alert{Disputed:} Hamilton or Madison?
+\begin{itemize}
+\item[-] Essays: 49-58, 62, and 63
+\item[-] Joint Essays: 18-20
+\end{itemize}
+\alert{Task}: identify authors of the disputed papers.  \\
+\alert{Task}: Classify papers as Hamilton or Madison using dictionary methods
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Setting up the Analysis}
+
+
+\alert{Training}$\leadsto$ papers Hamilton, Madison are known to have authored\\
+\alert{Test}$\leadsto$ unlabeled papers\\
+\alert{Preprocessing}:
+\begin{itemize}
+\item[-] Hamilton/Madison both discuss similar issues
+\item[-] Differ in extent they use \alert{stop words}
+\item[-] Focus analysis on the stop words
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Setting up the Analysis}
+
+\begin{itemize}
+\item[-] $\boldsymbol{Y} = (Y_{1}, Y_{2}, \hdots, Y_{N}) = (\text{Hamilton}, \text{Hamilton}, \text{Madison}, ..., \text{Hamilton})  $ \\ $N \times 1$ matrix with author labels
+\item[-] Define the number of words in federalist paper $i$ as num$_{i}$
+$\boldsymbol{X} = \begin{pmatrix}
+\frac{1}{\text{num}_{1}}  & \frac{2}{\text{num}_{1}} & \frac{0}{\text{num}_{1}} & \hdots & \frac{3}{\text{num}_{1}}\\
+\frac{0}{\text{num}_{2}} & \frac{1}{\text{num}_{2}} & \frac{0}{\text{num}_{2}} & \hdots & \frac{0}{\text{num}_{2}} \\
+\vdots & \vdots & \vdots& \ddots & \vdots \\
+\frac{0}{\text{num}_{N}} & \frac{0}{\text{num}_{N}} & \frac{1}{\text{num}_{N}} & \hdots & \frac{0}{\text{num}_{N}} \\
+\end{pmatrix}$
+
+ $N \times J$ counting stop word usage rate
+\item[-] $\boldsymbol{\theta} = (\theta_{1}, \theta_{2}, \hdots, \theta_{J})$ \\ Word weights.\\
+\end{itemize}
+
+
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Objective Function}
+
+
+\alert{Heuristically}: find $\boldsymbol{\theta}^{*} = (\theta_{1}^{*}, \theta_{2}^{*}, \hdots, \theta_{J}^{*}) $ used to create score
+\begin{eqnarray}
+p_{i}  = \sum_{j=1}^{J} \theta_{j}^{*} X_{ij} \nonumber
+\end{eqnarray}
+
+ that maximally discriminates between categories
+
+
+
+\scalebox{0.4}{\includegraphics{LDALine.pdf}}
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Objective Function}
+
+
+
+Define:
+\begin{eqnarray}
+\boldsymbol{\mu}_{\text{Madison}} & = & \frac{1}{N_{\text{Madison}}} \sum_{i=1}^{N} I(Y_{i} = \text{Madison}) \boldsymbol{X}_{i} \nonumber \\
+\boldsymbol{\mu}_{\text{Hamilton}} & = & \frac{1}{N_{\text{Hamilton}}} \sum_{i=1}^{N} I(Y_{i} = \text{Hamilton}) \boldsymbol{X}_{i} \nonumber
+\end{eqnarray}
+
+
+
+
+
+
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Objective Function}
+
+\begin{small}
+
+We can then define functions that describe the ``projected" mean and variance for each author
+
+\begin{eqnarray}
+g(\boldsymbol{\theta}, \boldsymbol{X}, \boldsymbol{Y},  \text{Madison}) & = & \frac{1}{N_{\text{Madison}}} \sum_{i= 1}^{N}  I(Y_{i} = \text{Madison} ) \boldsymbol{\theta}^{'}\boldsymbol{X}_{i}  = \boldsymbol{\theta}^{'} \boldsymbol{\mu}_{\text{Madison}} \nonumber  \\
+g(\boldsymbol{\theta}, \boldsymbol{X}, \boldsymbol{Y},  \text{Hamilton}) & = & \frac{1}{N_{\text{Hamilton}}} \sum_{i= 1}^{N}  I(Y_{i} = \text{Hamilton} ) \boldsymbol{\theta}^{'}\boldsymbol{X}_{i}  = \boldsymbol{\theta}^{'} \boldsymbol{\mu}_{\text{Hamilton}} \nonumber  \\
+s(\boldsymbol{\theta}, \boldsymbol{X}, \boldsymbol{Y},  \text{Madison}) & = & \sum_{i=1}^{N} I(Y_{i} = \text{Madison} ) (\boldsymbol{\theta}^{'} \boldsymbol{X}_{i} - \boldsymbol{\theta}^{'} \boldsymbol{\mu}_{\text{Madison}})^2 \nonumber \\
+s(\boldsymbol{\theta}, \boldsymbol{X}, \boldsymbol{Y},  \text{Hamilton}) & = & \sum_{i=1}^{N} I(Y_{i} = \text{Hamilton} ) (\boldsymbol{\theta}^{'} \boldsymbol{X}_{i} - \boldsymbol{\theta}^{'} \boldsymbol{\mu}_{\text{Hamilton}})^2 \nonumber
+\end{eqnarray}
+
+
+\end{small}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Objective Function$\leadsto$ Optimization}
+
+\begin{eqnarray}
+f(\boldsymbol{\theta}, \boldsymbol{X}, \boldsymbol{Y} ) & = & \frac{\left(g(\boldsymbol{\theta}, \boldsymbol{X}, \boldsymbol{Y},  \text{Hamilton}) - g(\boldsymbol{\theta}, \boldsymbol{X}, \boldsymbol{Y},  \text{Madison}) \right)^2}{s(\boldsymbol{\theta}, \boldsymbol{X}, \boldsymbol{Y},  \text{Hamilton})  + s(\boldsymbol{\theta}, \boldsymbol{X}, \boldsymbol{Y},  \text{Madison}) } \nonumber\\
+& =&  \frac{\left(\boldsymbol{\theta}^{'} ( \boldsymbol{\mu}_{\text{Hamilton}} - \boldsymbol{\mu}_{\text{Madison}})     \right)^2  }{\text{Scatter}_{\text{Hamilton}} + \text{Scatter}_{\text{Madison}}    } \nonumber
+\end{eqnarray}
+
+
+\alert{Optimization}$\leadsto$ find $\boldsymbol{\theta}^{*}$ to maximize $f(\boldsymbol{\theta}, \boldsymbol{X}, \boldsymbol{Y} ) $, assuming independence across dimensions.\\
+
+\alert{(Fisher's) Linear Discriminant Analysis}
+
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Optimization$\leadsto$ Word Weights}
+
+For each word $j$, construct weight $\theta^{*}_{j}$,
+\begin{small}
+\begin{eqnarray}
+\mu_{j, \text{Hamilton}} & = & \frac{\sum_{i = 1}^{N} I(Y_{i} = \text{Hamilton}) X_{ij} }{\sum_{j=1}^{J} \sum_{i = 1}^{N} I(Y_{i} = \text{Hamilton}) X_{ij} } \nonumber \\
+\mu_{j, \text{Madison}} & = & \frac{\sum_{i = 1}^{N} I(Y_{i} = \text{Madison}) X_{ij} }{\sum_{j=1}^{J} \sum_{i = 1}^{N} I(Y_{i} = \text{Madison}) X_{ij} } \nonumber \\
+\sigma^{2}_{j, \text{Hamilton}} & = & \text{Var}(X_{i,j} |  \text{Hamilton}) \nonumber \\
+\sigma^{2}_{j, \text{Madison} }& = & \text{Var}(X_{i,j} | \text{Madison}) \nonumber
+\end{eqnarray}
+\end{small}
+
+
+We can then generate weight $\theta^{*}_{j}$ as
+
+\begin{eqnarray}
+\theta^{*}_j &= & \frac{\mu_{j, \text{Hamilton}}  - \mu_{j, \text{Madison}}  } {\sigma_{j, \text{Hamilton}}^{2} + \sigma_{j, \text{Madison}}^{2}    }  \nonumber
+\end{eqnarray}
+
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Optimization$\leadsto$ Trimming the Dictionary}
+
+
+\begin{itemize}
+\item[-] Trimming weights: Focus on discriminating words (very simple \alert{regularization})
+\item[-] Cut off: For all $|\theta^{*}_{j}|<0.025$ set $\theta^{*}_{j} = 0$.
+\end{itemize}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Classification$\leadsto$ Determining Authorship}
+
+For each disputed document $i$, compute discrimination statistic
+\begin{eqnarray}
+p_{i}  & = & \sum_{j =1}^{J} \theta^{*}_{j} X_{ij} \nonumber
+\end{eqnarray}
+
+$p_i \leadsto$ classification (\alert{linear discriminator})
+\begin{itemize}
+\item[-] Above midpoint in training set $\rightarrow$ Hamilton text
+\item[-] Below midpoint in training set $\rightarrow$ Madison text
+\end{itemize}
+
+\alert{Findings}: Madison is the author of the disputed federalist papers.
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Inferring Separating Words}
+
+
+\only<1-9, 11->{Classification$\leadsto$ Custom Dictionaries
+\begin{itemize}
+\invisible<1>{\item[-] Stylometry$\leadsto$ Classify Authors}
+\invisible<1-2>{\item[-] Dictionary based classification $\leadsto$ Gentzkow and Shapiro (2010) and measures of media slant} \pause
+\invisible<1-3>{\item[-] Dictionary based classification$\leadsto$ Customized to particular setting}
+\end{itemize}
+\invisible<1-4>{\alert{Fictitious Prediction Problem} $\leadsto$ Infer words that are indicative of some class/group}
+\begin{itemize}
+\invisible<1-5>{\item[-] Difference in Republican, Democratic language $\leadsto$ \alert{Partisan} words}
+\invisible<1-6>{\item[-] Difference in Liberal, Conservative language $\leadsto$ Ideological Language}
+\invisible<1-7>{\item[-] Difference in Secret/Not Secret Language $\leadsto$ Secretive Language (Gill and Spirling 2014)}
+\invisible<1-8>{\item[-] Difference in Toy advertising }
+\invisible<1-10>{\item[-] Difference in Language across groups$\leadsto$ Labeling output from Clustering/Topic Models}
+\end{itemize}
+\invisible<1-11>{\alert{Vague} and \alert{Difficult} to derive before hand}
+
+}
+\begin{center}
+\only<10>{\scalebox{0.4}{\includegraphics{BoyGirlsAd.jpg}}}
+\end{center}
+\pause \pause\pause \pause \pause  \pause \pause \pause \pause \pause
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Congressional Language Across Sources}
+\pause
+
+\invisible<1>{Congressional Press Releases and Floor Speeches} \pause
+\begin{itemize}
+\invisible<1-2>{\item[-] Collected 64,033 press releases} \pause
+\invisible<1-3>{\item[-] Problem: are they \alert{distinct} from floor statements (approx. 52,000 during same time)?} \pause
+\begin{itemize}
+\invisible<1-4>{\item[-] Yes: press releases have different purposes, targets, and need not relate to official business } \pause
+\invisible<1-5>{\item[-] No: press releases are just reactive to floor activity, will follow floor statements} \pause
+\end{itemize}
+\invisible<1-6>{\item[-] Deeper question: what does it mean for two text collections to be \alert{different?}} \pause
+\invisible<1-7>{\item[-] One Answer: \alert{texts used for different purposes}} \pause
+\invisible<1-8>{\item[-] Partial answer: identify words that distinguish press releases and floor speeches}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{A Method for Identifying Distinguishing Words}
+
+\pause
+
+\invisible<1>{Mutual Information} \pause
+\begin{itemize}
+\invisible<1-2>{\item[-] Unconditional uncertainty (entropy): } \pause
+\begin{itemize}
+\invisible<1-3>{\item[-] Randomly sample a press release } \pause
+\invisible<1-4>{\item[-] Guess press release/floor statement} \pause
+\invisible<1-5>{\item[-] Uncertainty about guess } \pause
+\begin{itemize}
+\invisible<1-6>{\item[-] Maximum: No. press releases = No. floor statements} \pause
+\invisible<1-7>{\item[-] Minimum : All documents in one category} \pause
+\end{itemize}
+\end{itemize}
+\invisible<1-8>{\item[-] Conditional uncertainty ($X_{j}$) (conditional entropy)} \pause
+\begin{itemize}
+\invisible<1-9>{\item[-] Condition on presence of word $X_{j}$}\pause
+\invisible<1-10>{\item[-] Randomly sample a press release}\pause
+\invisible<1-11>{\item[-] Guess press release/floor statement}\pause
+\invisible<1-12>{\item[-] Word presence reduces uncertainty }\pause
+\begin{itemize}
+\invisible<1-13>{\item[-] Unrelated: Conditional uncertainty = uncertainty}\pause
+\invisible<1-14>{\item[-] Perfect predictor: Conditional uncertainty = 0}\pause
+\end{itemize}
+\end{itemize}
+\invisible<1-15>{\item[-] Mutual information($X_{j}$): uncertainty - conditional uncertainty ($X_{j}$)} \pause
+\begin{itemize}
+\invisible<1-16>{\item[-] Maximum: Uncertainty $\rightarrow$ $X_{j}$ is perfect predictor} \pause
+\invisible<1-17>{\item[-] Minimum: 0 $\rightarrow$ $X_{j}$ fails to separate speeches and floor statements}
+\end{itemize}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{A Method for Identifying Distinguishing Words}
+
+\pause
+\begin{itemize}
+\invisible<1>{\item[-] $\text{Pr}(\text{Press}) \equiv $ Probability selected document press release} \pause
+\invisible<1-2>{\item[-] $\text{Pr}(\text{Speech}) \equiv $ Probability selected document speech} \pause
+\invisible<1-3>{\item[-] Define \alert{entropy} $H(\text{Doc})$ } \pause
+\begin{eqnarray}
+\invisible<1-4>{H(\text{Doc})  & = &  \alert{-} \sum_{t \in \{\text{Pre}, \text{Spe} \} } \text{Pr}(t) \log_2 \text{Pr}(t) \nonumber } \pause
+% & = &  - (\text{Pr(Press)}\log_2 \text{Pr(Press)} + \text{Pr(Speech)} \log_2 \text{Pr(Speech)} ) \nonumber
+\end{eqnarray}
+\invisible<1-5>{\item[-] $\log_2$? Encodes bits} \pause
+\invisible<1-6>{\item[-] Maximum: Pr(Press) = Pr(Speech) = 0.5} \pause
+\invisible<1-7>{\item[-] Minimum: Pr(Press) $\rightarrow$ 0 (or Pr(Press) $\rightarrow$ 1)}
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{A Method for Identifying Distinguishing Words}
+
+\pause
+\begin{itemize}
+\invisible<1>{\item[-] Consider presence/absence of word $X_j$} \pause
+\invisible<1-2>{\item[-] Define \alert{conditional entropy} $H(\text{Doc}|X_j)$ } \pause
+\end{itemize}
+\begin{eqnarray}
+\invisible<1-3>{H(\text{Doc}|X_j) & = &  - \sum_{s = 0}^{1} \sum_{t \in \{\text{Pre}, \text{Spe} \} } \text{Pr}(t, X_j = s) \log_2 \text{Pr}(t| X_j = s) \nonumber } \pause
+\end{eqnarray}
+\begin{itemize}
+\invisible<1-4>{\item[-] Maximum: $X_j$ unrelated to Press Releases/Floor Speeches} \pause
+\invisible<1-5>{\item[-] Minimum: $X_j$ is a perfect predictor of press release/floor speech}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{A Method for Identifying Distinguishing Words}
+
+\pause
+
+\begin{itemize}
+\invisible<1>{\item[-] Define \alert{Mutual Information}($X_j$) as } \pause
+\begin{eqnarray}
+\invisible<1-2>{\text{Mutual Information}(X_j) & = & H(\text{Doc}) - H(\text{Doc}|X_j) \nonumber } \pause
+\end{eqnarray}
+\invisible<1-3>{\item[-] Maximum: entropy $\Rightarrow H(\text{Doc}|X_j) = 0$} \pause
+\invisible<1-4>{\item[-] Minimum:  0  $\Rightarrow H(\text{Doc}|X_j) = H(\text{Doc}) $.  } \pause
+\end{itemize}
+\large
+\invisible<1-5>{Bigger mutual information $\Rightarrow$ better discrimination } \pause \\
+\vspace{0.25in}
+\invisible<1-6>{Objective function and optimization$\leadsto$ estimate probabilities that we then place in mutual information}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{A Method for Identifying Distinguishing Words}
+
+Formula for mutual information \\ (based on ML estimates of probabilities)
+\begin{eqnarray}
+n_p & = & \text{Number Press Releases} \nonumber \\
+n_s & = & \text{Number of Speeches} \nonumber \\
+D  & = & n_p + n_s \nonumber \\
+n_j & = & \sum_{i=1}^{D} X_{i,j} \hspace{0.25in} \text{ (No. docs $X_j$ appears ) } \nonumber \\
+n_{-j} & =& \text{ No. docs $X_j$ does not appear  } \nonumber \\
+n_{j,p} & = & \text{No. press and $X_j$} \nonumber \\
+n_{j,s} & = & \text{No. speech and $X_j$} \nonumber \\
+n_{-j,p} & = & \text{No. press and not $X_j$} \nonumber \\
+n_{-j,s} & = & \text{No. speech and not $X_j$} \nonumber
+\end{eqnarray}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{A Method for Identifying Distinguishing Words}
+
+Formula for Mutual Information
+
+\begin{eqnarray}
+\text{MI}(X_j)  & = & \frac{n_{j,p}}{D} \log_2 \frac{n_{j,p} D}{n_j n_p}
+    +\frac{n_{j,s}}{D} \log_2 \frac{n_{j,s} D}{n_j n_{s}}
+    \nonumber \\
+   & &
+    +\frac{n_{-j,p}}{D} \log_2 \frac{n_{-j,p} D}{n_{-j} n_p}
+    +\frac{n_{-j, s}}{D} \log_2 \frac{n_{-j,s} D}{n_{-j} n_{s}}.
+     \nonumber
+\end{eqnarray}
+
+
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{What's Different About Press Releases}
+
+
+
+\only<1>{\scalebox{0.225}{\includegraphics{MutInfPlot1.pdf}}}
+\only<2>{\scalebox{0.225}{\includegraphics{MutInfPlot2.pdf}}}
+\only<3>{\scalebox{0.225}{\includegraphics{MutInfPlot3.pdf}}}
+\begin{center}
+\only<4-10>{\scalebox{0.125}{\includegraphics{MutInfPlot3.pdf}}}
+\only<11>{\scalebox{0.45}{\includegraphics{AttentionPressSpeech}}}
+\end{center}
+
+\alert{What's Different?}
+
+\only<4->{\begin{itemize}
+\invisible<1-4>{\item[-] Press Releases: Credit Claiming}
+\invisible<1-5>{\item[-] Floor Speeches: Procedural Words}
+\invisible<1-6>{\item[-] Validate: Manual Classification}
+\invisible<1-7>{\item[-] Sample 500 Press Releases, 500 Floor Speeches}
+\invisible<1-8>{\item[-] Credit Claiming: 36\% Press Releases, 4\% Floor Speeches}
+\invisible<1-9>{\item[-] Procedural: 0\% Press Releases, 44\% Floor Speeches}
+\invisible<1-10>{\item[-] Validate: Topic Classification}
+\end{itemize}
+}
+
+
+
+\pause \pause \pause \pause \pause \pause \pause\pause \pause\pause
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Fightin' Words$\leadsto$ An Introduction to Regularization}
+
+
+Monroe, Colaresi, and Quinn (2009)$\leadsto$ what makes a word partisan? \pause \\
+
+\invisible<1>{Argue for using \alert{Log Odds Ratio}, weighted by variance\\} \pause
+
+\invisible<1-2>{Recall: For some event $E$ and $F$} \pause
+\begin{eqnarray}
+\invisible<1-3>{P(E) & = & 1 - P(E^{c}) \nonumber \\} \pause
+\invisible<1-4>{\text{Odds}(E) & = & \frac{P(E)}{1- P(E)} \nonumber \\} \pause
+\invisible<1-5>{\text{Odds Ratio}(E, F) & = & \frac{\frac{P(E))}{(1 - P(E))}}{\frac{P(F)}{1-P(F)}}\nonumber \\} \pause
+\invisible<1-6>{\text{Log Odds Ratio}(E, F) & = & \log\left(\frac{P(E)}{1- P(E)}\right) - \log\left(\frac{P(F)}{1-P(F)} \right) \nonumber} \pause
+\end{eqnarray}
+
+\invisible<1-7>{Strategy$\leadsto$ Construct objective function on $\alert{proportions}$ (and then calculate log-odds)} \pause
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Objective Function}
+
+Suppose we're interested in how a word separates partisan speech.  \\
+$\boldsymbol{Y} = (\text{Republican}, \text{Republican}, \text{Democrat}, \hdots, \text{Republican})$\\
+$\boldsymbol{X} =$ Unnormalized matrix of word counts $N \times J$
+
+
+
+
+Define
+\begin{small}
+\begin{eqnarray}
+\boldsymbol{x}_{\text{Republican}} & = & (\sum_{i=1}^{N}I(Y_{i} = \text{Republican})X_{i1}, \sum_{i=1}^{N}I(Y_{i} = \text{Republican})X_{i2}, \nonumber \\
+&&  \hdots, \sum_{i=1}^{N}I(Y_{i} = \text{Republican})X_{iJ} ) \nonumber
+\end{eqnarray}
+\end{small}
+
+with $N_{\text{Republican}} = $ Total number of Republican words
+
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Objective Function}
+
+\pause
+\begin{eqnarray}
+\invisible<1>{\boldsymbol{\pi}_{\text{Republican}} & \sim & \text{Dirichlet}(\boldsymbol{\alpha}) \nonumber \\} \pause
+\invisible<1-2>{\boldsymbol{x}_{\text{Republican}}| \boldsymbol{\pi}_{\text{Republican}}  & \sim & \text{Multinomial}(N_{\text{Republican}}, \boldsymbol{\pi}_{\text{Republican}}) \nonumber }\pause
+\end{eqnarray}
+
+\invisible<1-3>{This implies an objective function on $\boldsymbol{\pi}$, } \pause
+\begin{eqnarray}
+\invisible<1-4>{p(\boldsymbol{\pi}| \boldsymbol{\alpha}, \boldsymbol{X}, \boldsymbol{Y}) & \propto & p(\boldsymbol{\pi}| \boldsymbol{\alpha}) p(\boldsymbol{x}_{\text{Republican}}| \boldsymbol{\pi} \boldsymbol{\alpha}, \boldsymbol{Y})  \nonumber \\} \pause
+\invisible<1-5>{& \propto & \frac{\Gamma(\sum_{j=1}^{J} \alpha_{j} ) }{\prod_{j} \Gamma(\alpha_{j}) } \prod_{j=1}^{J} \pi_{j}^{\alpha_{j} - 1} \pi_{j}^{x_{\text{Republican}, j}} \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-6>{$p(\boldsymbol{\pi}| \boldsymbol{\alpha}, \boldsymbol{X}, \boldsymbol{Y}) $ is a Dirichlet distribution:} \pause
+\begin{eqnarray}
+\invisible<1-7>{\pi_{\text{Republican}, j}^{*} & = & \frac{x_{\text{Republican}, j} + \alpha_{j} }{N_\text{Republican} + \sum_{j=1}^{J}\alpha_{j}} \nonumber } \pause
+\end{eqnarray}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Calculating Log Odds Ratio}
+
+Define $\log \text{Odds Ratio}_{j} $ as
+\begin{eqnarray}
+\log \text{Odds Ratio}_{j} & = & \log \left(\frac{\pi_{\text{Republican}, j}}{1 - \pi_{\text{Republican}, j}} \right) - \log \left( \frac{\pi_{\text{Democratic}, j}}{1 - \pi_{\text{Democratic}, j}} \right) \nonumber
+\end{eqnarray}
+
+
+
+\begin{eqnarray}
+\text{Var}(\log \text{Odds Ratio}_j ) & \approx & \frac{1 } { x_{jD} + \alpha_j }  + \frac{1} {x_{jR} + \alpha_j }  \nonumber \\
+\text{Std. Log Odds}_j & = & \frac { \log \text{Odds Ratio}_j  } { \sqrt{\text{Var}(\log \text{Odds Ratio}_j ) }} \nonumber
+\end{eqnarray}
+
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Applying the Model}
+
+{\tt https://gist.github.com/thiagomarzagao/5851207}\\
+
+How do Republicans and Democrats differ in debate?\\
+
+Condition on \alert{topic} and examine word usage\\
+
+\begin{itemize}
+\item[-] Press Releases (64,033)
+\item[-] Topic Coded
+\item[-] Given press release is about topic, what are the features that distinguish Republican and Democratic language?
+\end{itemize}
+
+
+
+\end{frame}
+\begin{frame}
+
+Mutual Information, Standardized Log Odds
+\begin{center}
+\only<1>{\scalebox{0.375}{\includegraphics{IraqWarPartisan.pdf}}}
+\only<2>{\scalebox{0.375}{\includegraphics{GasPricesPartisan.pdf}}}
+\end{center}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Gentzkow, Shapiro, and Taddy (2017): Rhetorical Polarization}
+
+
+
+\scalebox{0.5}{\includegraphics{GentTadShap.pdf}}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Discovery}
+
+Where do concepts/ideas/questions come from? \pause 
+\begin{itemize}
+\invisible<1>{\item[-] Text as Data (machine learning) methods can suggest idea} \pause 
+\invisible<1-2>{\item[-] \alert{Human in the loop}: utility requires human presence} \pause 
+\invisible<1-3>{\item[-] \alert{Goal specific validation}: once you have an organization it is yours and where it came from} \pause  \\
+\invisible<1-4>{does}\pause\invisible<1-5>{.not}\pause\invisible<1-6>{.matter} 
+
+\end{itemize}
+
+
+
+
+\end{frame}
+\end{document}
