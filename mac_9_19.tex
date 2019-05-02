@@ -1,0 +1,1475 @@
+\documentclass{beamer}
+
+%\usepackage[table]{xcolor}
+\mode<presentation> {
+  \usetheme{Boadilla}
+%  \usetheme{Pittsburgh}
+%\usefonttheme[2]{sans}
+\renewcommand{\familydefault}{cmss}
+%\usepackage{lmodern}
+%\usepackage[T1]{fontenc}
+%\usepackage{palatino}
+%\usepackage{cmbright}
+  \setbeamercovered{transparent}
+\useinnertheme{rectangles}
+}
+%\usepackage{normalem}{ulem}
+%\usepackage{colortbl, textcomp}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg= black}
+\definecolor{trial}{cmyk}{1,0,0, 0}
+\definecolor{trial2}{cmyk}{0.00,0,1, 0}
+\definecolor{darkgreen}{rgb}{0,.4, 0.1}
+\usepackage{array}
+\beamertemplatesolidbackgroundcolor{white}  \setbeamercolor{alerted
+text}{fg=red}
+
+\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}
+
+%\usepackage{color}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{colortbl}
+%\usepackage[usenames, dvipsnames]{color}
+%\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}c
+%\newcolumntype{Y}{\columncolor[cmyk]{0, 0, 1, 0}\raggedright}
+%\newcolumntype{C}{\columncolor[cmyk]{1, 0, 0, 0}\raggedright}
+%\newcolumntype{G}{\columncolor[rgb]{0, 1, 0}\raggedright}
+%\newcolumntype{R}{\columncolor[rgb]{1, 0, 0}\raggedright}
+
+%\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{Block}
+%$A = B$.
+%\end{beamerboxesrounded}}
+\renewcommand{\familydefault}{cmss}
+%\usepackage[all]{xy}
+
+\usepackage{tikz}
+\usepackage{lipsum}
+
+ \newenvironment{changemargin}[3]{%
+ \begin{list}{}{%
+ \setlength{\topsep}{0pt}%
+ \setlength{\leftmargin}{#1}%
+ \setlength{\rightmargin}{#2}%
+ \setlength{\topmargin}{#3}%
+ \setlength{\listparindent}{\parindent}%
+ \setlength{\itemindent}{\parindent}%
+ \setlength{\parsep}{\parskip}%
+ }%
+\item[]}{\end{list}}
+\usetikzlibrary{arrows}
+%\usepackage{palatino}
+%\usepackage{eulervm}
+\usecolortheme{lily}
+\newtheorem{ass}{Assumption}
+\newtheorem{com}{Comment}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+ \numberwithin{equation}{section}
+%\usepackage[latin1]{inputenc}
+\title[Text as Data] % (optional, nur bei langen Titeln nötig)
+{Text as Data}
+
+\author{Justin Grimmer}
+\institute[Stanford University]{Professor\\Department of Political Science \\  Stanford University}
+\vspace{0.3in}
+
+
+\date{May 2nd, 2019}%[Big Data Workshop]
+%\date{\today}
+
+
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Discovery and Measurement}
+
+What is the research process? (Grimmer, Roberts, and Stewart 2017)
+
+\begin{itemize}
+  \item[1)] \alert{Discovery}: a hypothesis or view of the world
+  \item[2)] \alert{Measurement} according to some organization
+  \item[3)] \alert{Causal Inference}: effect of some intervention
+\end{itemize}
+
+Text as data methods assist at each stage of research process
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\huge
+
+Measurement
+
+
+\end{frame}
+
+
+\begin{frame}
+
+Two approaches to measurement
+\begin{itemize}
+\item[1)] Use an existing classification scheme to categorize documents 
+\item[2)] Simultaneously discover categories and measure prevalence 
+\end{itemize}
+
+
+
+\end{frame}
+
+
+
+
+% \begin{frame}
+% \frametitle{Topic and Mixed Membership Models}
+
+% \invisible<6->{\alert{Clustering}\\
+%  Document $\leadsto$ One Cluster}\\
+% \invisible<1-5>{\alert{Topic Models} (Mixed Membership) \\
+% Document $\leadsto$ Many clusters}
+
+
+% \begin{tikzpicture}
+
+% \node (doc1) at (-8,5.5) [] {Doc 1} ;
+% \node (doc2) at (-8, 4.5) [] {Doc 2} ;
+% \node (doc3) at (-8, 3.5) [] {Doc 3} ;
+% \node (doc4) at (-8, 2.5) [] {$\vdots$} ;
+% \node (doc5) at ( -8, 1.5) [] {Doc $N$} ;
+
+
+% \node (clust1) at (-1, 5) [] {Cluster 1} ;
+% \node (clust2) at (-1, 4) [] {Cluster 2} ;
+% \node (clustd) at (-1, 3) [] {$\vdots$} ;
+% \node (clust4) at (-1, 2) [] {Cluster $K$} ;
+
+% \invisible<1,3->{\draw[->, line width = 1.5pt]  (doc1)  to [out=0, in=180] (clust4) ; }
+% \invisible<1-2,4->{\draw[->, line width = 1.5pt]  (doc2)  to [out=0, in=180] (clust1) ; }
+% \invisible<1-3,5->{\draw[->, line width = 1.5pt]  (doc3)  to [out=0, in=180] (clust2) ; }
+% \invisible<1-4,6->{\draw[->, line width = 1.5pt]  (doc5)  to [out=0, in=180] (clust1) ; }
+
+% \invisible<1-6>{\draw[->, line width= 1.5pt] (doc1) to [out=0, in =180] (clust1) ;
+% \draw[->, line width= 1.5pt] (doc1) to [out=0, in =180] (clust2) ;
+% \draw[->, line width= 1.5pt] (doc1) to [out=0, in =180] (clust4) ;
+% }
+
+
+% \end{tikzpicture}
+
+% \pause \pause \pause \pause \pause \pause
+
+% \end{frame}
+
+
+% \begin{frame}
+% \frametitle{A Statistical Highlighter (With Many Colors) }
+
+
+% \scalebox{0.45}{\includegraphics{WallachHighlighter.png}}
+
+% \end{frame}
+
+
+
+% \begin{frame}
+% \frametitle{Vanilla Latent Dirichlet Allocation$\leadsto$ Objective Function}
+
+% \begin{itemize}
+% \item[-] Consider document $i$, $(i =1, 2, \hdots, N)$.
+% \invisible<1>{\item[-] Suppose there are $M_{i}$ total words and $\boldsymbol{x}_{i}$ is an $M_{i} \times 1$ vector, where $x_{im}$ describes the $m^{\text{th}}$ word used in the document$^{*}$.    }
+% \end{itemize}
+
+
+% \begin{eqnarray}
+% \invisible<1-6>{\boldsymbol{\theta}_{k} & \sim & \text{Dirichlet}(\boldsymbol{1}) \nonumber }\\
+% \invisible<1-7>{\alpha_{k} & \sim & \text{Gamma}(\alpha, \beta) \nonumber } \\
+% \invisible<1-3>{\boldsymbol{\pi}_{i}|\boldsymbol{\alpha} & \sim & \text{Dirichlet}(\boldsymbol{\alpha}) }\nonumber \\
+% \invisible<1-4>{\boldsymbol{\tau}_{im}| \boldsymbol{\pi}_{i} & \sim & \text{Multinomial}(1, \boldsymbol{\pi}_{i})} \nonumber \\
+% \invisible<1-5>{x_{im} | \boldsymbol{\theta}_{k}, \tau_{imk}=1 & \sim & \text{Multinomial}(1, \boldsymbol{\theta}_{k}) }\nonumber
+% \end{eqnarray}
+
+
+% \invisible<1-2, 4->{$^{*}$Notice: this is a different representation than a document-term matrix.  $x_{im}$ is a number that says which of the $J$ words are used.  The difference is for clarity and we'll this representation is closely related to document-term matrix}
+
+
+% \pause \pause \pause \pause \pause \pause \pause
+% \end{frame}
+
+
+% \begin{frame}
+% \frametitle{Vanilla Latent Dirichlet Allocation$\leadsto$ Objective Function}
+
+% Together the model implies the following posterior:
+
+% \begin{small}
+% \begin{eqnarray}
+% \invisible<1>{p(\boldsymbol{\pi}, \boldsymbol{T},\boldsymbol{\Theta}, \boldsymbol{\alpha}| \boldsymbol{X}) & \propto & \nonumber p(\boldsymbol{\alpha}) p(\boldsymbol{\pi}| \boldsymbol{\alpha}) p(\boldsymbol{T}| \boldsymbol{\pi}) p(\boldsymbol{X}| \boldsymbol{\theta}, \boldsymbol{T}) \nonumber } \\
+% \invisible<1-2>{& \propto & p(\boldsymbol{\alpha}) \prod_{i=1}^{N} \left[p(\boldsymbol{\pi}_{i} | \boldsymbol{\alpha}) \prod_{m=1}^{M_{i}} p(\boldsymbol{\tau}_{im}| \boldsymbol{\pi}) p(x_{im}| \boldsymbol{\theta}_{k}, \tau_{imk}=1) \right ] \nonumber }\\
+% \invisible<1-3>{& \propto & p(\boldsymbol{\alpha}) \prod_{i=1}^{N} \left[\alert<5>{\frac{\Gamma(\sum_{k=1}^{K} \alpha_{k})}{\prod_{k=1}^{K} \Gamma(\alpha_{k}) } \prod_{k=1}^{K} \pi_{ik}^{\alpha_{k}- 1}} \prod_{m=1}^{M}\prod_{k=1}^{K} \left[ \pi_{ik} \alert<6>{\prod_{j=1}^{J} \theta_{jk}^{x_{imj}} }  \right]^{\tau_{ikm}} \right] }\nonumber
+% \end{eqnarray}
+
+% \end{small}
+
+% \invisible<1-6>{Optimization:}
+% \begin{itemize}
+% \invisible<1-7>{\item[-] Variational Approximation$\leadsto$ Find ``closest" distribution}
+% \invisible<1-8>{\item[-] Gibbs sampling $\leadsto$ MCMC algorithm to approximate posterior}
+% \end{itemize}
+
+% \invisible<1-9>{\alert{Described in the slides appendix}}
+% \pause \pause \pause \pause \pause \pause \pause \pause \pause
+
+
+% \end{frame}
+
+
+% \begin{frame}
+% \frametitle{Why does this work$\leadsto$ Co-occurrence}
+
+
+% Where's the information for each word's topic? \pause \\
+
+% \invisible<1>{Reconsider document-term matrix} \pause
+
+% \begin{center}
+% \invisible<1-2>{\begin{tabular}{ccccc}
+% \hline
+%         & $\text{Word}_1$ & $\text{Word}_2$ & $\hdots$ & $\text{Word}_J$ \\
+% \hline
+% Doc$_{1}$  & 0   & 1    & $\hdots$ & 0 \\
+% Doc$_{2}$ & 2 & 0  & $\hdots$ & 3\\
+% $\vdots$ & $\vdots$ & $\vdots$ & $\ddots$ & $\vdots$ \\
+% Doc$_{N}$ & 0 & 1 & $\hdots$ & 1 \\
+% \hline\hline
+% \end{tabular}} \pause
+% \end{center}
+% \invisible<1-3>{Inner product of Documents (rows): $\textbf{Doc}_{i}^{'} \textbf{Doc}_{l} $} \pause \\
+% \vspace{0.1in}
+% \invisible<1-4>{Inner product of Terms (columns): $\textbf{Word}_j^{'} \textbf{Word}_k$ } \pause \\
+% \invisible<1-5>{\alert{Allows}: measure of correlation of term usage across documents (heuristically: partition words, based on usage in documents)} \pause \\
+% \invisible<1-6>{\alert{Latent Semantic Analysis}:  Reduce information in matrix using linear algebra (provides similar results, difficult to generalize)} \pause \\
+% \invisible<1-7>{\alert{Biclustering}: Models that partition documents and words simultaneously}
+
+% \end{frame}
+
+% \begin{frame}
+
+% {\tt R Code!}
+
+% \end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Types of Classification Problems}
+
+
+\alert{Topic}: What is this text about? \pause
+\invisible<1>{\begin{itemize}
+\item[-] Policy area of legislation  \\
+$\Rightarrow$ $\{$Agriculture, Crime, Environment, ...$\}$
+\item[-] Campaign agendas \\
+$\Rightarrow$ $\{$Abortion, Campaign, Finance, Taxing, ...       $\}$
+\end{itemize}} \pause
+
+\invisible<1-2>{\alert{Sentiment}: What is said in this text? [\alert{Public Opinion}] } \pause
+\invisible<1-3>{\begin{itemize}
+\item[-] Positions on legislation\\
+ $\Rightarrow$ $\{$ Support, Ambiguous, Oppose $\}$
+\item[-] Positions on Court Cases \\
+$\Rightarrow$ $\{$ Agree with Court, Disagree with Court $\}$
+\item[-] Liberal/Conservative Blog Posts \\
+$\Rightarrow$ $\{$ Liberal, Middle, Conservative, No Ideology Expressed $\}$
+\end{itemize} } \pause
+
+\invisible<1-4>{\alert{Style}/\alert{Tone}: How is it said?} \pause
+\invisible<1-5>{\begin{itemize}
+\item[-] Taunting in floor statements\\
+ $\Rightarrow$ $\{$ Partisan Taunt, Intra party taunt, Agency taunt, ... $\}$
+\item[-] Negative campaigning \\
+$\Rightarrow$ $\{$ Negative ad, Positive ad$\}$
+\end{itemize} }
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+\frametitle{Pre-existing word weights$\leadsto$ Dictionaries}
+
+\invisible<1>{{\tt DICTION}}\\
+
+\invisible<1>{\only<2>{\scalebox{0.55}{\includegraphics{DICTION2.png}}}}
+\only<3>{\scalebox{0.55}{\includegraphics{DICTION3.png}}}
+\only<4>{\scalebox{0.55}{\includegraphics{DICTION4.png}}}
+\only<5>{\scalebox{0.85}{\includegraphics{DICTION5.png}}}
+\only<6>{\scalebox{0.85}{\includegraphics{DictionCost.png}}}
+
+\pause \pause \pause \pause \pause
+
+\end{frame}
+
+
+\begin{frame}
+
+\scalebox{0.75}{\includegraphics{Year.jpg}}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Dictionary Methods}
+
+
+Many Dictionary Methods (like DICTION) \pause
+
+\begin{itemize}
+\invisible<1>{\item[1)] Proprietary}\pause\invisible<1-2>{$\leadsto$ wrapped in GUI} \pause
+\invisible<1-3>{\item[2)] Basic tasks:} \pause
+\begin{itemize}
+\invisible<1-4>{\item[a)] Count words} \pause
+\invisible<1-5>{\item[b)] Weighted counts of words} \pause
+\invisible<1-6>{\item[c)] Some graphics}\pause
+\end{itemize}
+\invisible<1-7>{\item[3)] Pricey$\leadsto$ \alert{inexplicably}}
+\end{itemize}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{DICTION}
+
+
+
+\begin{columns}[]
+
+\column{0.5\textwidth}
+\scalebox{0.15}{\includegraphics{PolTone.jpg}}
+
+
+\column{0.5\textwidth}
+\pause
+\begin{itemize}
+\item[-] \invisible<1>{$\{$ Certain, Uncertain $\}$}\pause\invisible<1-2>{\\, $\{$ Optimistic, Pessimistic $\}$} \pause
+\item[-] \invisible<1-3>{$\approx$ 10,000 words} \pause
+\end{itemize}
+
+
+\invisible<1-4>{Applies DICTION to a wide array of political texts\\} \pause
+\invisible<1-5>{Examine specific periods of American political history}
+
+
+\end{columns}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Other Dictionaries }
+
+
+\begin{itemize}
+\item[1)] General Inquirer Database (\url{http://www.wjh.harvard.edu/~inquirer/} ) \pause
+\begin{itemize}
+\invisible<1>{\item[-] Stone, P.J., Dumphy, D.C., and Ogilvie, D.M. (1966) \emph{The General Inquirer: A Computer Approach to Content Analysis}} \pause
+\invisible<1-2>{\item[-] $\{$ Positive, Negative $\}$ } \pause
+\invisible<1-3>{\item[-] 3627 negative and positive word strings } \pause
+\invisible<1-4>{\item[-] Workhorse for classification across many domains/papers} \pause
+\end{itemize}
+\invisible<1-5>{\item[2)] Linguistic Inquiry Word Count (LIWC)} \pause
+\begin{itemize}
+\invisible<1-6>{\item[-] Creation process:} \pause
+\begin{itemize}
+\invisible<1-7>{\item[1)] Generate word list for categories$\leadsto$ `` We drew on common emotion rating scales...Roget's Thesaurus...standard English dictionaries. [then] brain-storming sessions among 3-6 judges were held" to generate other words } \pause
+\invisible<1-8>{\item[2)] Judge round$\leadsto$ (a) Does the word belong? (b) What other categories might it belong to?} \pause
+\end{itemize}
+\invisible<1-9>{\item[-] $\{$ Positive emotion, Negative emotion $\}$} \pause
+\invisible<1-10>{\item[-] 2300 words grouped into 70 classes} \pause
+\end{itemize}
+\invisible<1-11>{\item[-] Harvard-IV-4 } \pause
+\invisible<1-12>{\item[-] Affective Norms for English Words (we'll discuss this more later)} \pause
+\invisible<1-13>{\item[-] ...}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Generating New Words}
+
+Three ways to create dictionaries (non-exhaustive): \pause
+\begin{itemize}
+\invisible<1>{\item[-] Statistical methods (Separating methods)} \pause
+\invisible<1-2>{\item[-] Manual generation } \pause
+\begin{itemize}
+\invisible<1-3>{\item[-] Careful thought (prayer? epiphanies? divine intervention?) about useful words} \pause
+\end{itemize}
+\invisible<1-4>{\item[-] Populations of people who are surprisingly willing to perform ill-defined tasks} \pause
+\begin{itemize}
+\invisible<1-5>{\item[a)] Undergraduates$:\text{Pizza}\rightarrow \text{Research Output}$} \pause
+\invisible<1-6>{\item[b)] Mechanical turkers} \pause
+\begin{itemize}
+\invisible<1-7>{\item[-] Example: $\{$ Happy, Unhappy $\}$ } \pause
+\invisible<1-8>{\item[-] Ask turkers: how happy is } \pause
+\invisible<1-9>{\item[] {\tt elevator}, {\tt car}, {\tt pretty}, {\tt young} } \pause
+\invisible<1-10>{\item[] Output as dictionary}
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Applying Methods to Documents}
+
+Applying the model: \pause
+\begin{itemize}
+\invisible<1>{\item[-] Vector of word counts:  $\boldsymbol{X}_i = (X_{i1}, X_{i2}, \hdots, X_{iK})$, $(i = 1, \hdots, N)$} \pause
+\invisible<1-2>{\item[-] Weights attached to words  $\boldsymbol{\theta} = (\theta_{1}, \theta_{2}, \hdots, \theta_{K})$  } \pause
+\begin{itemize}
+\invisible<1-3>{\item[-] $\theta_{k} \in \{0,1\}$} \pause
+\invisible<1-4>{\item[-] $\theta_{k} \in \{-1, 0, 1 \}$} \pause
+\invisible<1-5>{\item[-] $\theta_{k} \in \{-2, -1, 0, 1, 2\}$} \pause
+\invisible<1-6>{\item[-] $\theta_{k} \in \Re$} \pause
+\end{itemize}
+\end{itemize}
+
+\invisible<1-7>{For each document $i$ calculate score for document } \pause
+\begin{eqnarray}
+\invisible<1-8>{Y_i  & = &  \frac{\sum_{k=1}^{K} \theta_k X_{ik}}{\sum_{k=1}^{K} X_{k}} \nonumber \\} \pause
+\invisible<1-9>{Y_i  & = &  \frac{\boldsymbol{\theta}^{'} \boldsymbol{X}_i}{\boldsymbol{X}_{i}^{'} \boldsymbol{1} } \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-10>{$Y_{i} \approx $ continuous $\leadsto$ Classification} \pause
+\begin{itemize}
+\invisible<1-11>{\item[] $Y_i> 0 \Rightarrow$ Positive Category} \pause
+\invisible<1-12>{\item[] $Y_i< 0 \Rightarrow$ Negative Category} \pause
+\invisible<1-13>{\item[] $Y_i \approx 0$ Ambiguous}
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Applying a Dictionary to Press Releases}
+
+\pause
+\begin{itemize}
+\invisible<1>{\item[-] Collection of 169,779 press releases (US House members 2005-2010)} \pause
+\invisible<1-2>{\item[-] Dictionary from Neal Caren's website $\leadsto$ Theresa Wilson, Janyce Wiebe, and Paul Hoffman's dictionary } \pause
+\invisible<1-3>{\item[-] Create positive/negative score for press releases.  }
+\end{itemize}
+
+
+
+
+
+
+\invisible<1-4>{{\tt Python} code and press releases}
+
+\pause
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Examining Positive and Negative Statements in Press Releases}
+
+\pause
+
+\only<1-10>{
+\invisible<1>{Least positive members of Congress:}
+\begin{itemize}
+\invisible<1-2>{\item[1)] Dan Burton, 2008}
+\invisible<1-3>{\item[2)] Nancy Pelosi, 2007}
+\invisible<1-4>{\item[3)] Mike Pence 2007}
+\invisible<1-5>{\item[4)] John Boehner, 2009}
+\invisible<1-6>{\item[5)] Jeff Flake, (basically all years)}
+\invisible<1-7>{\item[6)] Eric Cantor, 2009}
+\invisible<1-8>{\item[7)] Tom Price, 2010}
+\end{itemize}
+
+\invisible<1-9>{Legislators who are more extreme$\leadsto$ less positive in press releases}
+
+}
+
+
+\only<11>{\scalebox{0.5}{\includegraphics{pressOverTime.pdf}}}
+
+\only<12-13>{
+\begin{itemize}
+\item[-] Credit Claiming press release: 9.1 percentage points ``more positive" than a non-credit claiming press release
+\invisible<1-12>{\item[-] Anti-spending press release: 10.6 percentage points ``less positive" than a non-anti spending press release}
+\end{itemize}
+}
+
+\only<14>{\scalebox{0.5}{\includegraphics{CreditPositive.pdf}}}
+\only<15->{\scalebox{0.5}{\includegraphics{AntiCreditPositive.pdf}}}
+
+
+
+
+
+
+\pause \pause \pause \pause \pause\pause \pause \pause \pause \pause \pause \pause \pause \pause
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Methodological Issues/Problems with Dictionaries}
+
+\alert{Dictionary methods are context invariant} \pause \\
+\begin{itemize}
+\invisible<1>{\item[-] No optimization step $\leadsto$ same word weights regardless of texts} \pause
+\invisible<1-2>{\item[-] Optimization$\leadsto$ incorporate information specific to context} \pause
+\invisible<1-3>{\item[-] Without optimization$\leadsto$ unclear about dictionaries performance} \pause
+\end{itemize}
+
+
+
+\invisible<1-4>{\alert{Just because dictionaries provide measures labeled ``positive" or ``negative" it doesn't mean they are accurate measures in your text} (!!!!) \\} \pause
+
+\vspace{0.5in}
+
+\invisible<1-5>{{\huge \alert{Validation}}}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Validation}
+
+Classification Validity: \pause
+\begin{itemize}
+\invisible<1>{\item[-] \alert{Training}: build dictionary on subset of documents \alert{with known labels}} \pause
+\invisible<1-2>{\item[-] \alert{Test}: apply dictionary method to other documents \alert{with known labels}} \pause
+\invisible<1-3>{\item[-] Requires hand coded documents} \pause
+\invisible<1-4>{\item[-] Hand coded documents useful for other reasons} \pause
+\begin{itemize}
+\invisible<1-5>{\item[-] Is the classification scheme well defined for your texts?} \pause
+\invisible<1-6>{\item[-] Can humans accomplish the coding task?} \pause
+\invisible<1-7>{\item[-] Is the dictionary your using appropriate?} \pause
+\end{itemize}
+\end{itemize}
+
+\large
+\invisible<1-8>{\alert{Replicate} classification exercise}  \pause
+\normalsize
+\begin{itemize}
+\invisible<1-9>{\item[-] How well does our method perform on \alert{held out} documents?} \pause
+\invisible<1-10>{\item[-] Why held out?} \pause \invisible<1-11>{\alert{Over fitting} } \pause
+\invisible<1-12>{\item[-] Using off-the-shelf dictionary: all labeled documents to test} \pause
+\invisible<1-13>{\item[-] Supervised learning classification: \alert{(Cross)validation} }
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Hand Coding: A Brief Digression}
+
+\alert{Humans should be able to classify documents into the categories you want the machine to classify them in} \pause
+\begin{itemize}
+\invisible<1>{\item[-] This is \alert{hard}} \pause
+\invisible<1-2>{\item[-] Why? } \pause
+\begin{itemize}
+\invisible<1-3>{\item[-] Ambiguity in language} \pause
+\invisible<1-4>{\item[-] Limited working memory} \pause
+\invisible<1-5>{\item[-] Ambiguity in classification rules} \pause
+\end{itemize}
+\invisible<1-6>{\item[-] A procedure for training coders: } \pause
+\invisible<1-7>{\begin{itemize}
+\item[1)] Coding rules
+\item[2)] Apply to new texts
+\item[3)] Assess coder agreement (we'll discuss more in a few weeks)
+\item[4)] Using information and discussion, revise coding rules
+\end{itemize}}
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Assessing Classification}
+
+Measures of classification performance
+
+\begin{tabular}{l|l|l}
+ \hline
+  & \multicolumn{2}{c}{Actual Label}  \\
+  \hline
+  Guess &   Liberal & Conservative \\
+  \hline
+  Liberal &  \alert{True Liberal} & False Liberal \\
+  \hline
+  Conservative & False Conservative & \alert{True Conservative} \\
+  \hline
+  \hline
+\end{tabular}
+
+\pause
+\begin{eqnarray}
+\invisible<1>{\text{Accuracy} & = & \frac{ \alert{\text{TrueLib} }+ \alert{\text{TrueCons}}  } { \alert{\text{TrueLib} } + \alert{\text{TrueCons}} + \text{FalseLib} + \text{FalseCons} } \nonumber } \pause  \\
+\invisible<1-2>{\text{Precision}_{\text{Liberal}} &= &   \frac{ \alert{\text{True Liberal}}    }  { \alert{\text{True Liberal }} + \text{False Liberal}      } } \pause  \nonumber \\
+\invisible<1-3>{\text{Recall}_{\text{Liberal} } & = & \frac{ \alert{\text{True Liberal}}   } { \alert{\text{True Liberal}} + \text{False Conservative}   } } \pause  \nonumber \\
+\invisible<1-4>{F_{\text{Liberal}} & = & \frac{ 2\text{Precision}_{\text{Liberal}} \text{Recall}_{\text{Liberal} } } { \text{Precision}_{\text{Liberal}} +  \text{Recall}_{\text{Liberal} }} }   \nonumber \pause
+\end{eqnarray}
+
+\invisible<1-5>{\alert{Under reported for dictionary classification} }
+\end{frame}
+
+
+\begin{frame}
+\frametitle{What about continuous measures?}
+
+\pause
+
+\invisible<1>{\alert{Necessarily more complicated}\\} \pause
+
+\begin{itemize}
+\invisible<1-2>{\item[-] Go back to hand coding exercise} \pause
+\invisible<1-3>{\item[-] Imagine asking undergraduates to rate document on a continuous scale (0-100)} \pause
+\invisible<1-4>{\item[-] \alert{Difficult} to create classifications with agreement} \pause
+\invisible<1-5>{\item[-] \alert{Precisely} the point$\leadsto$ merely creating a gold standard is hard, let alone computer classification} \pause
+\end{itemize}
+
+\invisible<1-6>{\alert{Lower level classification}}\pause\invisible<1-7>{$\leadsto$ label phrases and then aggregate} \pause \\
+
+\invisible<1-8>{Modifiable areal unit problem in texts}\pause$\leadsto$\invisible<1-9>{aggregating destroys information, conclusion may depend on level of aggregation}
+
+
+
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}
+\frametitle{Validation, Dictionaries from other Fields}
+\pause
+\invisible<1>{Accounting Research: measure \alert{tone} of \alert{10-K} reports} \pause
+\begin{itemize}
+%\item[-] Comprehensive public summary of company performance
+\invisible<1-2>{\item[-] \alert{tone} matters (\$)} \pause
+\end{itemize}
+
+\invisible<1-3>{Previous state of art: Harvard-IV-4 Dictionary applied to texts} \\
+\invisible<1-4>{Loughran and McDonald (2011): \alert{Financial Documents are Different}, \textcolor{blue}{polysemes} } \pause
+\begin{itemize}
+\invisible<1-5>{\item[-] Negative words in Harvard, Not Negative in Accounting: \\} \pause
+\invisible<1-6>{{\tt tax, cost, capital, board, liability, foreign,  cancer, crude (oil), tire } } \pause
+\invisible<1-7>{\item[-] \alert{73\%} of Harvard negative words in this set(!!!!!)} \pause
+\invisible<1-8>{\item[-] Not Negative Harvard, Negative in Accounting: \\} \pause
+\invisible<1-9>{{\tt felony, litigation, restated, misstatement, unanticipated} } \pause
+\end{itemize}
+
+
+\large
+\invisible<1-10>{\alert{Context Matters}}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Measuring Happiness}
+
+\begin{columns}[]
+\column{0.5\textwidth}
+\scalebox{0.35}{\includegraphics{Bentham.jpg}}
+
+\column{0.5\textwidth}
+
+\pause
+\begin{itemize}
+\invisible<1>{\item[-] Quantifying Happiness: How happy is society?} \pause
+\invisible<1-2>{\item[-] How Happy is a Song?} \pause
+\invisible<1-3>{\item[-] Blog posts?} \pause
+\invisible<1-4>{\item[-] Facebook posts? (Gross National Happiness)} \pause
+\end{itemize}
+
+\invisible<1-5>{Use \alert{Dictionary Methods} }
+
+\end{columns}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Measuring Happiness}
+
+Dodds and Danforth (2009): Use a dictionary method to measure happiness \pause
+\begin{itemize}
+\invisible<1>{\item[-]  \alert{Affective Norms for English Words} (ANEW)} \pause
+\invisible<1-2>{\item[-] Bradley and Lang 1999:  1034 words, Affective reaction to words} \pause
+\begin{itemize}
+\invisible<1-3>{\item[-] On a scale of 1-9 how happy does this word make you?} \pause
+\invisible<1-4>{\item[] \alert{Happy} : triumphant (8.82)/paradise (8.72)/ love (8.72) } \pause
+\invisible<1-5>{\item[] \alert{Neutral}: street (5.22)/ paper (5.20)/ engine (5.20) } \pause
+\invisible<1-6>{\item[] \alert{Unhappy} : cancer (1.5)/funeral (1.39)/ rape (1.25) /suicide (1.25) } \pause
+\end{itemize}
+\invisible<1-7>{\item[-] \alert{Happiness} for text $i$ (with word $j$ having happiness $\theta_j$ and document frequence $X_{ij}$)} \pause
+\begin{eqnarray}
+\invisible<1-8>{\text{Happiness}_{i}  & = & \frac{ \sum_{k=1}^{K} \theta_{k} X_{ik} } { \sum_{k=1}^{K} X_{ik}} }  \nonumber
+\end{eqnarray}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+
+
+
+\scalebox{0.5}{\includegraphics{BillyJean.png}}
+\pause
+
+
+\invisible<1>{\alert{Homework Hints}:}
+\invisible<1>{One approach: write a {\tt for} loop searching for words in dictionary (caution: is dictionary stemmed?) }\\ \pause
+\invisible<1-2>{Happiest Song on Thriller?}  \\ \pause
+\invisible<1-3>{\alert{P.Y.T. (Pretty Young Thing) }   (This is the right answer!)}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Happiness in Society}
+
+\only<1>{\scalebox{1}{\includegraphics{SongHappiness.png}}}
+\only<2>{\scalebox{1}{\includegraphics{SongType.png}}}
+\only<3>{\scalebox{0.7}{\includegraphics{Blog.png}}}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Supervised Learning}
+
+\invisible<1>{Supervised Methods: } \pause
+\begin{itemize}
+\invisible<1-2>{\item[-] Models for \alert{categorizing texts}} \pause
+\begin{itemize}
+\invisible<1-3>{\item[-] Know (develop) categories before hand} \pause
+\invisible<1-4>{\item[-] Hand coding: assign documents to categories
+\item[-] Infer: new document assignment to categories (distribution of documents to categories)} \pause
+\invisible<1-5>{\item[-] \alert{Pre-estimation}: extensive work constructing categories, building classifiers
+\item[-] \alert{Post-estimation}: relatively little work}
+\end{itemize}
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Supervised Learning}
+
+\pause
+\begin{itemize}
+\invisible<1>{\item[-] How to generate \alert{valid} hand coding categories} \pause
+\begin{itemize}
+\invisible<1-2>{\item[-] Assessing coder performance
+\item[-] Assessing disagreement among coders
+\item[-] Evidence coders perform well} \pause
+\end{itemize}
+\invisible<1-3>{\item[-] Supervised Learning Methods: \alert{Naive Bayes}, \alert{LASSO} (Ridge), \alert{ReadMe} } \pause
+\invisible<1-4>{\item[-] Assessing Model Performance}  \pause
+\end{itemize}
+
+
+\invisible<1-5>{\alert{Methods generalize beyond text} }
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Components to Supervised Learning Method}
+
+
+ \pause
+\begin{itemize}
+\invisible<1>{\item[1)] Set of \alert{categories}  } \pause
+\begin{itemize}
+\invisible<1-2>{\item[-] Credit Claiming, Position Taking, Advertising
+\item[-] Positive Tone, Negative Tone
+\item[-] Pro-war, Ambiguous, Anti-war} \pause
+\end{itemize}
+\invisible<1-3>{\item[2)] Set of \alert{hand-coded} documents } \pause
+\begin{itemize}
+\invisible<1-4>{\item[-] Coding done by human coders
+\item[-] \alert{Training} Set: documents we'll use to learn how to code
+\item[-] \alert{Validation} Set: documents we'll use to learn how well we code } \pause
+\end{itemize}
+\invisible<1-5>{\item[3)] Set of \alert{unlabeled} documents} \pause
+\invisible<1-6>{\item[4)] Method to extrapolate from hand coding to unlabeled documents}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{How Do We Generate Coding Rules and Categories?}
+
+\pause
+\invisible<1>{\alert{Challenge}: coding rules/training coders to maximize coder performance} \pause \\
+\invisible<1-2>{\alert{Challenge}: developing a clear set of categories} \pause
+\begin{itemize}
+\invisible<1-3>{\item[1)] Limits of Humans:} \pause
+\begin{itemize}
+\invisible<1-4>{\item[-] Small working memories
+\item[-] Easily distracted
+\item[-] Insufficient motivation} \pause
+\end{itemize}
+\invisible<1-5>{\item[2)] Limits of Language:} \pause
+\begin{itemize}
+\invisible<1-6>{\item[-] Fundamental ambiguity in language [careful analysis of texts]
+\item[-] Contextual nature of language}
+\end{itemize}
+\end{itemize}
+
+\pause
+
+\invisible<1-7>{For supervised methods to work: maximize coder agreement (without cheating!)} \pause
+\begin{itemize}
+\invisible<1-8>{\item[1)] Write careful (and brief) coding rules } \pause
+\begin{itemize}
+\invisible<1-9>{\item[-] Flow charts help simplify problems } \pause
+\end{itemize}
+\invisible<1-10>{\item[2)] Train coders to remove ambiguity, misinterpretation}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{How Do We Generate Coding Rules?}
+
+Iterative process for generating coding rules:\pause
+\begin{itemize}
+\invisible<1>{\item[1)] Write a set of coding rules} \pause
+\invisible<1-2>{\item[2)] Have coders code documents (about 200) } \pause
+\invisible<1-3>{\item[3)] Assess coder agreement } \pause
+\invisible<1-4>{\item[4)] Identify sources of disagreement, repeat }
+\end{itemize}
+
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{The Unreliability of Measures of Intercoder Reliability}
+\pause 
+\Large 
+\begin{itemize}
+\invisible<1>{\item[1)] Hand Coding $\leadsto$ proportion in categories} \pause 
+\invisible<1-2>{\item[2)] Hand Coding (training set),  machine classification$\leadsto$ proportion in categories} \pause 
+\invisible<1-3>{\item[3)] Perfect training set (keywords, metadata) , machine classification$\leadsto$ proportion in categories } \pause 
+\end{itemize}
+\invisible<1-4>{Usual Procedure:} \pause 
+\begin{itemize}
+\invisible<1-5>{\item[-] Pay attention to percent agreement $\leadsto$ reliability} \pause 
+\invisible<1-6>{\item[-] Set arbitrary reliability threshold$\leadsto$ ignore remaining coder disagreement} \pause 
+\invisible<1-7>{\item[-] Fit Annotation model (Dawid and Skene 1979), infer parameters}
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+
+\begin{Large} 
+Problem: \pause 
+\begin{itemize}
+\invisible<1>{\item[] \alert{Coder Error} $\leadsto$ Biased proportions } \pause 
+\invisible<1-2>{\item[] Consequences for Business, Government, and Researchers } \pause 
+\end{itemize}
+\invisible<1-3>{Solution:} \pause 
+
+\begin{itemize}
+\invisible<1-4>{\item[] Method and easy to use software $\leadsto$ bounds on truth}
+\end{itemize} 
+\end{Large}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{What To Do About It}
+
+
+\Large 
+Measuring reliability $\leadsto$ descriptive task \pause \\
+\invisible<1>{Relationship between reliability and validity $\leadsto$ inferential task} \pause \\
+\invisible<1-2>{\alert{Inferential tools relating reliability and validity}} \pause \\
+\begin{itemize}
+\invisible<1-3>{\item[-] Derive bounds on proportions, reliability $\leftrightarrow$ validity } \pause
+\begin{itemize}
+\invisible<1-4>{\item[-]  \begin{large} Clear assumptions $\Rightarrow$ that bounds contain truth \end{large} } \pause
+\invisible<1-5>{\item[-] \begin{large} Bounds depend on coder agreement: $\uparrow$ agreement, $\downarrow$ narrower bounds \end{large}} \pause
+\end{itemize}
+\invisible<1-6>{\item[-] Extensions for alternative settings and inferences} 
+% \begin{itemize}
+% \invisible<1-7>{\item[-] \alert{More general assumptions about relationship between agreement and validity}} \pause
+% \invisible<1-8>{\item[-] Methods to evaluate machine coded data with alloyed gold standard} \pause
+% \invisible<1-9>{\item[-] Multiple coders} \pause
+% \invisible<1-10>{\item[-] \alert{Bounds on parameters where proportions are inputs to another statistical procedure} }
+% \end{itemize}
+% \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+% \begin{frame}
+
+% Motivational analysis here with partisan taunting?  (Or some other example of where I would use this in my work)
+
+
+% \end{frame}
+
+
+
+% \begin{frame}
+% \frametitle{Strategy for Talk: Connecting Reliability and Validity}
+
+% \pause 
+% \begin{itemize}
+% \invisible<1>{\item[1)] Derive Baseline Version of Our Method, Based on Relationship Between Agreement and Validity } \pause 
+% \invisible<1-2>{\item[2)] Generalize to Include Cases Where Coders Make Systematic Errors} \pause 
+% \invisible<1-3>{\item[3)] Generalize to Include Cases Where Coders Make Different Errors Across Categories}\pause
+% \invisible<1-4>{\item[4)] Partisan Taunting and Hand Coding} 
+% \end{itemize}
+
+
+% \end{frame}
+
+
+\begin{frame}
+\frametitle{Motivating Example and Notation}
+
+Suppose 2 coders classify $D$ documents into $3$ categories \\
+
+\begin{columns}[]
+
+\column{0.65\textwidth}
+\invisible<1>{Truth} 
+\begin{itemize}
+\invisible<1-2>{\item[] $\pi_{d} \in \{1, 2, 3 \}$} 
+\invisible<1-2>{\item[] $\bar{\pi}_{k}  = \text{mean}_{d}[I(\pi_{d} = k)]$, } 
+\invisible<1-2>{\item[] $\boldsymbol{\bar{\pi}} = (\bar{\pi}_{1}, \bar{\pi}_{2}, \bar{\pi}_{3})$} \invisible<1-3, 5->{= (0.7, 0.25, 0.05)}
+\end{itemize}
+
+\invisible<1-4>{Coders:} 
+\begin{itemize}
+\invisible<1-5>{\item[] $y_{d}^{1} \in \{1, 2, 3\}$}  \invisible<1-6>{, $y_{d}^{2} \in \{1, 2, 3\}$} 
+\invisible<1-7>{\item[] $\bar{y}_{k}^{1}  = \text{mean}_{d} I[(y_{d}^{1}  = k)]$
+				\item[] $\bar{y}_{k}^{2} =  \text{mean}_{d} I[(y_{d}^{2}  = k)]$} 
+\invisible<1-8>{\item[] $\bar{y}_{k} = \text{mean}_{c}[\bar{y}_{k}^{c}] $} 
+\invisible<1-9>{\item[] $\bar{\boldsymbol{y}} = (\bar{y}_{1}, \bar{y}_{2},  \bar{y}_{3})$} 
+\end{itemize}
+
+
+ \invisible<1-10>{\alert{Agreement and Reliability}} 
+ \begin{itemize}
+ \invisible<1-11>{\item[] $m_{jk}^{12} = \text{mean}_{d} [I(y_{d}^{1} =j , y_{d}^{2} = k) ]$}
+ \invisible<1-12>{\item[] $a^{12} = \sum_{k=1}^{3} m_{kk}^{12}$} \invisible<1-13>{ $=$ 0.7}
+ \end{itemize}
+
+\column{0.4\textwidth}
+
+\begin{Large}
+
+\begin{eqnarray}
+\invisible<1-2>{\alert{\text{truth} }& = & \bar{\boldsymbol{\pi} }} \nonumber \\
+% \end{eqnarray}
+% \vspace{0.05in}
+% \begin{eqnarray}
+\invisible<1-9>{\alert{\text{na\"ive estimate}} & = & \bar{\boldsymbol{y}} }\nonumber \\
+% \end{eqnarray}
+% \vspace{0.05in}
+% \begin{eqnarray}
+\invisible<1-12>{\alert{\text{reliability}} & = & a^{12} }\nonumber 
+\end{eqnarray}
+\end{Large}
+
+\end{columns}
+\pause \pause \pause \pause \pause \pause  \pause \pause \pause  \pause \pause \pause \pause 
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{The Link Between Truth and Coders' Decisions}
+\pause 
+
+\invisible<1>{Coding task $\leadsto$ map from truth to codes}  
+\begin{eqnarray}
+\invisible<1-2>{\epsilon_{jk}^{1} & = & \text{ Proportion coder $1$ classifies a document in $j$ when truth is $k$} \nonumber} \\
+\only<1-4>{\invisible<1-3>{\epsilon_{kk}^{1} & = & \text{ Proportion coder $1$ classifies a document in $k$ when truth is $k$ }\nonumber }}
+\only<5->{\epsilon_{kk}^{1} & = & \text{ \alert{validity} } \nonumber }
+\end{eqnarray}
+
+\invisible<1-4>{Mapping from Truth to Coders' Decisions} 
+\begin{eqnarray}
+\invisible<1-5>{\bar{y}_{1}^{2} & = & \epsilon_{11}^{2} \bar{\pi}_{1} +  \epsilon_{12}^{2} \bar{\pi}_{2} +  \epsilon_{13}^{2} \bar{\pi}_{3}} \nonumber 
+\end{eqnarray}
+
+\invisible<1-6>{Proportion coder 2 places in category $1$: mixture across categories} 
+
+
+
+\invisible<1-7>{\alert{For Example:}}
+\begin{itemize}
+\invisible<1-8>{\item[] $\epsilon_{11}^{2} =0.8$,  $\epsilon_{12}^{2} =0.14$ ,$\epsilon_{13}^{2} = 0.17$ and  $\boldsymbol{\bar{\pi}} = (0.7, 0.25, 0.05)$ then}
+\begin{eqnarray}
+\invisible<1-9>{\bar{y}_{1}^{2} & = & 0.8 \times 0.7 + 0.14 \times 0.25 + 0.17 \times 0.05  = 0.60 \nonumber} 
+\end{eqnarray}
+\end{itemize}
+
+\pause \pause\pause \pause \pause \pause \pause \pause \pause 
+\end{frame}
+
+\begin{frame}
+\frametitle{The Link Between Truth and Coders' Decisions}
+
+Define the evaluation matrix $\boldsymbol{E}^{1}$: 
+
+\invisible<1>{\begin{eqnarray}
+\boldsymbol{E}^{1} & = & \begin{pmatrix} \epsilon^{1}_{11} & \epsilon^{1}_{12} & \epsilon^{1}_{13} \\
+										 \epsilon^{1}_{21} & \epsilon^{1}_{22} & \epsilon^{1}_{23} \\
+										 \epsilon^{1}_{31} & \epsilon^{1}_{32} & \epsilon^{1}_{33} \\
+						\end{pmatrix} \nonumber
+\end{eqnarray}}
+
+
+\only<3>{\begin{eqnarray}
+\boldsymbol{E}^{1} & = & \begin{pmatrix} 0.9 & 0.07 & 0.02 \\ 0.08 & 0.9 & 0.08 \\ 0.02 & 0.03 & 0.9 \\ \end{pmatrix} \nonumber \\
+\boldsymbol{E}^{2} & = & \begin{pmatrix} 0.8 & 0.14 & 0.17 \\0.01 & 0.80 &  0.03 \\ 0.19 & 0.06 & 0.8 \\ \end{pmatrix} \nonumber 
+\end{eqnarray}}
+
+
+
+
+\invisible<1-4>{Then, } 
+\begin{eqnarray}
+\invisible<1-5>{\bar{\boldsymbol{y}}^{1}  &= & \boldsymbol{E}^{1} \bar{\boldsymbol{\pi}} \nonumber \\
+\bar{\boldsymbol{y}}^{2}  &= & \boldsymbol{E}^{2} \bar{\boldsymbol{\pi}} \nonumber }
+\end{eqnarray}
+
+
+\only<7>{
+	\begin{eqnarray}
+	\bar{\boldsymbol{y}}^{1} & = & (0.65, 0.28, 0.07) \nonumber \\
+	\bar{\boldsymbol{y}}^{2} & = & (0.6, 0.21, 0.19) \nonumber 
+	\end{eqnarray}
+}
+
+
+
+
+\invisible<1-7>{\alert{If} $\boldsymbol{E}^{1}$ and $\boldsymbol{E}^{2}$ are known, then }  
+\begin{eqnarray}
+\invisible<1-8>{\left(\boldsymbol{E}^{1}\right)^{-1} \bar{\boldsymbol{y}}^{1} & = & \bar{\boldsymbol{\pi}} \nonumber \\
+\left(\boldsymbol{E}^{2}\right)^{-1} \bar{\boldsymbol{y}}^{2} & = & \bar{\boldsymbol{\pi}} \nonumber }
+\end{eqnarray}
+
+\invisible<1-9>{\alert{Problem: We don't (and can't) know evaluation matrices}}
+
+\pause \pause \pause \pause \pause \pause \pause \pause \pause 
+
+\end{frame}
+
+
+\begin{frame}
+
+\Large  
+Agreement, Assumptions, Structure $\leadsto$ Set of Matrices
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{The Link Between Truth and Reliability}
+
+\begin{itemize}
+\item[] Goal: use coders' reliability to infer validity \pause 
+\invisible<1>{\item[] Define:} \pause 
+\begin{eqnarray}
+\invisible<1-2>{\epsilon^{1} & = & \epsilon^{1}_{11} \bar{\pi}_{1}  + \epsilon^{1}_{22} \bar{\pi}_{2} + \epsilon^{1}_{33} \bar{\pi}_{3} \nonumber } \pause 
+\end{eqnarray}
+\invisible<1-3>{$\epsilon^{1} \leadsto$ average validity rate} \pause 
+\end{itemize}
+
+\invisible<1-4>{\begin{prop}
+ Suppose coder 1 and coder 2 have agreement rate $a^{12}$.  \\
+ Maximum Average Validity
+\begin{eqnarray}
+  \dot{\epsilon}^{12} & = & \frac{1 + a^{12}}{2} \nonumber 
+  \end{eqnarray}
+
+\end{prop}}  \pause 
+
+
+\invisible<1-5>{\alert{Equivalently} $\leadsto$ maximum average validity implies:} \pause 
+\begin{itemize}
+\invisible<1-6>{\item[-] Coders agree: correct} \pause 
+\invisible<1-7>{\item[-] Coders disagree: at least one coder is correct} 
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Deriving Bounds on Proportions}
+
+\begin{ass} \label{a:max}
+\textbf{Wisdom of the Coders} Coder 1 and 2 have maximum validity given their agreement rate $a^{12}$
+\end{ass}
+
+\pause 
+\invisible<1>{\begin{ass} \label{a:constant}
+\textbf{Constant Validity Assumption} Coder $c$'s validity is constant across categories.  $\epsilon^{c} = \epsilon^{c}_{kk}$
+\end{ass}}
+
+
+\invisible<1-2>{Other structure:} \pause 
+\begin{eqnarray}
+\invisible<1-3>{\left(\boldsymbol{E}^{1}\right)^{-1}\bar{\boldsymbol{y}}^{1} & = & \bar{\boldsymbol{\pi}}  } \pause   \nonumber \\
+\invisible<1-4>{\left(\boldsymbol{E}^{2}\right)^{-1}\bar{\boldsymbol{y}}^{2} & = & \bar{\boldsymbol{\pi}}  } \pause \nonumber \\
+\invisible<1-5>{\left(\boldsymbol{E}^{1}\right)^{-1}\bar{\boldsymbol{y}}^{1} &= & \left(\boldsymbol{E}^{2}\right)^{-1}\bar{\boldsymbol{y}}^{2} \pause  \label{e:obv1}  }\\
+\invisible<1-6>{\left(\boldsymbol{E}^{1}\right)^{-1}\bar{\boldsymbol{y}}^{1} &\in & \text{(K-1)-dimensional simplex}  \label{e:obv2}   }
+\end{eqnarray} \pause
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Intervals for the Proportion in Each Category}
+
+Set of pairs of matrices $(\tilde{\boldsymbol{E}}^{1}, \tilde{\boldsymbol{E}}^{2})$ that satisfy maximum average validity, constant validity, and Equations \ref{e:obv1} and \ref{e:obv2} into set $\mathbb{E}$.  
+
+
+\pause 
+
+\begin{prop}
+\invisible<1>{Suppose coders have maximum average validity and constant validity.}\pause \invisible<1-2>{  Define $\bar{\pi}^{\text{int}}_{k}$ as}  \pause 
+
+\begin{eqnarray}
+\invisible<1-3>{\bar{\pi_{k}}^{\text{int}} & = & \left[ \min_{(\tilde{E}^{1}, \tilde{E}^{2}) \in \mathbb{E} } \left(\tilde{\boldsymbol{E}}^{c}\right)^{-1} \bar{\boldsymbol{y}}^{c}|_{k}, \max_{(\tilde{E}^{1}, \tilde{E}^{2}) \in \mathbb{E} } \left(\tilde{\boldsymbol{E}}^{c}\right)^{-1} \bar{\boldsymbol{y}}^{c}|_{k} \right] \nonumber } \pause 
+\end{eqnarray}
+\invisible<1-4>{Then $\bar{\pi}_{k} \in \bar{\pi_{k}}^{\text{int}}$.  } \pause 
+\end{prop}  
+
+
+\begin{itemize}
+\invisible<1-5>{\item[] Optimization not straightforward $\leadsto$ non-linear programming algorithm } 
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{frame}
+\frametitle{Example 1: Three Categories}
+
+
+Two coders: agree 70\% of speeches
+
+
+\begin{tabular}{l|ccc}
+\hline
+               & Category 1 & Category 2 & Category 3 \\
+\hline               
+Truth           &  0.7       &   0.25        &      0.05       \\
+\hline
+Naive Estimate &   0.63    &  0.25         &    0.13           \\        
+\hline
+\invisible<1>{Constant Validity}        &  \invisible<1>{[0.63, 0.88]  }   &    \invisible<1>{[0.00, 0.29]  }   &   \invisible<1>{[0.00,0.18]}            \\
+\invisible<1>{($\epsilon^{1}, \epsilon^{2} \in [0.65,1]$) } \pause     & &   & \\
+\hline
+ + \invisible<1-2>{Maximum Average Validity     }                                 &  \invisible<1-2>{[0.68, 0.77]  }       &  \invisible<1-2>{[0.09, 0.29]}       &  \invisible<1-2>{[0.00, 0.16]    } \pause        \\ 
+\hline
+\invisible<1-3>{+ Structure   }               &     \invisible<1-3>{[0.69, 0.73]  }    &  \invisible<1-3>{[0.21, 0.26]   }    & \invisible<1-3>{[0.02, 0.08]}           \\
+\hline
+\end{tabular}
+
+\begin{itemize}
+\invisible<1-4>{\item[] Naive estimate $\leadsto$ outside of bounds (Category 1 and 3)} \pause 
+\invisible<1-5>{\item[] High (acceptable) reliability $\neq$ unbiased inferences} 
+\end{itemize}
+
+
+\pause \pause 
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Simulation Evidence }
+
+\begin{center}
+
+\only<1-3>{\begin{tabular}{ccc}
+\hline\hline
+No. Coded & Bootstrap  & Prop. Contained  \\
+\hline
+\multicolumn{3}{c}{Maximum Validity}\\ 
+\hline
+100 & No  & 0.60    \\
+\invisible<1>{100 & Yes  &  0.93 }\\
+\hline 
+\invisible<1-2>{500 & No & 0.93 }\\
+\invisible<1-2>{500 & Yes  & 1 }\\
+\hline
+\invisible<1-2>{1000 & No & 0.99} \\
+\invisible<1-2>{1000 & Yes & 1}\\
+%1000 & No & Differential & 0.96\\
+\hline
+\invisible<1-2>{10000 & No  & 0.98}\\
+\invisible<1-2>{10000 & No  & 0.99 }\\
+\hline
+\invisible<1-2>{30000 & No   & 1 }\\
+\invisible<1-2>{30000 & No & 0.99}\\
+\hline
+\end{tabular}}
+\pause\pause 
+
+\only<4->{\begin{tabular}{lll}
+\hline\hline
+No. Coded & Bootstrap  & Prop. Contained  \\
+\hline
+\multicolumn{3}{c}{Relaxing Constant Validity} \\
+\hline
+10000 & No   & 0.86  \\
+\hline
+\multicolumn{3}{c}{Independent Coders} \\
+ \hline
+1000 & No  &  1 \\
+\hline 
+10000 & No   &  1    \\
+%10000 & No  & 0.65 \\
+\hline\hline
+\end{tabular}}
+
+\end{center}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\scalebox{0.5}{\includegraphics{IntervalWidth.pdf}}
+
+
+\end{frame}
+
+
+\begin{frame}
+Generalize:
+\begin{itemize}
+\item[1)] Number of coders
+\item[2)] Maximum Average Validity
+\item[3)] Constant Validity
+\end{itemize}
+
+\end{frame}
+
+
+
+% \begin{frame}
+
+% McCall (2013):\pause \invisible<1>{ examines origins of inequality attitudes. } \pause  \\
+% \invisible<1-2>{Examines incidence of news stories} \pause \\
+% \invisible<1-3>{112 Double coded stories, $a^{12} = 0.88 \leadsto$ \alert{One of few scholars able to provide data!!}} \pause 
+
+% \begin{tabular}{l|lll} 
+% \hline \hline
+% \invisible<1-4>{Method  & Irrelevant & Inequality & Economy/Changes } \pause \\
+% \hline 
+% \invisible<1-5>{Coder 1  &  0.46   &  0.12         &      0.41          } \pause  \\
+% \invisible<1-6>{Coder 2  &  0.47   &  0.11         &      0.42          } \pause  \\
+% \hline
+% \invisible<1-7>{Bounds, No Bootstrap &  [0.46, 0.49]      & [0.07, 0.12]        &    [0.41,0.44]   
+
+
+
+\begin{frame}
+\frametitle{Dawid-Skene (1979) Annonator Model}
+
+\Large 
+Computer science, NLP literature\pause\invisible<1>{ $\leadsto$ model annotator bias with mixture model} \pause 
+
+\begin{eqnarray}
+\invisible<1-2>{\pi_{d} & \sim &  \text{Multinomial}(1, \bar{\boldsymbol{\pi}}) \nonumber \\} \pause 
+\invisible<1-3>{y_{d}^{c} & \sim &  \text{Multinomial}(1, \boldsymbol{\epsilon^{c}}_{\pi_{d}}) \nonumber } \pause 
+\end{eqnarray}
+
+\invisible<1-4>{where $\boldsymbol{\epsilon^{c}}_{\pi_{d}}$ refers to the $\pi_{d}^{\text{th}}$ column of evaluation matrix\\} \pause 
+
+\invisible<1-5>{Problems: } \pause 
+\begin{itemize}
+\invisible<1-6>{\item[1)] Sensitive to starting values $\leadsto$ bias} \pause 
+\invisible<1-7>{\item[2)] Individual document labels $\leadsto$ sensitive to starting value} \pause 
+\invisible<1-8>{\item[3)] Systematic bias in inferred proportions}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Criticism and Vitriol (Grimmer, King, and Superti 2015a)}
+
+\large 
+
+\invisible<1>{\alert{Taunting} (Vitrol): attack other party's (or member's) competency  (Valence) }\\
+\invisible<1-2>{\alert{Taunting}: explict, public, and negative \alert{attacks}}
+
+\begin{itemize}
+\invisible<1-3>{\item[-] Sample 30,000 Senate Floor Speeches$\leadsto$ Taunting, Other Categories}
+\invisible<1-4>{\item[-] 10\% of speeches double coded, random pair of coders}
+\invisible<1-4>{\item[-] Relative high agreement rate ($\approx$ 85\%), with face validity}
+\invisible<1-5>{\item[-] Interested in average rate senators taunt in their floor speeches}
+\end{itemize} 
+
+\invisible<1-6>{Use extensions to apply algorithm to estimate Congress-to-Congress changes in taunting rate with non-overlapping coders} 
+
+\pause \pause \pause \pause \pause \pause% \pause \pause 
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Partisan Taunting}
+
+
+
+\scalebox{0.5}{\includegraphics{RegressionExample.pdf}}
+
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{The Problem of Intercoder Reliability}
+
+\Large 
+Our Solution:
+\begin{itemize}
+\item[-] Intervals that contain truth with probabilty 1
+\item[-] Extensions (in the paper) include:
+\begin{itemize}
+\item[-] \begin{large} Bounds on agreement with alloyed gold standard for machine learning methods \end{large}
+\item[-]\begin{large}  Multiple coders (wisdom of crowds results) \end{large}
+\item[-]\begin{large}  Proportions as inputs to other models \end{large}
+\end{itemize}
+\item[-] Extensions (outside paper) include:
+\begin{itemize}
+\item[-] Analysis of Computer Science prediction contests
+\end{itemize}
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{The Problem of Intercoder Reliability}
+
+\huge 
+\pause 
+\begin{itemize}
+\invisible<1>{\item[] \alert{Coder Error} $\leadsto$ Bias } \pause 
+\invisible<1-2>{\item[] \alert{Coder Error} $\leadsto$ Method to Address Bias} 
+\end{itemize}
+\end{frame}
+
+
+
+
+\end{document}
