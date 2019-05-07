@@ -1,0 +1,1106 @@
+\documentclass{beamer}
+
+%\usepackage[table]{xcolor}
+\mode<presentation> {
+  \usetheme{Boadilla}
+%  \usetheme{Pittsburgh}
+%\usefonttheme[2]{sans}
+\renewcommand{\familydefault}{cmss}
+%\usepackage{lmodern}
+%\usepackage[T1]{fontenc}
+%\usepackage{palatino}
+%\usepackage{cmbright}
+  \setbeamercovered{transparent}
+\useinnertheme{rectangles}
+}
+%\usepackage{normalem}{ulem}
+%\usepackage{colortbl, textcomp}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg= black}
+\definecolor{trial}{cmyk}{1,0,0, 0}
+\definecolor{trial2}{cmyk}{0.00,0,1, 0}
+\definecolor{darkgreen}{rgb}{0,.4, 0.1}
+\usepackage{array}
+\beamertemplatesolidbackgroundcolor{white}  \setbeamercolor{alerted
+text}{fg=red}
+
+\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}
+
+%\usepackage{color}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{colortbl}
+%\usepackage[usenames, dvipsnames]{color}
+%\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}c
+%\newcolumntype{Y}{\columncolor[cmyk]{0, 0, 1, 0}\raggedright}
+%\newcolumntype{C}{\columncolor[cmyk]{1, 0, 0, 0}\raggedright}
+%\newcolumntype{G}{\columncolor[rgb]{0, 1, 0}\raggedright}
+%\newcolumntype{R}{\columncolor[rgb]{1, 0, 0}\raggedright}
+
+%\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{Block}
+%$A = B$.
+%\end{beamerboxesrounded}}
+\renewcommand{\familydefault}{cmss}
+%\usepackage[all]{xy}
+
+\usepackage{tikz}
+\usepackage{lipsum}
+
+ \newenvironment{changemargin}[3]{%
+ \begin{list}{}{%
+ \setlength{\topsep}{0pt}%
+ \setlength{\leftmargin}{#1}%
+ \setlength{\rightmargin}{#2}%
+ \setlength{\topmargin}{#3}%
+ \setlength{\listparindent}{\parindent}%
+ \setlength{\itemindent}{\parindent}%
+ \setlength{\parsep}{\parskip}%
+ }%
+\item[]}{\end{list}}
+\usetikzlibrary{arrows}
+%\usepackage{palatino}
+%\usepackage{eulervm}
+\usecolortheme{lily}
+\newtheorem{ass}{Assumption}
+\newtheorem{com}{Comment}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+ \numberwithin{equation}{section}
+%\usepackage[latin1]{inputenc}
+\title[Text as Data] % (optional, nur bei langen Titeln nötig)
+{Text as Data}
+
+\author{Justin Grimmer}
+\institute[Stanford University]{Professor\\Department of Political Science \\  Stanford University}
+\vspace{0.3in}
+
+
+\date{May 7th, 2019}%[Big Data Workshop]
+%\date{\today}
+
+
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Three categories of documents}
+
+\alert{Hand labeled}
+\begin{itemize}
+\item[-] Training set (what we'll use to estimate model)
+\item[-] Validation set (what we'll use to assess model)
+\end{itemize}
+\alert{Unlabeled}
+\begin{itemize}
+\item[-] Test set (what we'll use the model to categorize)
+\end{itemize}
+
+\alert{Label more documents than necessary to train model}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Regression models}
+
+Suppose we have $N$ documents, with each document $i$ having label $y_{i} \in \{-1, 1\}\leadsto\{$not, credit claiming$\}$ \pause \\
+\invisible<1>{We represent each document $i$ is $\boldsymbol{x}_{i} = (x_{i1}, x_{i2}, \hdots, x_{iJ})$. } \pause  \\
+
+\begin{eqnarray}
+\invisible<1-2>{f(\boldsymbol{\beta}, \boldsymbol{X}, \boldsymbol{Y})  & = & \sum_{i=1}^{N}\left( y_{i} - \boldsymbol{\beta}^{'} \boldsymbol{x}_{i} \right)^{2}  \nonumber \\} \pause
+\invisible<1-3>{\widehat{\boldsymbol{\beta} } & = & \text{arg min}_{\boldsymbol{\beta}} \left\{\sum_{i=1}^{N}\left( y_{i} - \boldsymbol{\beta}^{'} \boldsymbol{x}_{i} \right)^{2}\right\} \nonumber \\} \pause
+ \invisible<1-4>{& = & \left( \boldsymbol{X}^{'}\boldsymbol{X}   \right)^{-1}\boldsymbol{X}^{'}\boldsymbol{Y} \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-5>{Problem: \\} \pause
+\begin{itemize}
+\invisible<1-6>{\item[-] $J$ will likely be large (perhaps $J> N$)} \pause
+\invisible<1-7>{\item[-] There many correlated variables} \pause
+\end{itemize}
+
+\invisible<1-8>{Predictions will be \alert{variable}}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Mean Square Error}
+Suppose $\theta$ is some value of the true parameter \pause \\
+\invisible<1>{Bias: \\} \pause
+\begin{eqnarray}
+\invisible<1-2>{\text{Bias} & = & E[\widehat{\theta} - \theta]\nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-3>{We may care about average distance from truth} \pause
+
+\begin{eqnarray}
+\invisible<1-4>{\text{E}[(\hat{\theta} - \theta)^{2}]}\pause\invisible<1-5>{ & = & E[\hat{\theta}^{2}]  - 2 \theta E[\hat{\theta}] + \theta^2 } \pause \nonumber \\
+ \invisible<1-6>{& = &  E[\hat{\theta}^{2}] - E[\hat{\theta}]^{2} + E[\hat{\theta}]^{2}- 2 \theta E[\hat{\theta}] + \theta^2} \pause  \nonumber \\
+\invisible<1-7>{& = & E[\hat{\theta}^{2}] - E[\hat{\theta}]^{2} +  (E[\widehat{\theta} - \theta])^2 } \pause \nonumber \\
+  \invisible<1-8>{& = & \text{Var}(\hat{\theta}) + \text{Bias}^{2} } \pause \nonumber
+\end{eqnarray}
+
+\invisible<1-9>{To reduce MSE, we are willing to induce bias to decrease variance$\leadsto$ methods that \alert{shrink} coefficeints toward zero}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Ridge Regression}
+
+Penalty for model complexity \pause
+
+\begin{eqnarray}
+\invisible<1>{f(\boldsymbol{\beta}, \boldsymbol{X}, \boldsymbol{Y} ) }\pause \invisible<1-2>{& = & \sum_{i=1}^{N} \left(y_{i} - \
+\beta_{0} - \sum_{j=1}^{J}\beta_{j} x_{ij}\right)^{2} } \pause \invisible<1-3>{ + \underbrace{\lambda \sum_{j=1}^{J} \beta_{j}^{2}}_{\text{Penalty}} } \pause \nonumber
+\end{eqnarray}
+
+\invisible<1-4>{where:} \pause
+
+\begin{itemize}
+\invisible<1-5>{\item[-] $\beta_{0}\leadsto$ intercept} \pause
+\invisible<1-6>{\item[-] $\lambda\leadsto$ penalty parameter} \pause
+\invisible<1-7>{\item[-] Standardized $\boldsymbol{X}$ (coefficients on same scale)}
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Ridge Regression$\leadsto$ Optimization}
+
+\begin{eqnarray}
+\boldsymbol{\beta}^{\text{Ridge}} & = & \text{arg min}_{\boldsymbol{\beta}} \left\{f(\boldsymbol{\beta}, \boldsymbol{X}, \boldsymbol{Y})\right\} \nonumber  \pause \\
+\invisible<1>{& = & \text{arg min}_{\boldsymbol{\beta}} \left\{\sum_{i=1}^{N} \left(y_{i} - \beta_{0} - \sum_{j=1}^{J}\beta_{j} x_{ij}\right)^{2}  + \lambda \sum_{j=1}^{J} \beta_{j}^{2}\right\} } \pause \nonumber \\
+ \invisible<1-2>{& = & \text{arg min}_{\boldsymbol{\beta}} \left\{ (\boldsymbol{Y} - \boldsymbol{X}^{'} \boldsymbol{\beta})^{'}(\boldsymbol{Y} - \boldsymbol{X}^{'} \boldsymbol{\beta}) + \lambda \boldsymbol{\beta}^{'}\boldsymbol{\beta} \right\} } \nonumber \\
+\invisible<1-3>{& = & \left(\boldsymbol{X}^{'}\boldsymbol{X} + \lambda \boldsymbol{I}_{J}     \right)^{-1} \boldsymbol{X}^{'} \boldsymbol{Y} } \nonumber
+\end{eqnarray}
+
+\invisible<1-2>{Demean the data and set $\beta_{0} = \bar{y} = \sum_{i=1}^{N} \frac{y_{i}}{N}$ }
+\pause \pause
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Ridge Regression$\leadsto$ Intuition (1)}
+
+
+Suppose $\boldsymbol{X}^{'}\boldsymbol{X} = \boldsymbol{I}_{J}$.  \pause
+\begin{eqnarray}
+\invisible<1>{\widehat{\boldsymbol{\beta}} & = & \left(\boldsymbol{X}^{'}\boldsymbol{X}\right)^{-1} \boldsymbol{X}^{'}\boldsymbol{Y} \nonumber} \pause  \\
+ \invisible<1-2>{& = & \boldsymbol{X}^{'}\boldsymbol{Y} } \pause \nonumber \\
+ \invisible<1-3>{\boldsymbol{\beta}^{\text{ridge}} & = & \left(\boldsymbol{X}^{'}\boldsymbol{X} + \lambda \boldsymbol{I}_{J}     \right)^{-1} \boldsymbol{X}^{'} \boldsymbol{Y} \nonumber } \pause \\
+  \invisible<1-4>{&= & \left(\boldsymbol{I}_{j} + \lambda \boldsymbol{I}_{j} \right)^{-1} \boldsymbol{X}^{'}\boldsymbol{Y} \nonumber} \pause  \\
+   \invisible<1-5>{&= & \left(\boldsymbol{I}_{j} + \lambda \boldsymbol{I}_{j} \right)^{-1} \widehat{\boldsymbol{\beta}} \nonumber } \pause \\
+ \invisible<1-6>{\beta_{j}^{\text{Ridge}} & =  & \frac{\widehat{\beta}_{j}}{1 + \lambda} \nonumber }
+\end{eqnarray}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Ridge Regression$\leadsto$ Intuition (2)}
+
+\begin{eqnarray}
+\boldsymbol{\beta}_{j} & \sim & \text{Normal}(0, \tau^{2}) \nonumber \\
+y_{i} & \sim & \text{Normal}(\beta_{0} + \boldsymbol{x}_{i}^{'}\boldsymbol{\beta}, \sigma^{2}) \nonumber
+\end{eqnarray}
+
+
+\pause
+\begin{small}
+\begin{eqnarray}
+\invisible<1>{p(\boldsymbol{\beta}| \boldsymbol{X}, \boldsymbol{Y})  & \propto & \prod_{j=1}^{J} p(\beta_{j}) \prod_{i=1}^{N} p(y_{i}| \boldsymbol{x}_{i}, \boldsymbol{\beta}) \nonumber} \pause  \\
+\invisible<1-2>{& \propto &   \prod_{j=1}^{J}\frac{1}{\sqrt{2 \pi} \tau } \exp\left( - \frac{\beta_{j}^2}{2 \tau^2 }  \right) \prod_{i=1}^{N} \frac{1}{\sqrt{2\pi} \sigma} \exp\left( - \frac{ (y_{i} - \beta_{0} - \boldsymbol{x}^{'}_{i} \boldsymbol{\beta})^{2}  }{2 \sigma^2 }   \right) } \nonumber
+\end{eqnarray}
+\end{small}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Ridge Regression$\leadsto$ Intuition (2)}
+
+\begin{eqnarray}
+\log p(\boldsymbol{\beta}| \boldsymbol{X}, \boldsymbol{Y}) & = &  - \sum_{j=1}^{J} \frac{\beta_{j}^2}{2 \tau^2 } - \sum_{i=1}^{N} \frac{ (y_{i} - \beta_{0} - \boldsymbol{x}^{'} \boldsymbol{\beta})^{2}  }{2 \sigma^2 } \nonumber \pause \\
+\invisible<1>{- 2 \sigma^2\log p(\boldsymbol{\beta}| \boldsymbol{X}, \boldsymbol{Y}) & = &   \sum_{i=1}^{N} (y_{i} - \beta_{0} - \boldsymbol{x}^{'} \boldsymbol{\beta})^{2} + \sum_{j=1}^{J} \frac{\sigma^2}{\tau^2} \beta_{j}^2  } \pause  \nonumber
+\end{eqnarray}
+
+\invisible<1-2>{where:} \pause
+\begin{itemize}
+\invisible<1-3>{\item[-] $\lambda = \frac{\sigma^2}{\tau^2} $}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Ridge Regression $\leadsto$ Intuition (3) }
+
+\begin{defn}
+Suppose $\boldsymbol{X}$ is an $N \times J$ matrix.  Then $\boldsymbol{X}$ can be written as:
+
+\begin{eqnarray}
+\boldsymbol{X} & =& \underbrace{\boldsymbol{U}}_{N \times N} \underbrace{\boldsymbol{S}}_{N \times J} \underbrace{\boldsymbol{V}^{'}}_{J \times J} \nonumber
+\end{eqnarray}
+
+Where:
+\begin{eqnarray}
+\boldsymbol{U}^{'}\boldsymbol{U} & = & \boldsymbol{I}_{N} \nonumber \\
+\boldsymbol{V}^{'}\boldsymbol{V} & = & \boldsymbol{V}\boldsymbol{V}^{'} = \boldsymbol{I}_{J} \nonumber
+\end{eqnarray}
+$\boldsymbol{S}$ contains $\min(N, J)$ singular values, $\sqrt{\lambda_{j}}\geq 0$ down the diagonal and then 0's for the remaining entries
+\end{defn}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Ridge Regression $\leadsto$ Intuition (3) }
+
+\begin{small}
+Recall: PCA:
+\begin{eqnarray}
+\frac{1}{N} \boldsymbol{X}^{'}\boldsymbol{X} = \underbrace{\boldsymbol{W}}_{\text{eigenvectors}} \begin{pmatrix} \lambda_{1} & 0 & \hdots & 0 \\
+      0     & \lambda_{2} & \hdots & 0 \\
+      \vdots  & \vdots     & \ddots & \vdots \\
+      0       & 0     & \hdots   & \lambda_{J}\\
+      \end{pmatrix}
+      \underbrace{ \boldsymbol{W}^{'}}_{\text{eigenvectors}}   \nonumber
+      \end{eqnarray} \pause
+
+\invisible<1>{Using SVD:} \pause
+
+\begin{eqnarray}
+\invisible<1-2>{\frac{1}{N} \boldsymbol{X}^{'}\boldsymbol{X} & = & \boldsymbol{V} \boldsymbol{S}^{'}\underbrace{\left(\boldsymbol{U}^{'}\boldsymbol{U}\right)}_{\boldsymbol{I}_{J}} \boldsymbol{S} \boldsymbol{V}^{'} \nonumber } \pause \\
+\invisible<1-3>{&  = & \frac{1}{N} \boldsymbol{V} \boldsymbol{S}^{'} \boldsymbol{S} \boldsymbol{V}^{'} \nonumber } \pause \\
+\invisible<1-4>{& = &   \underbrace{\boldsymbol{V}}_{\text{eigenvectors}} \begin{pmatrix} \lambda_{1} & 0 & \hdots & 0 \\
+      0     & \lambda_{2} & \hdots & 0 \\
+      \vdots  & \vdots     & \ddots & \vdots \\
+      0       & 0     & \hdots   & \lambda_{J}\\
+      \end{pmatrix} \underbrace{\boldsymbol{V}^{'}}_{\text{eigenvectors}} \nonumber }
+\end{eqnarray}
+
+\end{small}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Ridge Regression $\leadsto$ Intuition (3) }
+\begin{footnotesize}
+We can write the predicted values for a regular regression as
+\begin{eqnarray}
+\hat{Y} & = & \boldsymbol{X} \hat{\boldsymbol{\beta}} \nonumber \\
+    & = & \boldsymbol{X} \left(\boldsymbol{X}^{'}\boldsymbol{X} \right)^{-1}\boldsymbol{X}^{'} \boldsymbol{Y} \nonumber \\
+    & = & \boldsymbol{U} \boldsymbol{U}^{'}\boldsymbol{Y}  = \sum_{j=1}^{J} \boldsymbol{u}_{j} \boldsymbol{u}_{j}^{'} \boldsymbol{Y} \nonumber
+\end{eqnarray}
+\pause
+
+\invisible<1>{We can write $\boldsymbol{\beta}^{\text{ridge}}$ as} \pause
+\begin{eqnarray}
+\invisible<1-2>{\hat{Y}^{\text{ridge}}& = & \boldsymbol{X}\left(\boldsymbol{X}^{'}\boldsymbol{X} + \lambda \boldsymbol{I}_{J}    \right)^{-1}\boldsymbol{X}^{'}\boldsymbol{Y} \nonumber } \pause \\
+\invisible<1-3>{& = & \boldsymbol{U} \tilde{\boldsymbol{S}} \boldsymbol{U}^{'}\boldsymbol{Y} \nonumber }
+\end{eqnarray}
+
+
+
+\invisible<1-3>{Where
+\begin{eqnarray}
+\tilde{\boldsymbol{S}} &= & \left[\boldsymbol{S}(\boldsymbol{S}^{'}\boldsymbol{S} + \lambda \boldsymbol{I}_{J})^{-1} \boldsymbol{S} \right] \nonumber
+\end{eqnarray}}
+
+\pause
+
+\invisible<1-4>{Which we can write as:
+\begin{eqnarray}
+\hat{Y}^{\text{ridge}}& = & \sum_{j=1}^{J} \boldsymbol{u}_{j} \frac{\lambda_{j}}{\lambda_{j} + \lambda} \boldsymbol{u}_{j}^{'} \boldsymbol{Y} \nonumber
+\end{eqnarray}}
+
+
+\end{footnotesize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Degrees of Freedom for Ridge}
+
+We will say that the degrees of freedom for Ridge regression with penalty $\lambda$ is
+\begin{eqnarray}
+\text{dof}(\lambda ) & = & \sum_{j=1}^{J} \frac{\lambda_{j}}{\lambda_{j} + \lambda} \nonumber
+\end{eqnarray}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Lasso Regression Objective Function}
+
+Different Penalty for Model Complexity
+
+\begin{eqnarray}
+f(\boldsymbol{\beta}, \boldsymbol{X}, \boldsymbol{Y} ) & = & \sum_{i=1}^{N} \left(y_{i} - \beta_{0} - \sum_{j=1}^{J} \beta_{j} x_{ij}  \right)^{2} + \lambda \sum_{j=1}^{J} \underbrace{|\beta_{j}|}_{\text{Penalty}} \nonumber \pause
+\end{eqnarray}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Lasso Regression Optimization}
+
+\begin{defn}
+\alert{Coordinate Descent Algorithms: } \\
+Consider $g:\Re^{J} \rightarrow \Re$.  Our goal is to find $\boldsymbol{x}^{*} \in \Re^{J}$ such that $g(\boldsymbol{x}^{*}) \leq g(\boldsymbol{x})$ for all $\boldsymbol{x} \in \Re$. \\
+
+To find $\boldsymbol{x}^{*}$:
+
+
+Until convergence: for each iteration $t$ and each coordinate $j$
+
+\begin{eqnarray}
+x_{j}^{t + 1} & = & \text{arg min}_{x_{j} \in \Re}g(x_{1}^{t +1}, x_{2}^{t + 1}, \hdots, x_{j-1}^{t+1}, x_{j}, x_{j+1}^{t}, \hdots, x_{J}^{t}) \nonumber
+\end{eqnarray}
+
+\end{defn}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Lasso Regression Optimization: Coordinate Descent}
+
+
+\begin{eqnarray}
+ \tilde{f}(\boldsymbol{\beta}, \boldsymbol{X}, \boldsymbol{Y} ) & = & \frac{1}{2N} \sum_{i=1}^{N} \left(y_{i} - \beta_{0} - \sum_{j=1}^{J} \beta_{j} x_{ij}  \right)^{2} + \lambda \sum_{j=1}^{J} |\beta_{j}| \nonumber \pause
+\end{eqnarray}
+
+\begin{itemize}
+\invisible<1>{\item[-] \alert{Case 1}: If $\beta_{j} = 0 \leadsto $ not differentiable. But $\beta_{j} = 0$} \pause
+\invisible<1-2>{\item[-] \alert{Case 2}: If $ \beta_{j}>(<) 0 \leadsto$ differentiable $\leadsto$ differentiate and solve for $\beta_{j}$ } \pause
+\end{itemize}
+
+\invisible<1-3>{Define $\tilde{y}_{i}^{j} = \beta_{0} + \sum_{l \neq j} x_{il} \beta_{l} $ \\} \pause
+
+\invisible<1-4>{$r^{j} \equiv  \frac{1}{N} \sum_{i=1}^{N} x_{ij}(y_{i} - \tilde{y}_{i}^{j} )$} \pause
+
+
+\invisible<1-5>{Update step for $\beta_{j}$ is } \pause
+
+\begin{eqnarray}
+\invisible<1-6>{\beta_{j} & \leftarrow  & \text{sign}(r^{j})\text{max}(|r^{j}| - \lambda, 0 ) \nonumber }
+\end{eqnarray}
+
+
+
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+\frametitle{Lasso Regression$\leadsto$ Intuition 1, Soft Thresholding}
+
+Suppose again $\boldsymbol{X}^{'}\boldsymbol{X} = \boldsymbol{I}_{J}$ \pause
+
+\begin{eqnarray}
+\invisible<1>{f(\boldsymbol{\beta}, \boldsymbol{X}, \boldsymbol{Y} ) & = & \left(Y - \boldsymbol{X}\boldsymbol{\beta} \right)^{'}\left(Y - \boldsymbol{X}\boldsymbol{\beta} \right)  + \lambda \sum_{j=1}^{J}| \beta_{j}| \nonumber \\} \pause
+ \invisible<1-2>{& = & - 2 \boldsymbol{X}^{'}\boldsymbol{Y} \boldsymbol{\beta} + \boldsymbol{\beta}^{'}\boldsymbol{\beta} + \lambda  \sum_{j=1}^{J}| \beta_{j}| } \pause  \nonumber
+\end{eqnarray}
+
+\invisible<1-3>{The coefficient is } \pause
+\begin{eqnarray}
+\invisible<1-4>{\beta_{j}^{\text{LASSO}} & = & \text{sign}\left(\widehat{\beta}_{j}\right) \left(|\widehat{\beta}_{j}| - \lambda  \right)_{+} \nonumber } \pause
+\end{eqnarray}
+
+\begin{itemize}
+\invisible<1-5>{\item[-] $\text{sign}(\cdot) \leadsto$ $1$ or $-1$} \pause
+\invisible<1-6>{\item[-] $\left( |\widehat{\beta}_{j}| - \lambda \right)_{+} = \text{max}( |\widehat{\beta}_{j}| - \lambda, 0 )$}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Lasso Regression$\leadsto$ Intuition 1, Soft Thresholding}
+
+
+Compare soft assignment \pause
+\begin{eqnarray}
+\invisible<1>{\beta_{j}^{\text{LASSO}} & = & \text{sign}\left(\widehat{\beta}_{j}\right) \left(|\widehat{\beta}_{j}| - \lambda  \right)_{+} } \pause \nonumber
+\end{eqnarray}
+
+\invisible<1-2>{With hard assignment, selecting $M$ biggest components} \pause
+\begin{eqnarray}
+\invisible<1-3>{\beta_{j}^{\text{subset}} & = & \widehat{\beta}_{j} \cdot I\left(|\widehat{\beta}_{j}| \geq | \widehat{\beta}_{(M)} |     \right) \nonumber } \pause
+\end{eqnarray}
+
+
+\invisible<1-4>{Intuition 2: Prior on coefficients $\leadsto$ Laplace ``The Bayesian LASSO" } \pause
+
+\invisible<1-5>{Why does LASSO induce sparsity?}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Comparing Ridge and LASSO}
+
+
+\only<1>{\scalebox{0.8}{\includegraphics{RidgeExamp1.pdf}}}
+\only<2>{\scalebox{0.8}{\includegraphics{LassoExamp1.pdf}}}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Comparing Ridge and LASSO}
+
+Contrast $\beta = (\frac{1}{\sqrt{2}},\frac{1}{\sqrt{2}} )$ and $\tilde{\beta} = (1, 0)$ \pause
+
+\invisible<1>{Under ridge:}\pause
+\begin{eqnarray}
+\invisible<1-2>{\sum_{j=1}^{2} \beta_{j}^{2} & = & \frac{1}{2} + \frac{1}{2} = 1\nonumber \\} \pause
+\invisible<1-3>{\sum_{j=1}^{2} \tilde{\beta}_{j}^{2}  & = &  1 + 0 = 1 } \pause \nonumber
+\end{eqnarray}
+
+\invisible<1-4>{Under LASSO } \pause
+\begin{eqnarray}
+\invisible<1-5>{\sum_{j=1}^{2} |\beta_{j}| & = & \frac{1}{\sqrt{2}} + \frac{1}{\sqrt{2}}  = \sqrt{2} \nonumber \\} \pause
+\invisible<1-6>{\sum_{j=1}^{2} |\tilde{\beta}_{j}| & = & 1 +0 = 1 \nonumber }
+\end{eqnarray}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Ridge and LASSO: The Elastic-Net}
+
+Combining the two criteria $\leadsto$ Elastic-Net
+
+\begin{small}
+\begin{eqnarray}
+f(\boldsymbol{\beta}, \boldsymbol{X}, \boldsymbol{Y} ) & = & \frac{1}{2N} \sum_{i=1}^{N}\left(y_{i} - \beta_{0} - \sum_{j=1}^{J} \beta_{j} x_{ij} \right)^2 + \lambda \sum_{j=1}^{J} \left(\frac{1}{2} (1-\alpha)\beta_{j}^2 + \alpha|\beta_{j}|    \right) \nonumber
+\end{eqnarray}
+\end{small}
+
+\pause
+
+\invisible<1>{The new update step (for coordinate descent:)} \pause
+
+\invisible<1-2>{\begin{eqnarray}
+\beta_{j} & \leftarrow & \frac{\text{sign}(r^{j})\text{max}(|r^{j}| - \lambda \alpha, 0)}{1 + \lambda (1- \alpha) } \nonumber
+\end{eqnarray}
+}
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Selecting $\lambda$}
+
+How do we determine $\lambda$? $\leadsto$ Cross validation  \pause \\
+\invisible<1>{Applying models gives score (probability) of document belong to class$\leadsto$ threshold to classify} \pause \\
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Loss Functions and Model Complexity}
+
+
+Suppose observations $i$ have dependent variables $Y_{i}$ and covariates $\boldsymbol{x}_{i} = (x_{i1}, x_{i2}, \hdots, x_{iP})$. \pause   \\
+\invisible<1>{Assume:
+\begin{eqnarray}
+Y_{i} & \sim   & \text{Distribution}(\mu_{i}, \phi) \nonumber \\
+\mu_{i} & = & f(\boldsymbol{\beta}, \boldsymbol{x}_{i})   \nonumber
+\end{eqnarray}
+
+Use MLE to obtain $\hat{\boldsymbol{\beta}}$.  \\} \pause
+\invisible<1-2>{Potential \alert{loss} functions:} \pause
+\begin{eqnarray}
+\invisible<1-3>{L\left(Y_{i}, f(\hat{\boldsymbol{\beta}}, \boldsymbol{x}_{i} )\right)}\pause \invisible<1-4>{ & = & \left(Y_{i} - f(\hat{\boldsymbol{\beta}}, \boldsymbol{x}_{i} )\right)^{2} \nonumber \\} \pause
+\invisible<1-5>{& = & \left| Y_{i} - f(\hat{\boldsymbol{\beta}}, \boldsymbol{x}_{i} )\right| \nonumber \\} \pause
+\invisible<1-6>{& = & I\left(Y_{i}  = I(f(\hat{\boldsymbol{\beta}}, \boldsymbol{x}_{i})> \tau)\right) \nonumber }
+\end{eqnarray}
+
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Training and Test Sets}
+
+
+The useful ``fiction" of training and test sets: \pause
+
+
+\begin{itemize}
+\invisible<1>{\item[-] Training set: data set used to fit the model} \pause
+\invisible<1-2>{\item[-] Test set: data used to evaluate fit of the model} \pause
+\end{itemize}
+
+\invisible<1-3>{Even if no division, useful to think about \alert{systematic} components of data.  }
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Loss Functions and Model Complexity}
+
+
+Suppose that we have: \pause
+\begin{itemize}
+\invisible<1>{\item[-] Training sets, $\mathcal{T}$, with $|\mathcal{T}| = N_{\text{train}}$ } \pause
+\invisible<1-2>{\item[-] Test sets, $\mathcal{O}$ with $| \mathcal{O}| = N_{\text{test}}$} \pause
+\end{itemize}
+
+\invisible<1-3>{Training (in-sample) error is:} \pause
+
+\begin{eqnarray}
+\invisible<1-4>{\text{Error}_{\text{in}} }  \pause & = &\invisible<1-5>{ \sum_{i \in \mathcal{T}} \frac{1}{N_{\text{train}}} L(Y_{i} , f(\hat{\boldsymbol{\beta}}, \boldsymbol{x}_{i} )) \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-6>{We'd like to estimate out of sample performance with } \pause
+\begin{eqnarray}
+\invisible<1-7>{\text{Error}_{\text{out}} & = & \text{E}[L(\boldsymbol{Y}_{i \in \mathcal{O}} , f(\hat{\boldsymbol{\beta}} , \boldsymbol{x}_{i \in \mathcal{O}}))| \mathcal{T} ] \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-8>{where the expectation is taken over \alert{samples} for test sets and supposes we have a training set.   } \pause
+
+\begin{eqnarray}
+\invisible<1-9>{\text{Error} & = & \text{E}\left[\text{E}[L(\boldsymbol{Y} , f(\hat{\boldsymbol{\beta}} , \boldsymbol{X}))| \mathcal{T} ] \right] \nonumber }
+\end{eqnarray}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Loss Functions and Model Complexity}
+
+Suppose $Y_{i} = f(\boldsymbol{x}_{i} ) + \epsilon_{i}$ \pause  \\
+\invisible<1>{Where $E[\epsilon_{i} ] = 0 $ } \pause \\
+\invisible<1-2>{$\text{var}(\epsilon_{i}) = \sigma^{2}_{\epsilon} $} \pause \\
+\invisible<1-3>{Define $f(\hat{\boldsymbol{\beta}}, \boldsymbol{x} ) = \hat{f}(\boldsymbol{x})$ } \pause \\
+\invisible<1-4>{With squared error loss: } \pause
+\begin{eqnarray}
+\invisible<1-5>{\text{Error}(\boldsymbol{x}_{0}) & = & \text{E}[(Y_{i} - \hat{f}(\boldsymbol{x}_{i}))^{2} | \boldsymbol{x}_{i} = \boldsymbol{x}_{0} ]  \nonumber \\} \pause
+\invisible<1-6>{& = & \text{E}[(f(\boldsymbol{x}_{i}) + \epsilon_{i}  - \hat{f}(\boldsymbol{x}_{i}))^{2} | \boldsymbol{x}_{i} = \boldsymbol{x}_{0} ]  \nonumber \\} \pause
+\invisible<1-7>{& = & \sigma^{2}_{\epsilon} + \left[ f(\boldsymbol{x}_{0}) - \text{E}[\hat{f}(\boldsymbol{x}_{0})]\right]^{2}  + E[\left(\hat{f}(\boldsymbol{x}_{0} ) - E[\hat{f}(\boldsymbol{x}_{0} )]\right)^{2} ] \nonumber \\} \pause
+\invisible<1-8>{& = & \text{Irreducible error} + \text{Bias}^{2} + \text{Variance} \nonumber }
+\end{eqnarray}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Probit Regression (for motivational purposes)}
+
+
+Suppose:
+\begin{eqnarray}
+Y_{i} & \sim & \text{Bernoulli}(\pi_{i}) \nonumber \\
+\pi_{i} & = & \Phi(\boldsymbol{\beta}^{'}\boldsymbol{x}_{i}) \nonumber
+\end{eqnarray}
+
+where $\Phi(\cdot)$ is the cumulative normal distribution.\\
+Implies log-likelihood
+\begin{eqnarray}
+\log \text{L}(\boldsymbol{\beta}| \boldsymbol{X} , \boldsymbol{Y}) &  = & \sum_{i=1}^{N} \left[ Y_{i} \log \Phi(\boldsymbol{\beta}^{'}\boldsymbol{x}_{i} )   + (1-Y_{i}) \log (1-  \Phi(\boldsymbol{\beta}^{'}\boldsymbol{x}_{i} )) \right] \nonumber
+\end{eqnarray}
+
+Log-likelihood is a \alert{loss function}$\leadsto$ overly optimistic: improves with more parameters
+
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{How Do We Build A Model?}
+
+
+There are many ways to fit models \\
+And many choices made when performing model fit\\
+How do we choose? \pause \\
+
+\invisible<1>{Bad way to choose:}\pause \invisible<1-2>{ within sample model fit (HTF Figure 7.1) }
+
+\begin{center}
+\scalebox{0.5}{\includegraphics{TestTrain.png}}
+\end{center}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{How Do We Build A Model?}
+
+\begin{center}
+\scalebox{0.325}{\includegraphics{TestTrain.png}}
+\end{center}
+
+
+Model \alert{overfit}$\leadsto$ in sample error is \alert{optimistic}: \pause
+\begin{itemize}
+\invisible<1>{\item[-] Some model complexity captures \alert{systematic} features of the data} \pause
+\invisible<1-2>{\item[-] Characteristics found in both training and test set} \pause
+\invisible<1-3>{\item[-] Reduces error in both training and test set } \pause
+\invisible<1-4>{\item[-] Additional model complexity: \alert{idiosyncratic} features of the training set} \pause
+\invisible<1-5>{\item[-] Reduces error in training set, increases error in test set}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{How Do We Choose Covariates?}
+
+Best model \alert{depends on task}
+
+\begin{itemize}
+\item[-] Causal inference observational study: make treatment assignment ignorable
+\item[-] Prediction: improve predictive performance
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Stepwise Regression}
+Suppose we have $P$ covariates. \\
+$2^{P}$ potential models\\
+
+\pause
+\invisible<1>{Stepwise procedures} \pause
+\begin{itemize}
+\invisible<1-2>{\item[1)] Forward selection
+\begin{itemize}
+\item[a)] No variables in model.
+\item[b)] Check all variables p-value if include, include lowest p-value
+\item[c)] Repeat until included p-value is above some threshold} \pause
+\end{itemize}
+\invisible<1-3>{\item[2)] Backward elimination
+\begin{itemize}
+\item[a)] Fit model with all variables (if possible)
+\item[b)] Remove variable with largest p-value
+\item[c)] Repeat until potentially excluded p-value is below some threshold} \pause
+\end{itemize}
+\end{itemize}
+
+\invisible<1-4>{Problematic:
+\begin{itemize}
+\item[1)] Not optimal model selection (path dependent)
+\item[2)] P-value $\neq$ objective of model}
+\end{itemize}
+
+
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Analytic Solutions}
+
+Approximate optimism and compensate in loss function.  \pause \\
+
+\invisible<1>{Akaike Information Criterion (AIC) $\leadsto$ Minimize\\} \pause
+\invisible<1-2>{As $N \rightarrow \infty $ } \pause
+
+\begin{eqnarray}
+\invisible<1-3>{- 2 \text{E} [ \log P_{\hat{\boldsymbol{\beta}}} (Y)] & = & -2\left[ \text{E} [\log \text{L}(\hat{\boldsymbol{\beta}}| \boldsymbol{X} , \boldsymbol{Y})]  -  d \right] \nonumber \\} \pause
+\invisible<1-4>{\text{AIC} & = & - 2 \left[\log \text{L}(\hat{\boldsymbol{\beta}}| \boldsymbol{X} , \boldsymbol{Y}) - d \right] \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-5>{where $d$ is the number of parameters in the model} \pause
+
+\begin{itemize}
+\invisible<1-6>{\item[-] Intuition: balances model fit with penalty for complexity} \pause
+\invisible<1-7>{\item[-] Derived from method to estimate \alert{optimism} in likelihood based models} \pause
+\invisible<1-8>{\item[-] Derived from a method to compute similarity between estimated model and true model (under assumptions of course)} \pause
+\invisible<1-9>{\item[-] Can be extended to general models, though requires estimate of irresolvable error}
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Analytic Solutions}
+
+Bayesian Information Criterion (BIC) [Schwarz Criterion] \pause
+
+\begin{eqnarray}
+\invisible<1>{\text{BIC} &  = &  - 2 \log \text{L}(\widehat{\boldsymbol{\beta}}| \boldsymbol{X} , \boldsymbol{Y}) + (\log N) d \nonumber } \pause
+\end{eqnarray}
+
+
+\invisible<1-2>{where $d$ is again the effective number of parameters} \pause
+\begin{itemize}
+\invisible<1-3>{\item[-] Intuition: balances model fit with penalty for complexity} \pause
+\invisible<1-4>{\item[-] Derived from \alert{Bayesian} approach to model selection} \pause
+\invisible<1-5>{\item[-] Approximation to Bayes' factor} \pause
+\invisible<1-6>{\item[-] \alert{Penalizes more heavily than AIC}}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{BIC or AIC?}
+
+\begin{center}
+\only<1>{\scalebox{0.55}{\includegraphics{Bayes1.pdf}}}\only<2>{\scalebox{0.55}{\includegraphics{Bayes2.pdf}}}\only<3>{\scalebox{0.55}{\includegraphics{Bayes3.pdf}}}\only<4>{\scalebox{0.55}{\includegraphics{Bayes4.pdf}}}\only<5>{\scalebox{0.55}{\includegraphics{Bayes5.pdf}}}\only<6>{\scalebox{0.55}{\includegraphics{Bayes6.pdf}}}\only<7>{\scalebox{0.55}{\includegraphics{Bayes7.pdf}}}\only<8>{\scalebox{0.55}{\includegraphics{Bayes8.pdf}}}\only<9>{\scalebox{0.55}{\includegraphics{Bayes9.pdf}}}\only<10>{\scalebox{0.55}{\includegraphics{Bayes10.pdf}}}\only<11>{\scalebox{0.55}{\includegraphics{AIC1.pdf}}}\only<12>{\scalebox{0.55}{\includegraphics{AIC2.pdf}}}\only<13>{\scalebox{0.55}{\includegraphics{AIC3.pdf}}}\only<14>{\scalebox{0.55}{\includegraphics{AIC4.pdf}}}\only<15>{\scalebox{0.55}{\includegraphics{AIC5.pdf}}}\only<16>{\scalebox{0.55}{\includegraphics{AIC6.pdf}}}\only<17>{\scalebox{0.55}{\includegraphics{AIC7.pdf}}}\only<18>{\scalebox{0.55}{\includegraphics{AIC8.pdf}}}\only<19>{\scalebox{0.55}{\includegraphics{AIC9.pdf}}}\only<20>{\scalebox{0.55}{\includegraphics{AIC10.pdf}}}
+\end{center}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{BIC or AIC?}
+
+\begin{itemize}
+\item[-] BIC
+\begin{itemize}
+\item[-] Asymptotically consistent \alert{if true model is in choice set}
+\item[-] As $N\rightarrow \infty$ will choose correct model with probability 1 (if available)
+\item[-] Small samples$\leadsto$ overpenalize
+\end{itemize}
+\item[-] AIC
+\begin{itemize}
+\item[-] No asymptotic guarantees $\leadsto$ derivation doesn't require truth in set.  (KL-criteria)
+\item[-] In large samples$\leadsto$ favors complexity
+\item[-] Small samples$\leadsto$ avoids over penalization
+\end{itemize}
+\end{itemize}
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{How Do We Select A Model?}
+
+Analytic statistics for selection, include penalty for complexity \pause
+\begin{itemize}
+\invisible<1>{\item[-] AIC : Akaka Information Criterion} \pause
+\invisible<1-2>{\item[-] BIC: Bayesian Information Criterion} \pause
+\invisible<1-3>{\item[-] DIC: Deviance Information Criterion} \pause
+\end{itemize}
+
+\invisible<1-4>{Can work well, but...} \pause
+\begin{itemize}
+\invisible<1-5>{\item[-] Rely on specific loss function} \pause
+\invisible<1-6>{\item[-] Rely on asymptotic argument} \pause
+\invisible<1-7>{\item[-] Rely on estimate of number of parameters} \pause
+\invisible<1-8>{\item[-] \alert{Extremely model dependent} } \pause
+\end{itemize}
+
+\invisible<1-9>{Need: general tool for evaluating models, \alert{replicates} decision problem}
+
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+\frametitle{Cross-Validation: Some Intuition}
+
+Optimal division of data for prediction: \pause
+\begin{itemize}
+\invisible<1>{\item[-] Train: build model} \pause
+\invisible<1-2>{\item[-] Validation: assess model} \pause
+\invisible<1-3>{\item[-] Test: predict remaining data} \pause
+\end{itemize}
+
+\invisible<1-4>{K-fold Cross-validation idea: create many training and test sets.  } \pause
+\begin{itemize}
+\invisible<1-5>{\item[-] Idea: use observations both in training and test sets} \pause
+\invisible<1-6>{\item[-] Each step: use held out data to evaluate performance} \pause
+\invisible<1-7>{\item[-] \alert{Avoid overfitting} and have context specific penalty } \pause
+\end{itemize}
+
+\invisible<1-8>{Estimates:}
+\begin{eqnarray}
+\invisible<1-8>{\text{Error} & = & \text{E}\left[\text{E}[L(\boldsymbol{Y} , f(\hat{\boldsymbol{\beta}} , \boldsymbol{X}))| \mathcal{T} ] \right] \nonumber }
+\end{eqnarray}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Cross-Validation: A How To Guide}
+
+Process: \pause
+\begin{itemize}
+\invisible<1>{\item[-]  Randomly partition data into K groups. } \pause
+\invisible<1-2>{\item[] (Group 1, Group 2, Group3, $\hdots$, Group K ) } \pause
+\invisible<1-3>{\item[-]  Rotate through groups as follows} \pause
+\end{itemize}
+\begin{tabular}{lll}
+\invisible<1-4>{Step & Training & Validation (``Test") \\} \pause
+\invisible<1-5>{1 & Group2, Group3, Group 4, $\hdots$, Group K & Group 1\\} \pause
+\invisible<1-6>{2 & Group 1, Group3, Group 4, $\hdots$, Group K & Group 2 \\} \pause
+\invisible<1-7>{3 & Group 1, Group 2, Group 4, $\hdots$, Group K & Group 3 \\} \pause
+\invisible<1-8>{$\vdots$ & $\vdots$ & $\vdots$ \\} \pause
+\invisible<1-9>{K & Group 1, Group 2, Group 3, $\hdots$, Group K - 1 & Group K }
+\end{tabular}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Cross-Validation: A How To Guide}
+\footnotesize
+\begin{tabular}{lll}
+Step & Training & Validation (``Test") \\
+1 & Group2, Group3, Group 4, $\hdots$, Group K & Group 1\\
+2 & Group 1, Group3, Group 4, $\hdots$, Group K & Group 2 \\
+3 & Group 1, Group 2, Group 4, $\hdots$, Group K & Group 3 \\
+$\vdots$ & $\vdots$ & $\vdots$ \\
+K & Group 1, Group 2, Group 3, $\hdots$, Group K - 1 & Group K
+\end{tabular}
+\normalsize
+ \pause \invisible<1>{Strategy: } \pause
+\begin{itemize}
+\invisible<1-2>{\item[-] Divide data into $K$ groups} \pause
+\invisible<1-3>{\item[-] Train data on $K-1$ groups.  Estimate $\hat{f}^{-K}(\boldsymbol{\beta}, \boldsymbol{X})$  } \pause
+\invisible<1-4>{\item[-] Predict values for $K^{\text{th}}$} \pause
+\invisible<1-5>{\item[-] Summarize performance with loss function: $L(\boldsymbol{Y}_i , \hat{f}^{-k} (\boldsymbol{\beta}, \boldsymbol{X})  ) $} \pause
+\begin{itemize}
+\invisible<1-6>{\item[-] Mean square error, Absolute error, Prediction error, ...} \pause
+\end{itemize}
+\invisible<1-7>{\item[] CV(ind. classification)  = $ \frac{1}{N}\sum_{i=1}^{N} L(\boldsymbol{Y}_i , f^{-k} (\boldsymbol{\beta}, \boldsymbol{X}_i)  ) $} \pause
+\invisible<1-8>{\item[] CV(proportions)   =  $\frac{1}{K} \sum_{j=1}^{K} \text{Mean Square Error Proportions from Group j}$} \pause
+\invisible<1-9>{\item[-] Final choice: model with highest $CV$ score}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{How Do We Select $K$? (HTF, Section 7.10)  }
+
+Common values of $K$
+\begin{itemize}
+\item[-] $K = 5$: Five fold cross validation
+\item[-] $K = 10$: Ten fold cross validation
+\item[-] $K = N $: Leave one out cross validation
+\end{itemize}
+
+Considerations:
+\begin{itemize}
+\item[-] How sensitive are inferences to number of coded documents? (HTF, pg 243-244)
+\item[-] 200 labeled documents
+\begin{itemize}
+\item[-] $K= N \rightarrow$ 199 documents to train,
+\item[-] $K = 10 \rightarrow$ 180 documents to train
+\item[-] $K = 5 \rightarrow$ 160 documents to train
+\end{itemize}
+\item[-] 50 labeled documents
+\begin{itemize}
+\item[-] $K= N \rightarrow$ 49 documents to train,
+\item[-] $K = 10 \rightarrow$ 45 documents to train
+\item[-] $K = 5 \rightarrow$ 40 documents to train
+\end{itemize}
+\item[-] How long will it take to run models?
+\begin{itemize}
+\item[-] $K-$fold cross validation requires $K \times $ One model run
+\end{itemize}
+\item[-] What is the correct loss function?
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{If you cross validate, you really need to cross validate (Section 7.10.2, ESL)}
+
+\begin{itemize}
+\item[-] Use CV to estimate prediction error
+\item[-] \alert{All} supervised steps performed in cross-validation
+\item[-] \alert{Underestimate} prediction error
+\item[-] \alert{Could lead to selecting lower performing model}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Example from Facebook Data}
+
+What do people say to legislators?  (Franco, Grimmer, and Lee 2017)
+\begin{itemize}
+\item[1)] Example: estimating classification error
+\begin{itemize}
+\item[a)] Accuracy in legislator posts: 75\%
+\item[b)] Accuracy in public posts: 66.25\%
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Credit Claiming (Back to Ridge/Lasso, Grimmer, Westwood, and Messing 2014)}
+
+\begin{footnotesize}
+%\#\#credit is a 797 element long binary vector
+
+%\#\#dtm is a 797 x 7587 document term matrix
+\begin{semiverbatim}
+\only<1>{library(glmnet)
+
+set.seed(8675309) \#\#setting seed
+
+folds<- sample(1:10, nrow(dtm), replace=T) \#\#assigning to fold
+
+out\_of\_samp<- c()  \#\#collecting the predictions}
+
+
+\only<2>{for(z in 1:10)\{
+
+  train<- which(folds!=z) \#\#the observations we will use to train the model
+
+  test<- which(folds==z) \#\#the observations we will use to test the model
+
+  part1<- cv.glmnet(x = dtm[train,], y = credit[train], alpha = 1, family = \'binomial\') \#\#fitting the LASSO model on the data.
+
+  \#\# alpha = 1 -> LASSO
+
+  \#\# alpha = 0 -> RIDGE
+
+  \#\# 0<alpha<1 -> Elastic-Net
+
+  out\_of\_samp[test]<- predict(part1, newx= dtm[test,], s = part1\$lambda.min, type =\'class\') \#\#predicting the labels
+
+  print(z) \#\#printing the labels
+
+  \}
+
+conf\_table<- table(out\_of\_samp, credit)  \#\#calculating the confusion table
+
+> round(sum(diag(conf\_table))/len(credit), 3)
+
+[1] \alert{0.844}
+}
+\end{semiverbatim}
+\end{footnotesize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Generalized Cross Validation and Ridge Regression}
+
+In some special cases there are analytic solutions: \\ \pause
+
+\begin{eqnarray}
+\invisible<1>{\boldsymbol{\beta}^{\text{Ridge}} & = & \left(\boldsymbol{X}^{'}\boldsymbol{X} + \lambda \boldsymbol{I}_{J} \right)^{-1} \boldsymbol{X}^{'} \boldsymbol{Y} \nonumber } \pause \\
+\invisible<1-2>{\widehat{\boldsymbol{Y}} & = & \boldsymbol{X}(\boldsymbol{\beta})^{\text{Ridge}} \nonumber\\} \pause
+\invisible<1-3>{& = & \underbrace{\boldsymbol{X}\left(\boldsymbol{X}^{'}\boldsymbol{X} + \lambda \boldsymbol{I}_{J} \right)^{-1} \boldsymbol{X}^{'}}_{\text{Hat Matrix}} \boldsymbol{Y} \nonumber\\} \pause
+\invisible<1-4>{\widehat{\boldsymbol{Y}} & = & \underbrace{\boldsymbol{H}}_{\text{Smoother Matrix}} \boldsymbol{Y}  \nonumber } \pause
+\end{eqnarray}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Generalized Cross Validation and Ridge Regression}
+
+
+Why do we care?  \pause \\
+\invisible<1>{Leave one out cross validation\\} \pause
+\begin{eqnarray}
+\invisible<1-2>{\text{Cross Validation}(1) & = & \frac{1}{N} \sum_{i=1}^{N} (Y_{i} - f (\boldsymbol{X}_{-i}, \boldsymbol{Y}_{-i}, \lambda, \hat{\boldsymbol{\beta}} ))^{2} \nonumber \\} \pause
+\invisible<1-3>{& = & \frac{1}{N} \sum_{i=1}^{N}  \left(\frac{Y_{i} - f (\boldsymbol{X}, \boldsymbol{Y}, \lambda, \hat{\boldsymbol{\beta} }) }{1 - H_{ii}} \right)^2 \nonumber}
+\end{eqnarray}
+
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Generalized Cross Validation and Ridge Regression}
+
+Calculating $\boldsymbol{H}$ can be computationally expensive \pause \\
+\begin{itemize}
+\invisible<1>{\item[-] $\text{Trace}(\boldsymbol{H}) \equiv \text{Tr}(\boldsymbol{H})  = \sum_{i=1}^{N} H_{ii} $ } \pause
+\invisible<1-2>{\item[-] $\text{Tr}(\boldsymbol{H})$ = Effective number of parameters (class regression = number of independent variables + 1)} \pause
+\invisible<1-3>{\item[-] For Ridge regression:} \pause
+\begin{eqnarray}
+\invisible<1-4>{\text{Tr}(\boldsymbol{H}) & = & \sum_{j=1}^{J} \frac{\lambda_{j}}{\lambda_{j} + \underbrace{\lambda}_{\text{Penalty}}} \nonumber } \pause
+\end{eqnarray}
+\invisible<1-5>{where $\lambda_{j}$ is the $j^{\text{th}}$ Eigenvalue from $\boldsymbol{\Sigma} = \boldsymbol{X}^{'}\boldsymbol{X}$} \pause \invisible<1-6>{ (!!!!!)} \pause
+\end{itemize}
+
+
+\invisible<1-7>{Define generalized cross validation:} \pause
+\begin{eqnarray}
+\invisible<1-8>{\text{GCV} &  = & \frac{1}{N} \sum_{i=1}^{N} \left( \frac{Y_{i} - \hat{Y}_{i}}{1 - \frac{\text{Tr}(\boldsymbol{H})}{N} }    \right)^2 \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-9>{Applicable in any setting where we can write \alert{Smoother} matrix} \pause
+
+\end{frame}
+
+
+
+\end{document}
+
+
+
+
