@@ -1,0 +1,110 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage{graphicx,textcomp}
+\usepackage{natbib}
+\usepackage{setspace}
+\usepackage{fullpage}
+\usepackage{color}
+\usepackage[reqno]{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb,enumerate}
+\usepackage[all]{xy}
+\usepackage{endnotes}
+\usepackage{lscape}
+\newtheorem{com}{Comment}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+\usepackage[compact]{titlesec}
+\usepackage{dcolumn}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{multirow}
+\usepackage{xcolor}
+\newcolumntype{.}{D{.}{.}{-1}}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+\definecolor{light-gray}{gray}{0.65}
+\usepackage{url}
+\newcommand{\Sref}[1]{Section~\ref{#1}}
+\newtheorem{hyp}{Hypothesis}
+
+\title{Text as Data: Homework 3}
+
+\date{Assigned: 5/9, Due 5/16}
+
+\begin{document}
+\maketitle
+
+In this homework we will analyze a collection of news stories from the New York Times from the November 1-3, 2004 (the day before, of, and after the 2004 general election). This data come from the New York Times Annotated Corpus and is for academic use only. We have done some preprocessing in order to simplify the homework tasks.
+
+
+\section{Preprocessing and Creating a Document-Term Matrix}
+
+\begin{itemize}
+\item[a)] From the course github, download {\tt nyt\_ac.json} 
+\item[b)] Using the {\tt JSON} library in python, import the data. Use {\tt type} to explore the structure of this data. How are this data organized?
+\item[c)] Extract the title and text from each story.  Create an individual document for each story and write each of the files to a new directory 
+\item[d)] Using the loaded {\tt json} file, create a document term matrix of the 1000 most used terms.  Be sure to: 
+\begin{itemize}
+\item[-] Discard word order
+\item[-] Remove stop words
+\item[-] Apply the porter stemmer
+\end{itemize}
+\item[e)] Include in your document-term matrix the \emph{desk} from which the story originated, which we will include later
+\end{itemize}
+
+% \subsection*{Clustering Methods}
+
+% \begin{itemize}
+% \item[1)] Using the {\tt kmeans} function, create a plot of the {\tt kmeans} objective function as the number of clusters varies from 2 to $N - 1$.    
+% \item[2)] Apply K-Means with 6 clusters, being sure to use {\tt set.seed} to ensure you can replicate your analysis
+% \item[3)] Label each cluster using computer and hand methods:
+% \begin{itemize}
+% \item[i)] Suppose $\boldsymbol{\theta}_{k}$ is the cluster center for cluster $k$ and define $\bar{\boldsymbol{\theta}}_{-k} = \frac{\sum_{j \neq k} \boldsymbol{\theta_{j}}   }{K-1 }$ or the average of the centers not $k$.  Define 
+% \begin{eqnarray}
+% \text{Diff}_{k} & = & \boldsymbol{\theta}_{k} - \bar{\boldsymbol{\theta}}_{-k}\nonumber 
+% \end{eqnarray}
+
+% Use the top ten words from $\text{Diff}_{k}$ to label the clusters
+% \item[ii)] Sample and read texts assigned to each cluster and produce a hand label
+% \end{itemize}
+% \end{itemize}
+\section{Dictionary Classification Methods}
+\begin{itemize}
+\item[a)] Download the list of positive
+
+\begin{small}
+ https://raw.githubusercontent.com/nealcaren/quant-text-fall-2014/master/positive.csv
+ \end{small}
+ and negative 
+
+\begin{small}
+ https://raw.githubusercontent.com/nealcaren/quant-text-fall-2014/master/negative.csv
+\end{small}
+   words from Neil Caren's website.
+
+\item[b)] Calculate a positive score and a negative score for each document and the difference between each score using the dictionaries
+\item[c)] How does the score change before and after the election?  How does the score vary across desks?
+\end{itemize}
+
+
+\section{Supervised Learning with Naive Bayes}
+
+\begin{itemize}
+% \item[a)] Using the version of Naive Bayes outlined on slide 24 of lecture 14, write a function to estimate $p(C_{k})$ and $\boldsymbol{\theta}_{k}$ for an arbitrary collection of categories.  Hint: to compute the probability of a document from a category, note you can work with the log of the probability equivalently.  
+\item[a)] Let's focus on documents that came from Business/Financial desk and National Desk.  Using leave-one out cross validation, calculate the accuracy of Ridge Regression to calculate the label.
+\item[b)] Compare the performance of Ridge to the performance of 2 of the following 3 algorithms using 10-fold cross validation:
+\begin{itemize}
+\item[-] LASSO 
+\item[-] Elastic Net, $\alpha = 0.5$ 
+\item[-] Elastic Net, $\alpha = 0.25$ 
+\end{itemize}
+How does Ridge compare? 
+\end{itemize}
+
+
+
+
+\end{document}
