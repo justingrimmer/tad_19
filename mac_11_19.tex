@@ -1,0 +1,422 @@
+\documentclass{beamer}
+
+%\usepackage[table]{xcolor}
+\mode<presentation> {
+  \usetheme{Boadilla}
+%  \usetheme{Pittsburgh}
+%\usefonttheme[2]{sans}
+\renewcommand{\familydefault}{cmss}
+%\usepackage{lmodern}
+%\usepackage[T1]{fontenc}
+%\usepackage{palatino}
+%\usepackage{cmbright}
+  \setbeamercovered{transparent}
+\useinnertheme{rectangles}
+}
+%\usepackage{normalem}{ulem}
+%\usepackage{colortbl, textcomp}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg= black}
+\definecolor{trial}{cmyk}{1,0,0, 0}
+\definecolor{trial2}{cmyk}{0.00,0,1, 0}
+\definecolor{darkgreen}{rgb}{0,.4, 0.1}
+\usepackage{array}
+\beamertemplatesolidbackgroundcolor{white}  \setbeamercolor{alerted
+text}{fg=red}
+
+\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}
+
+%\usepackage{color}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{colortbl}
+%\usepackage[usenames, dvipsnames]{color}
+%\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}c
+%\newcolumntype{Y}{\columncolor[cmyk]{0, 0, 1, 0}\raggedright}
+%\newcolumntype{C}{\columncolor[cmyk]{1, 0, 0, 0}\raggedright}
+%\newcolumntype{G}{\columncolor[rgb]{0, 1, 0}\raggedright}
+%\newcolumntype{R}{\columncolor[rgb]{1, 0, 0}\raggedright}
+
+%\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{Block}
+%$A = B$.
+%\end{beamerboxesrounded}}
+\renewcommand{\familydefault}{cmss}
+%\usepackage[all]{xy}
+
+\usepackage{tikz}
+\usepackage{lipsum}
+
+ \newenvironment{changemargin}[3]{%
+ \begin{list}{}{%
+ \setlength{\topsep}{0pt}%
+ \setlength{\leftmargin}{#1}%
+ \setlength{\rightmargin}{#2}%
+ \setlength{\topmargin}{#3}%
+ \setlength{\listparindent}{\parindent}%
+ \setlength{\itemindent}{\parindent}%
+ \setlength{\parsep}{\parskip}%
+ }%
+\item[]}{\end{list}}
+\usetikzlibrary{arrows}
+%\usepackage{palatino}
+%\usepackage{eulervm}
+\usecolortheme{lily}
+\newtheorem{ass}{Assumption}
+\newtheorem{com}{Comment}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+ \numberwithin{equation}{section}
+%\usepackage[latin1]{inputenc}
+\title[Text as Data] % (optional, nur bei langen Titeln nötig)
+{Text as Data}
+
+\author{Justin Grimmer}
+\institute[Stanford University]{Professor\\Department of Political Science \\  University of Chicago}
+\vspace{0.3in}
+
+
+\date{May 8th, 2019}%[Big Data Workshop]
+%\date{\today}
+
+
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Naive Bayes and General Problem Setup}
+
+
+Suppose we have document $i$, $(i=1, \hdots, N)$ with $J$ features \pause \\
+\invisible<1>{$\boldsymbol{x}_i = (x_{1i}, x_{2i}, \hdots, x_{Ji} ) $} \pause \\
+\invisible<1-2>{Set of $K$ categories.  Category $k$ $(k=1, \hdots, K)$ \\
+$\{C_{1}, C_{2}, \hdots, C_{K} \}$} \pause\\
+\invisible<1-3>{Subset of labeled documents $\boldsymbol{Y} = (Y_{1}, Y_{2}, \hdots, Y_{N_{\text{train}}})$ where $Y_{i} \in \{C_{1}, C_{2}, \hdots, C_{K} \}$.}\pause \\
+\invisible<1-4>{\alert{Goal}: classify every document into \alert{one} category. } \pause  \\
+\invisible<1-5>{Learn a function that maps from space of (possible) documents to categories} \pause \\
+\invisible<1-6>{To do this: use hand coded observations to estimate (train) regression model } \pause \\
+\invisible<1-7>{Apply model to test data, classify those observations} 
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Naive Bayes and General Problem Setup (Jurafsky Inspired Slide) } 
+
+Goal: For each document $\boldsymbol{x}_i$, we want to infer most likely \alert{category} \pause \\
+
+
+\begin{eqnarray}
+\invisible<1>{C_{\text{Max} }  & = & \text{arg max}_{k} p(C_k | \boldsymbol{x}_{i} ) \nonumber } \pause 
+\end{eqnarray}
+
+\invisible<1-2>{We're going to use Bayes' rule to estimate $p(C_k| \boldsymbol{x}_i)$.} \pause 
+\begin{eqnarray}
+\invisible<1-3>{p(C_k| \boldsymbol{x}_i ) & = &\text{     } \frac{p(C_k, \boldsymbol{x}_i)}{p(\boldsymbol{x}_i )}}\pause \nonumber \\
+  \only<1-5>{\invisible<1-4>{& = & \text{     } \frac{ p(C_k) p(\boldsymbol{x}_i|C_k) }  { p(\boldsymbol{x}_i)  } \nonumber } \pause \\}
+  \only<6>{\invisible<1-5>{ & = &\text{     } \frac{ \overbrace{p(C_k)}^{\text{Proportion in $C_{k}$}} \underbrace{p(\boldsymbol{x}_i|C_k)}_{\text{Language model}}  }  { p(\boldsymbol{x}_i)  } \nonumber } }
+\end{eqnarray}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Naive Bayes and Optimization (Jurafsky Inspired Slide) } 
+\pause 
+\begin{eqnarray}
+\invisible<1>{C_{\text{Max} } & = & \text{arg max}_{k} \text{      } p(C_k| \boldsymbol{x}_i )} \pause  \nonumber \\
+\invisible<1-2>{C_{\text{Max} } & = & \text{arg max}_{k} \text{      } \frac{ p(C_k)p(\boldsymbol{x}_i|C_k)  }  { p(\boldsymbol{x}_i)  } } \pause \nonumber \\
+\invisible<1-3>{C_{\text{Max} } & = & \text{arg max}_{k} \text{      } p(C_k) p(\boldsymbol{x}_i|C_k) } \pause \nonumber 
+\end{eqnarray}
+
+\invisible<1-4>{Two probabilities to estimate:} \pause  
+\begin{itemize}
+\invisible<1-5>{\item[] $p(C_k) = \frac{\text{No. Documents in } k } {\text{No. Documents } } $ (training set)} \pause 
+\invisible<1-6>{\item[] $p(\boldsymbol{x}_i|C_k) $ \alert{complicated} without assumptions} \pause 
+\begin{itemize}
+\invisible<1-7>{\item[-] Imagine each $x_{ij}$ just binary indicator.  Then $2^{J}$ possible $\boldsymbol{x}_i$ documents} \pause 
+\invisible<1-8>{\item[-] Simplify: assume each feature is independent } \pause 
+\end{itemize}
+\end{itemize}
+\begin{eqnarray}
+\invisible<1-9>{p(\boldsymbol{x}_i|C_k) & = & \prod_{j=1}^{J} p(x_{ij} | C_k)  \nonumber}  
+\end{eqnarray}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Naive Bayes and Optimization (Jurafsky Inspired Slide) } 
+
+Two components to estimation:
+\begin{itemize}
+\item[-] $p(C_k) = \frac{\text{No. Documents in } k } {\text{No. Documents } } $  (training set)
+\item[-] $p(\boldsymbol{x}_i|C_k) = \prod_{j=1}^{J} p(x_{ij} | C_k)$ \pause 
+\end{itemize}
+
+\invisible<1>{Maximum likelihood estimation (training set): } \pause 
+\begin{eqnarray}
+\invisible<1-2>{p(x_{im} = z | C_k ) & = & \frac{ \text{No( Docs$_{ij}$ = z and C = C$_k$ ) }  } { \text{No(C= C$_k$)}  } } \pause   \nonumber 
+\end{eqnarray}
+
+\invisible<1-3>{\alert{Problem}: What if \text{No( Docs$_{ij}$ = z and C = C$_k$ ) } = 0 ?} \pause 
+\invisible<1-4>{$\prod_{j=1}^{J} p(x_{ij} | C_k) = 0 $} 
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Naive Bayes and General Problem Setup (Jurafsky Inspired Slide) } 
+
+\pause 
+
+\invisible<1>{Solution: smoothing (Bayesian estimation) } \pause 
+\begin{eqnarray}
+\invisible<1-2>{p(x_{ij} = z | C_k ) & = & \frac{ \text{No( Docs$_{ij}$ = z and C = C$_k$ ) }   + 1} { \text{No(C= C$_k$)}  + k  } \nonumber } \pause 
+\end{eqnarray}
+
+
+\invisible<1-3>{Algorithm steps:} \pause 
+\begin{itemize}
+\invisible<1-4>{\item[1)] Learn $\hat{p}(C)$ and $\hat{p}(\boldsymbol{x}_i|C_k)$ on \alert{training data}} \pause 
+\invisible<1-5>{\item[2)] Use this to identify most likely $C_k$ for each document $i$ in \alert{test set} } \pause 
+\end{itemize}
+
+\begin{eqnarray}
+\invisible<1-6>{C_{i} & = & \text{arg max  }_{k} \hat{p}(C_k) \hat{p}(\boldsymbol{x}_i | C_k) \nonumber } \pause 
+\end{eqnarray}
+
+\invisible<1-7>{Simple intuition about Naive Bayes:} \pause 
+\begin{itemize}
+\invisible<1-8>{\item[-] Learn what documents in class $j$ look like} \pause 
+\invisible<1-9>{\item[-] Find class $k$ that document $i$ is most similar to} 
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Naive Bayes and Unigram Language Models}
+
+Assume the following data generating process (should look familiar)
+\begin{eqnarray}
+\boldsymbol{\pi} & \sim & \text{Dirichlet}(\boldsymbol{\alpha}) \nonumber \\
+\boldsymbol{\theta} & \sim & \text{Dirichlet}(\boldsymbol{\lambda}) \nonumber \\
+\boldsymbol{\tau}_{i} & \sim & \text{Multinomial}(1, \boldsymbol{\pi}) \nonumber \\
+\boldsymbol{x}_{i} | \tau_{ik} = 1 , \boldsymbol{\theta} & \sim & \text{Multinomial}(n_{i}, \boldsymbol{\theta}_{k}) \nonumber 
+\end{eqnarray}
+
+\pause 
+
+\invisible<1>{If we randomly sample documents $N_{\text{train}}$ and label them $(\boldsymbol{Y})$, then we can estimate } \pause 
+\begin{eqnarray}
+\invisible<1-2>{\widehat{\pi}_{k} & = & \frac{ \sum_{i=1}^{N} I(Y_{i} = k) + \alpha_{k} }{N_{\text{train}} + \sum_{k=1}^{K} \alpha_{k} } \nonumber \\} \pause 
+\invisible<1-3>{\widehat{\theta}_{jk} & = & \frac{ \sum_{i=1}^{N} I(Y_{i} = k) x_{ij} + \lambda_{j}  } { \sum_{j=1}^{J} \sum_{i=1}^{N} I(Y_{i} = k) x_{ij} + \sum_{j=1}^{J} \lambda_{j}  } \nonumber} 
+\end{eqnarray}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Naive Bayes and Unigram Language Models}
+
+The probability a new document has $\tau_{ik} = 1$ is then \pause 
+
+\begin{eqnarray}
+\invisible<1>{p(\tau_{ik} = 1 | \boldsymbol{x}_{i}, \widehat{\boldsymbol{\pi}}, \widehat{\boldsymbol{\theta}}) & \propto & p(\tau_{ik} =1 ) p(\boldsymbol{x}_{i}| \boldsymbol{\theta}, \tau_{ik}=1 )\nonumber \\} \pause 
+\invisible<1-2>{& \propto & \widehat{\pi_{k}} \prod_{j=1}^{J} \left(\widehat{\theta}_{jk}\right)^{x_{ij}} \nonumber \\} \pause 
+\invisible<1-3>{& \propto & \overbrace{\widehat{\pi_{k}}}^{p(C_{k})} \underbrace{\prod_{j=1}^{J} \left(\widehat{\theta}_{jk}\right)^{x_{ij}}}_{\text{Unigram model}} \nonumber }
+\end{eqnarray}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Some {\tt R} Code} 
+
+{\tt library(e1071) } \\
+{\tt dep<- c(labels, rep(NA, no.testSet)) } \\
+{\tt dep<- as.factor(dep) } \\
+{\tt out<- naiveBayes(dep$\sim$., as.data.frame(tdm)) } \\
+{\tt predicts<- predict(out, as.data.frame(tdm[-training.set,])) } 
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{ReadMe: Optimization for a Different Goal (Hopkins and King 2010) }
+
+Naive Bayes, LASSO, $\hdots$: focused on individual document classification. \pause \\
+\invisible<1>{But what if we're focused on \alert{proportions only}? } \pause  \\
+\invisible<1-2>{Hopkins and King (2010): method for characterizing distribution of classes} \pause  \\
+\invisible<1-3>{\alert{Can be much more accurate than individual classifiers}, requires fewer assumptions (\alert{do not need random sample of documents } ) .} \pause
+\begin{itemize}
+\invisible<1-4>{\item[-] King and Lu (2008): derive method for characterizing causes of deaths for verbal autopsies }\pause
+\invisible<1-5>{\item[-] Hopkins and King (2010): extend the method to text documents } \pause
+\end{itemize}
+
+
+\invisible<1-6>{Basic intuition: } \pause
+\begin{itemize}
+\invisible<1-7>{\item[-] Examine joint distribution of characteristics (without making Naive Bayes like assumption)
+\item[-] Focus on distributions (only) makes this analysis possible}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{ReadMe: Optimization for a Different Goal (Hopkins and King 2010) }
+
+Measure \alert{only} presence/absence of each term [$(J x 1) $ vector ] \pause
+\begin{eqnarray}
+\invisible<1>{\boldsymbol{x}_i & = & (1, 0, 0, 1, \hdots, 0) \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-2>{What are the possible realizations of $\boldsymbol{x}_i$?} \pause
+\begin{itemize}
+\invisible<1-3>{\item[-] $2^{J}$ possible vectors} \pause
+\end{itemize}
+
+\invisible<1-4>{Define:} \pause
+\begin{eqnarray}
+\invisible<1-5>{P(\boldsymbol{x}) & = & \text{probability of observing } \boldsymbol{x}} \pause  \nonumber \\
+\invisible<1-6>{P(\boldsymbol{x}|C_j) & = & \text{Probability of observing } \boldsymbol{x} \text{ conditional on category } C_j} \pause  \nonumber \\
+\invisible<1-7>{P(\boldsymbol{X}| C) & = & \text{Matrix collecting vectors} } \pause \nonumber \\
+\invisible<1-8>{P(C ) & = & P(C_1, C_2, \hdots, C_K) \text{ target quantity of interest } } \pause \nonumber
+\end{eqnarray}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{ReadMe: Optimization for a Different Goal (Hopkins and King 2010) }
+
+\begin{eqnarray}
+\underbrace{P(\boldsymbol{x} )}_{2^{J} x 1}  & = & \underbrace{P(\boldsymbol{x}| C )}_{2^{J} x K}  \underbrace{P(C)}_{K x 1 }  \nonumber
+\end{eqnarray}
+Matrix algebra problem to solve, for $P(C)$ \\
+Like Naive Bayes, requires two pieces to estimate\\
+Complication $2^{J} >> \text{no. documents} $\\
+\alert{Kernel Smoothing Methods} (without a formal model)
+\begin{itemize}
+\item[-] $P(\boldsymbol{x})$ = estimate directly from test set
+\item[-] $P(\boldsymbol{x}| C)$ = estimate from training set
+\begin{itemize}
+\item[-] Key assumption: $P(\boldsymbol{x}| C)$ in training set is equivalent to $P(\boldsymbol{x}| C)$ in test set
+\end{itemize}
+\item[-] If true, can perform biased sampling of documents, worry less about drift...
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Algorithm Summarized}
+
+\begin{itemize}
+\item[-] Estimate $\hat{p}(\boldsymbol{x})$ from test set
+\item[-] Estimate $\hat{p}(\boldsymbol{x}|C)$ from training set
+\item[-] Use $\hat{p}(\boldsymbol{x})$ and $\hat{p}(\boldsymbol{x}|C)$ to solve for $p(C)$
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Assessing Model Performance}
+
+Not classifying individual documents $\rightarrow$ different standards\\
+\alert{Mean Square Error} :
+\begin{eqnarray}
+\text{E}[(\hat{\theta} - \theta) ^2] & = & \text{var} (\hat{\theta} ) + \text{Bias}(\hat{\theta},  \theta)^2 \nonumber
+\end{eqnarray}
+Suppose we have true proportions $P(C)^{\text{true}}$.  Then, we'll estimate \alert{Root Mean Square Error }
+\begin{eqnarray}
+\text{RMSE} & = & \sqrt{ \frac{\sum_{j=1}^{J} (P(C_j)^{\text{true}} - P(C_j) ) } {J} } \nonumber \\
+\text{Mean Abs. Prediction Error} & = & | \frac{\sum_{j=1}^{J} (P(C_j)^{\text{true}} - P(C_j) ) } {J} | \nonumber
+\end{eqnarray}
+
+\alert{Visualize}: plot true and estimated proportions
+
+
+\end{frame}
+
+
+\begin{frame}
+\begin{center}
+\only<1>{\scalebox{0.8}{\includegraphics{Shot1.png}}}
+\end{center}
+\only<2>{\scalebox{0.5}{\includegraphics{Shot2.png}}}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Using the House Press Release Data}
+
+\begin{tabular}{lll}
+\hline\hline
+Method & RMSE & APSE  \\
+\hline
+ReadMe &  0.036  & 0.056 \\
+NaiveBayes & 0.096 & 0.14 \\
+SVM & 0.052 & 0.084 \\
+\hline
+\end{tabular}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Code to Run in R}
+
+
+Control file: \\
+\begin{tabular}{lll}
+filename & truth & trainingset \\
+\hline
+20July2009LEWIS53.txt & 4 & \alert{1} \\
+26July2006LEWIS249.txt & 2 & \alert{0} \\
+\hline
+\end{tabular}
+
+
+
+{\tt tdm<- undergrad(control=control, fullfreq=F)  } \\
+{\tt process<- preprocess(tdm) } \\
+{\tt output<- undergrad(process) } \\
+{\tt output\$est.CSMF \#\# proportion in each category} \\
+{\tt output\$true.CSMF \#\# if labeled for validation set (but not used in training set) }
+
+
+
+\end{frame}
+
+
+
+
+
+
+\end{document}
