@@ -1,0 +1,637 @@
+\documentclass{beamer}
+
+%\usepackage[table]{xcolor}
+\mode<presentation> {
+  \usetheme{Boadilla}
+%  \usetheme{Pittsburgh}
+%\usefonttheme[2]{sans}
+\renewcommand{\familydefault}{cmss}
+%\usepackage{lmodern}
+%\usepackage[T1]{fontenc}
+%\usepackage{palatino}
+%\usepackage{cmbright}
+  \setbeamercovered{transparent}
+\useinnertheme{rectangles}
+}
+%\usepackage{normalem}{ulem}
+%\usepackage{colortbl, textcomp}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg= black}
+\definecolor{trial}{cmyk}{1,0,0, 0}
+\definecolor{trial2}{cmyk}{0.00,0,1, 0}
+\definecolor{darkgreen}{rgb}{0,.4, 0.1}
+\usepackage{array}
+\beamertemplatesolidbackgroundcolor{white}  \setbeamercolor{alerted
+text}{fg=red}
+
+\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}
+
+%\usepackage{color}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{colortbl}
+%\usepackage[usenames, dvipsnames]{color}
+%\setbeamertemplate{caption}[numbered]\newcounter{mylastframe}c
+%\newcolumntype{Y}{\columncolor[cmyk]{0, 0, 1, 0}\raggedright}
+%\newcolumntype{C}{\columncolor[cmyk]{1, 0, 0, 0}\raggedright}
+%\newcolumntype{G}{\columncolor[rgb]{0, 1, 0}\raggedright}
+%\newcolumntype{R}{\columncolor[rgb]{1, 0, 0}\raggedright}
+
+%\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{Block}
+%$A = B$.
+%\end{beamerboxesrounded}}
+\renewcommand{\familydefault}{cmss}
+%\usepackage[all]{xy}
+
+\usepackage{tikz}
+\usepackage{lipsum}
+
+ \newenvironment{changemargin}[3]{%
+ \begin{list}{}{%
+ \setlength{\topsep}{0pt}%
+ \setlength{\leftmargin}{#1}%
+ \setlength{\rightmargin}{#2}%
+ \setlength{\topmargin}{#3}%
+ \setlength{\listparindent}{\parindent}%
+ \setlength{\itemindent}{\parindent}%
+ \setlength{\parsep}{\parskip}%
+ }%
+\item[]}{\end{list}}
+\usetikzlibrary{arrows}
+%\usepackage{palatino}
+%\usepackage{eulervm}
+\usecolortheme{lily}
+\newtheorem{ass}{Assumption}
+\newtheorem{com}{Comment}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+ \numberwithin{equation}{section}
+%\usepackage[latin1]{inputenc}
+\title[Machine Learning] % (optional, nur bei langen Titeln nötig)
+{Machine Learning}
+
+\author{Justin Grimmer}
+\institute[Stanford University]{Professor\\Department of Political Science \\  Stanford University}
+\vspace{0.3in}
+
+
+\date{May 14th, 2019}%[Big Data Workshop]
+%\date{\today}
+
+
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Ensemble Learning: Intuition}
+
+\alert{Heuristic} (upon which we'll improve):\pause\invisible<1>{ if regressions are \alert{accurate} and \alert{diverse}$\rightarrow$ ensemble methods improve} \pause \\
+\invisible<1-2>{\alert{Intuition}: } \pause
+\begin{itemize}
+\invisible<1-3>{\item[-] Classify observations into two categories (Category 1, Category 2). }  \pause
+\invisible<1-4>{\item[-] True labels: evenly distributed across two categories}  \pause
+\invisible<1-5>{\item[-] Three classifiers with $75\%$ accuracy, but independent  }\pause
+\invisible<1-6>{\item[-] Implement majority voting rule  }\pause
+\end{itemize}
+\begin{eqnarray}
+\invisible<1-7>{\text{Pr(Correct Guess}| \text{Votes} )} \pause \invisible<1-8>{ & = & \text{Pr(3 correct)} + \text{Pr(2 correct)} } \pause \nonumber \\
+ \invisible<1-9>{& = & 0.75^3 + 3 \times (0.75^2 \times 0.25)} \pause  \nonumber \\
+  \invisible<1-10>{& = &  0.844 \nonumber }
+  \end{eqnarray}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Ensemble Learning: Intuition}
+
+
+
+\only<1>{\scalebox{0.45}{\includegraphics{Ensemble1.pdf}}}
+
+
+
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Ensemble Learning: Intuition}
+
+\alert{Diverse} and \alert{Accurate} matter.
+
+\only<1>{\scalebox{0.45}{\includegraphics{Ensemble2.pdf}}}
+\only<2>{\scalebox{0.45}{\includegraphics{Ensemble3.pdf}}}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Wisdom of the Crowds:}
+
+Goal: estimate an observation's category$\leadsto$ $Y \in \{0, 1\}$ \pause \\
+\invisible<1>{Classifiers: (suppose) a sequence of identically distributed (\alert{not necessarily independent}) random variables. } \pause  \\
+\invisible<1-2>{Suppose $Y = 1$} \pause \\
+\invisible<1-3>{Guess from classifer $m$ is $B_{m}$ with Pr$(B_{i} = 1) = p>0.5$.  \\} \pause
+\begin{eqnarray}
+\invisible<1-4>{\bar{B} & = & \sum_{m=1}^{M} \frac{B_{m}}{M} \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-5>{\alert{Wisdom of crows} (Condorcet Jury Theorem)} \pause
+\begin{eqnarray}
+\invisible<1-6>{\lim_{M\rightarrow \infty} P(\bar{B}> 0.5) & = & 1 \nonumber }
+\end{eqnarray}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Wisdom of the Crowds}
+
+Suppose $B_{m}$ have variance $\sigma^2$ and pairwise correlation $\rho$. \pause   \\
+\invisible<1>{Then, } \pause
+
+\begin{eqnarray}
+\invisible<1-2>{\text{var}(\bar{B}) }\pause\invisible<1-3>{& = & \text{var}\left(\sum_{i=1}^{M} \frac{B_{i}}{M}  \right)} \pause  \nonumber \\
+ \invisible<1-4>{& = & \frac{1}{M^{2}} \sum_{i=1}^{M} \text{var}\left(B_{i}\right) + \frac{2}{M^2} \sum_{i<j} \text{cov}(B_{i}, B_{j}) \nonumber } \pause\\
+ \invisible<1-5>{& = & \frac{M \sigma^2}{M^2}  + \frac{2}{M^2} \rho \sigma^2 {{M}\choose{2}} \nonumber } \pause\\
+\invisible<1-6>{& = & \underbrace{\rho \sigma^2}_{\text{Resolve with independence}} + \underbrace{\frac{1 - \rho}{M} \sigma^2}_{\text{Resolve with $\uparrow$classifiers}} \nonumber }
+\end{eqnarray}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{\alert{Bagging}: bootstrap aggregation}
+
+\begin{small}
+Creating Weak Classifiers with resampling: \pause
+\begin{itemize}
+\invisible<1>{\item[-] Suppose we have dependent variables $\boldsymbol{Y}$ and data $\boldsymbol{X}$} \pause
+\invisible<1-2>{\item[-] For each bootstrap step $m$, $(m = 1,2, \hdots, M)$ draw $N$ observations with replacement, $\tilde{\boldsymbol{Y}}_{m}$, $\tilde{\boldsymbol{X}}_{m}$.  } \pause
+\invisible<1-3>{\item[-] Train classifier on bootstrapped data, } \pause
+\begin{eqnarray}
+\invisible<1-4>{\tilde{\boldsymbol{Y}}_{m} & = & f^{m}(\tilde{\boldsymbol{X}}_{m}, \widehat{\boldsymbol{\beta}}, \boldsymbol{\lambda} ) \nonumber } \pause \\
+\invisible<1-5>{\hat{f}^{m}(\boldsymbol{x}_{i} , \widehat{\boldsymbol{\beta}}, \boldsymbol{\lambda} ) &= & \text{Classifier from m$^{\text{th}}$ iteration at } \boldsymbol{x}_{i}}  \nonumber \pause
+\end{eqnarray}
+\invisible<1-6>{\item[-] Aggregating across classifiers, } \pause
+\begin{eqnarray}
+\invisible<1-7>{f_{\text{bag}}(\boldsymbol{x}_{i}) & = & \frac{1}{M} \sum_{m=1}^{M} \hat{f}^{m}(\boldsymbol{x}_{i} , \widehat{\boldsymbol{\beta}}, \boldsymbol{\lambda}) \nonumber } \pause
+\end{eqnarray}
+\invisible<1-8>{\item[-] Only leads to a difference in estimate if classifiers are non-linear. } \pause
+\invisible<1-9>{\item[-] Strong Correlation between classifiers (recall optimal division from previous slide)}
+\end{itemize}
+\end{small}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Classification and Regression Trees (CART): Intuition}
+
+Consider regression $E[Y|\boldsymbol{x}_{i}]$. \pause  \\
+\invisible<1>{With no assumptions, \alert{stratify}$\leadsto$ different mean for unique values of $\boldsymbol{x}_{i}$\\} \pause
+\begin{itemize}
+\invisible<1-2>{\item[-] Within each strata $p$, compute average $Y$} \pause
+\begin{eqnarray}
+\invisible<1-3>{\bar{Y}|\boldsymbol{x}_{p} & = & \sum_{i=1}^{N} \frac{I(\boldsymbol{x}_{i} = \boldsymbol{x}_{p})Y_{i}}{\sum_{t=1}^{N} I(\boldsymbol{x}_{t} = \boldsymbol{x}_{p}) } \nonumber } \pause
+\end{eqnarray}
+\end{itemize}
+
+\invisible<1-4>{Implies that for test data we would fit:} \pause
+
+
+\begin{eqnarray}
+\invisible<1-5>{\hat{f}(\boldsymbol{x}_{i}) & = & \sum_{p=1}^{P} \bar{Y}|\boldsymbol{x}_{p}  I(\boldsymbol{x}_{i} = \boldsymbol{x}_{p}) \nonumber }\pause\\
+\invisible<1-6>{& = & \sum_{p=1}^{P} c_{p}  I(\boldsymbol{x}_{i} = \boldsymbol{x}_{p}) \nonumber }\pause
+\end{eqnarray}
+
+\invisible<1-7>{Curse of dimensionality(!!!)\\} \pause
+\invisible<1-8>{Approximate with \alert{regions}$\leadsto$ search for splits of data to approximate stratification}
+
+
+
+
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Classification and Regression Trees (CART): Objective function}
+
+Labels $\boldsymbol{Y}_{i}$ and documents $\boldsymbol{x}_{i}$
+
+\begin{eqnarray}
+E[Y| \boldsymbol{x}_{i}] & = & \widehat{f}(\boldsymbol{x}_{i}) \nonumber \\
+& = & \sum_{p=1}^{P} c_{p} I (\boldsymbol{x}_{i} \in R_{p}) \nonumber
+\end{eqnarray}
+
+where:
+\begin{itemize}
+\item[-] $R_{p}$ describes a \alert{region} $\leadsto$ node
+\item[-] $c_{p}$ describes values of $Y_{i}$ for document in $R_{p}$
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Classification and Regression Trees (CART): Optimization function}
+
+Suppose we want to minimize sum of squared residuals with each \alert{node}\\ \pause
+
+\invisible<1>{Then $c_{p} = $ Average $Y$ for documents assigned to $R_{p}$ \\} \pause
+\begin{eqnarray}
+\invisible<1-2>{\widehat{c}_{p} & =&  \sum_{i=1}^{N} \frac{Y_{i} I(\boldsymbol{x}_{i} \in R_{p} )  }{\sum_{j=1}^{N} I(\boldsymbol{x}_{j} \in R_{p} )  } \nonumber } \pause
+\end{eqnarray}
+
+\invisible<1-3>{Determining an optimal partition$\leadsto$ NP-Hard.  \\} \pause
+\invisible<1-4>{Suppose we are in some node (perhaps at the start).  \\} \pause
+\invisible<1-5>{Greedy algorithm:} \pause
+\begin{footnotesize}
+\begin{eqnarray}
+\invisible<1-6>{(j^{*}, s^{*})  & = & \text{arg min}_{j, s} \left[ \underbrace{\text{min}_{c_{1}} \sum_{i=1}^{N}I(x_{ij}< s)(Y_{i} - c_{1})^2}_{\text{``cost" group 1}}  + \underbrace{\text{min}_{c_{2}} \sum_{i=1}^{N}I(x_{ij}> s)(Y_{i} - c_{2})^2}_{\text{``cost" group 2}}   \right] \nonumber }
+\end{eqnarray}
+\end{footnotesize}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Classification and Regression Trees (CART): Algorithm}
+
+\begin{itemize}
+\item[-] Start in Node
+\item[-] Partition according to Greedy algorithm
+\item[-] Continue until some stopping rule: number of observations per node
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{CART Picture (Spirling 2008)}
+
+\scalebox{0.7}{\includegraphics{CART_Example.png}}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Forests and Trees}
+
+Recall: accurate (unbiased) and uncorrelated classifiers \pause
+\begin{itemize}
+\invisible<1>{\item[-] Grow trees deeply$\leadsto$ unbiased classifers, though high variance} \pause
+\invisible<1-2>{\item[-] \alert{Average}$\leadsto$ reduces variance, but will be correlated} \pause
+\invisible<1-3>{\item[-] Random forest$\leadsto$ introduce additional sampling to induce independence$\leadsto$ Only split on subset of variables}
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Random Forest Algorithm (ESL, 588)}
+
+\pause
+\begin{itemize}
+\invisible<1>{\item[1)] For $m$ bootstrap samples $(m = 1,\hdots, M)$, draw $N$ observations with replacement, $\tilde{\boldsymbol{Y}_{m}}, \tilde{\boldsymbol{X}_{m}}$} \pause
+\invisible<1-2>{\item[2)] Until a minimum node size is reached:} \pause
+\begin{itemize}
+\invisible<1-3>{\item[i)] \alert{Select $z$ of the $J$ variables}$\leadsto$ introduces independences across the trees} \pause
+\invisible<1-4>{\item[ii)] Among those $z$, select the best split node} \pause
+\invisible<1-5>{\item[iii)] Split into daughter nodes} \pause
+\end{itemize}
+\invisible<1-6>{\item[3)] The result is an ensemble (forest) of trees $\boldsymbol{T} = (T_{1}, T_{2}, \hdots, T_{M})$, } \pause
+\begin{eqnarray}
+\invisible<1-7>{\hat{f}(\boldsymbol{x}_{i}) & = & \frac{1}{M} \sum_{m=1}^{M} T_{m} (\boldsymbol{x}_{i}) \nonumber } \pause
+\end{eqnarray}
+\end{itemize}
+
+\invisible<1-8>{{\tt RandomForest}$\leadsto$ Not a silver bullet!} \pause
+\begin{itemize}
+\invisible<1-9>{\item[-] With many poor predictors$\leadsto$ the $p$ selected may be meaningless} \pause
+\invisible<1-10>{\item[-] Wager and Athey (2015): Random Forest for estimating heterogeneous effects}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+
+
+
+
+
+% \begin{frame}
+% \frametitle{Common Ensemble Methods}
+
+% \alert{Boosting}: sequential training of weak classifiers
+% \begin{itemize}
+% \item[-] Method for combining several \alert{weak} classifiers
+% \item[-] Basic idea:
+% \begin{itemize}
+% \item[-] Model 1: classify initially based on all data (equal weight)
+% \item[-] Model 2: classify all data, more weight to incorrectly classified data
+% \item[-] Model 3: classify all data, more weight to incorrectly classified data
+% \item[] $\hdots $
+% \item[-] Model M: classify all data, more weight to incorrectly classified data
+% \end{itemize}
+% \item[-] Aggregate using weighted committee
+% \end{itemize}
+
+
+
+% \end{frame}
+
+
+
+
+
+
+\begin{frame}
+\frametitle{Super Learning}
+
+
+\begin{itemize}
+\item[1) ] Set of hand labeled documents.  For each $i$, $(i=1, \hdots, N_{\text{train}})$
+\begin{itemize}
+\invisible<1>{\item[] $Y_{i, \text{train} } \in \{C_{1} C_{2}, \hdots C_{K} \}$}
+\end{itemize}
+\invisible<1-2>{\item[2)] Estimate relationship between labels and words }
+\begin{itemize}
+\invisible<1-3>{\item[-] Each document $i$  is a \alert{count vector} of $K$ words}
+\invisible<1-4>{\item[] $ \textbf{x}_{i, \text{train}}  =  (X_{i1}, X_{i2}, \hdots, X_{iK}  )$ } \nonumber
+\end{itemize}
+\end{itemize}
+
+\only<1->{
+\begin{eqnarray}
+\invisible<1-5>{\text{Pr}(Y_{i} = C_{k} | \textbf{x}_{i} )\invisible<1-6>{_{\text{train}}}\invisible<1-7>{& = & \widehat{g} (\textbf{x}_{i} )_{\text{train}} } \nonumber }
+\end{eqnarray}
+}
+%\only<7->{
+%\begin{eqnarray}
+%\text{Pr}(Y_{i}  = \text{Credit} | \textbf{w}_{i} )_{\text{train}} \invisible<1-7>{& = & \widehat{g} (\textbf{w}_{i} )_{\text{train}} } %\nonumber
+%\end{eqnarray}
+%}
+
+\begin{itemize}
+\invisible<1-7>{\item[-] Identify systematic relationship between words, labels}  \invisible<1-8>{$\leadsto$ Data and \alert{assumptions}}
+\begin{itemize}
+\invisible<1-9>{\item[-] LASSO (Tibshirani 1996): \alert{sparsity} }
+\invisible<1-10>{\item[-] KRLS (Hainmueller and Hazlett 2013): \alert{dense}, flexible surface}
+\invisible<1-11>{\item[-] Ridge, Elastic-Net, SVM, Random Forests, BART, ...}
+\end{itemize}
+\invisible<1-12>{\item[-] Which model?  Difficult to know before hand}
+\invisible<1-13>{\item[-] Assess out of sample performance with \alert{cross validation}}
+\end{itemize}
+\invisible<1-14>{\alert{Weighted ensemble}: weights determined by (unique) out of sample predictive performance}
+
+\pause \pause \pause \pause \pause \pause \pause \pause \pause \pause \pause \pause \pause \pause
+\end{frame}
+
+
+\begin{frame}
+
+
+Committee Methods:\\
+
+Fit many methods, average with equal weights
+
+\begin{itemize}
+\item[-] Voting (classification)
+\item[-] Averaging (predictions)
+\end{itemize}
+
+
+Problem: many poor methods may overwhelm high quality fit (remember earlier figures)\\
+Solution: learn weights via cross validation
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Weighted Ensemble to Classify Documents}
+
+\begin{itemize}
+\item[-] Suppose we have $M$ $(m = 1, \hdots, M)$ models.
+\end{itemize}
+\begin{eqnarray}
+\invisible<1>{\alert<14->{\text{Pr}(Y_{i}   =  \text{C}_{1} | \textbf{x}\only<1-13>{_{i}}\only<14->{_{i,\text{test}}} )_{\text{train}} } & = & \alert<14->{  \sum_{m=1}^{M} \alert<3>{\widehat{\pi}_{m} } \alert<4>{\widehat{g}_{m}(\textbf{x}\only<1-13>{_{i}}\only<14->{_{i, \text{test}}} )}} \nonumber }
+\end{eqnarray}
+
+\begin{itemize}
+\invisible<1-4>{\item[-] Estimate weights $(\widehat{\pi}_{m})$}
+\only<1-11>{
+\begin{itemize}
+\invisible<1-5>{\item[-] K-fold cross validation: generate $M$ out of sample predictions for each document in training set}
+\invisible<1-6>{\item[] $\widehat{\textbf{Y}}_{i}  = (\widehat{Y}_{i1}, \widehat{Y}_{i2}, \hdots, \widehat{Y}_{iM} )$}
+\invisible<1-7>{\item[-] Estimate weights with constrained regression:}
+\begin{eqnarray}
+\invisible<1-8>{Y_{i} & = & \sum_{m=1}^{M} \pi_{m} \hat{Y}_{im} + \epsilon_{i} \nonumber }
+\end{eqnarray}
+\invisible<1-9>{\item[] where we impose constraints: $\pi_{m} \geq 0 $ and $\sum_{m=1}^{M} \pi_{m} = 1$. }
+\invisible<1-10>{\item[-] Result $\widehat{\pi}_{m}$ for each method }
+\end{itemize}
+}
+\invisible<1-11>{\item[-] Estimate  $\widehat{g}_{m}(\textbf{x}_{i} ) \leadsto $ Apply all $M$ models to entire training set}
+\end{itemize}
+\invisible<1-12>{3) For each document $i$ in test set, $\textbf{x}_{i, \text{test}}$ } \\
+%\begin{eqnarray}
+%\invisible<1-11>{\text{Pr}(Y_{i} = \text{Credit} | \textbf{w}_{i} ) & = & \sum_{m=1}^{M} \widehat{\pi}_{m} \widehat{g}_{m}(\textbf{w}_{i} ) \nonumber }
+%\end{eqnarray}
+\invisible<1-14>{(Classify if above threshold)} \\
+
+
+\pause \pause \pause \pause \pause \pause \pause \pause \pause \pause \pause \pause \pause \pause
+\end{frame}
+
+
+
+
+\begin{frame}
+
+
+\scalebox{0.6}{\includegraphics{SuperLearner.png}}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Why Super Learn?}
+
+van der Laan et al (2007) prove:
+\begin{itemize}
+\item[-] \alert{Asymptotically}: super learners will perform as well the \alert{best} candidates for data
+\item[-] \alert{Oracle}: performs like the best possible method among candidate methods
+\begin{itemize}
+\item[-] Asymptotically outperforms constituent methods
+\item[-] Performs as well as optimal combinations of those methods
+\end{itemize}
+\end{itemize}
+
+Practical questions:
+\begin{itemize}
+\item[-] Final regression:
+\begin{itemize}
+\item[-] Logistic
+\item[-] Linear
+\item[-] \alert{Could super learn again!}
+\end{itemize}
+\item[-] How Many Folds?
+\begin{itemize}
+\item[-] van der Laan et al's proofs rely on growing folds with $N$ (but slowly)
+\item[-] Use 10-fold cross validation for simulations
+\end{itemize}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Impression of Influence}
+
+Estimate: $Y_{i} \in \{\text{Credit}, \text{Not Credit} \}$ \pause \\
+\begin{itemize}
+\invisible<1>{\item[-] Triple hand code 800 press releases} \pause
+\invisible<1-2>{\item[-] Resolve disagreement with voting$\leadsto$ few disagreements} \pause
+\end{itemize}
+
+\invisible<1-3>{Use five classifiers to form Ensemble (cross validating within each to tune parameters)}\pause
+\begin{itemize}
+\invisible<1-4>{\item[-] LASSO} \pause \invisible<1-9>{0}
+\invisible<1-5>{\item[-] Elastic-Net}\pause \invisible<1-9>{ 23\%}
+\invisible<1-6>{\item[-] Random Forest} \pause \invisible<1-9>{61\%}
+\invisible<1-7>{\item[-] A Support Vector Machine}\pause \invisible<1-9>{16\%}
+\invisible<1-8>{\item[-] Kernel Regularized Least Squares (KRLS, Hainmueller and Hazlett 2014)}\pause \invisible<1-9>{ 0}
+\end{itemize}
+
+
+
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Strategic Credit Claiming to Build a Personal Vote}
+
+\begin{tikzpicture}
+\node (dummy1) at (-8, 8) [] {} ;
+\node at (-6, 8) [] {\scalebox{0.4}{\includegraphics{DensTikz.pdf}}};
+
+\invisible<1>{\node (trial) at (-8.75,5.7) [] {} ;
+\only<1-9>{\node(Burton) at (-10, 10) [] {\scalebox{0.5}{\includegraphics{Burton.jpg}}};
+\draw[->, line width = 1.5pt] (Burton) to [out = 270, in = 90] (trial) ; }
+
+\only<3>{\node (McGroff) at (-3, 11) [] {\alert{John McGroff}: ``voted for every spending bill "} ; }
+\only<3>{\node (McGroff2) at (-3, 10.6) [] {that went through the office"} ;}
+\only<4>{\node (McGroff3) at (-3, 11) [] {\alert{John McGroff}:  ``Not the actions of a fiscally "};}
+\only<4>{\node (McGroff4) at (-3, 10.6) [] {conservative congressman who } ; }
+\only<4>{\node (McGroff5) at (-3, 10.2) [] {cares about personal responsibility"}; }
+}
+%\invisible<1-4>{\node (Price) at (-10, 8) [] {\scalebox{0.2}{\includegraphics{Price.jpg}}} ;
+%\node (trial1) at (-8.7,5.7) [] {} ;
+%\draw[->, line width = 1.5pt] (Price) to [out = 0, in = 90] (trial1) ; }
+
+\only<1-9>{
+\invisible<1-4>{\node (Flake) at (-8.2, 11) [] {\scalebox{0.1}{\includegraphics{Flake.jpg}}} ;
+\node (trial2) at (-8.6,5.7) [] {} ;
+\draw[->, line width = 1.5pt] (Flake) to [out = 270, in = 90] (trial2) ; }
+
+
+\invisible<1-5>{\node (Degette) at (-10, 6) [] {\scalebox{0.1}{\includegraphics{Jan.jpg}}} ;
+\node (trial3) at (-8.65, 5.7) [] {} ;
+\draw[->, line width = 1.5pt] (Degette) to [out = 30, in = 90] (trial2) ; }
+
+\invisible<1-6>{\node (Lobiondo) at (-6, 10) [] {\scalebox{0.08}{\includegraphics{Lobiondo.jpg}}} ;
+\node (trial4) at (-5.1, 5.7) [] {} ;
+\draw[->, line width = 1.5pt] (Lobiondo) to [out = 270, in = 90] (trial4) ; }
+
+\invisible<1-7>{\node (Lobiondo) at (-4, 9.5) [] {\scalebox{0.125}{\includegraphics{Edwards.jpg}}} ;
+\node (trial5) at (-4.95, 5.7) [] {} ;
+\draw[->, line width = 1.5pt] (Lobiondo) to [out = 270, in = 90] (trial5) ; }}
+
+\invisible<1-8>{\node (Rogers) at (-1.8, 11) [] {\scalebox{0.15}{\includegraphics{Rogers.jpg}}};
+\node (trial6) at (-2.4, 5.7) [] {} ;
+\draw[->, line width = 1.5pt] (Rogers) to [out = 270, in = 90] (trial6) ; }
+
+\only<10>{\node (Pork1) at (-7, 11)  [] {``We just can't afford luxuries like ideology" } ; }
+\only<11>{\node (Pork2) at (-7, 11)  [] {Lexington Herald-Leader: \alert{Prince of Pork}} ; }
+
+
+\end{tikzpicture}
+
+\pause \pause \pause \pause \pause \pause \pause \pause \pause \pause
+
+%\only<1>{\scalebox{0.4}{\includegraphics{DensTikz.pdf}}}
+%\only<1>{\scalebox{0.4}{\includegraphics{NewDensity1.pdf}}}\only<2>{\scalebox{0.4}{\includegraphics{NewDensity2.pdf}}}\only<3>{\scalebox{0.4}{\includegraphics{NewDensity3.pdf}}}\only<4>{\scalebox{0.4}{\includegraphics{NewDensity4.pdf}}}\only<5>{\scalebox{0.4}{\includegraphics{NewDensity5.pdf}}}\only<6>{\scalebox{0.4}{\includegraphics{NewDensity9.pdf}}}\only<7>{\scalebox{0.4}{\includegraphics{NewDensity10.pdf}}}\only<8>{\scalebox{0.4}{\includegraphics{NewDensity11.pdf}}}\only<9>{\scalebox{0.4}{\includegraphics{NewDensity12.pdf}}}\only<10>{\scalebox{0.4}{\includegraphics{NewDensity13.pdf}}}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Other Reasons to Ensemble (Dietterich 2000) }
+
+Statistical \pause
+\begin{itemize}
+\invisible<1>{\item[-] With little data, many algorithms offer similar performance } \pause
+\invisible<1-2>{\item[-] Ensemble ensures we avoid \alert{wrong} model in test set } \pause
+\end{itemize}
+\invisible<1-3>{Computational } \pause
+\begin{itemize}
+\invisible<1-4>{\item[-] Methods stuck in local modes} \pause
+\invisible<1-5>{\item[-] Result: no one run provides best model} \pause
+\invisible<1-6>{\item[-] Averages of runs may perform better } \pause
+\end{itemize}
+\invisible<1-7>{Complex ``true" functional forms } \pause
+\begin{itemize}
+\invisible<1-8>{\item[-] One method may be unable to approximate true DGP } \pause
+\invisible<1-9>{\item[-] Mixtures of methods may approximate better } \pause
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+
+\end{document}
