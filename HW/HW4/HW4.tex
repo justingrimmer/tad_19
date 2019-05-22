@@ -1,0 +1,122 @@
+\documentclass[letterpaper,12pt]{article}
+%\usepackage{amsmath,epsfig,setspace,multirow,url,fancyhdr}
+%\usepackage{graphicx}
+%\usepackage{setspace}
+\usepackage{lscape,enumitem}
+\usepackage{arabtex}
+\usepackage{rotating}
+%%\usepackage{times}
+%\usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry}
+%\usepackage{endnotes}
+%\clubpenalty=10000 \widowpenalty=10000
+%\hyphenation{}
+%\renewcommand{\bibitem}{\vskip6pt\par\hangindent\parindent\hskip-\parindent}
+% === graphic packages ===
+\usepackage{graphicx,textcomp}
+% === bibliography package ===
+\usepackage{natbib}
+% === margin and formatting ===
+%\usepackage[compact]{titlesec}
+%\usepackage{fullpage}
+\usepackage{vmargin}
+\setpapersize{USletter}
+\topmargin=0in
+\usepackage{color}
+% === math packages ===
+\usepackage[reqno]{amsmath}
+%\usepackage[pdftex]{hyperref}
+\usepackage{amsthm}
+\usepackage{amssymb,enumerate}
+\usepackage[all]{xy}
+\usepackage{lscape}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\newtheorem{com}{Comment}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+\newtheorem{ass}{Assumption}
+ \numberwithin{equation}{section}
+ \numberwithin{equation}{section}
+% === dcolumn package ===
+\usepackage{dcolumn}
+\newcolumntype{.}{D{.}{.}{-1}}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+% === additional packages ===
+\usepackage{url}
+\newcommand{\Sref}[1]{Section~\ref{#1}}
+\newcommand{\mean}{\text{mean}}
+\usepackage{color,setspace}
+\definecolor{spot}{rgb}{0.6,0,0}
+
+\title{Machine Learning, Homework 4}
+
+\date{Assigned 5/22, Due 5/30}
+\begin{document}
+\maketitle
+
+
+\noindent In this problem set we're going to make a slight detour from text as data to predict student's drinking habits.  While this might seem like a big departure, we're going to learn more about some methods that are fundamental to classification problems.  Further, we're going to see that the methods for learning for text as data problems are more generally useful.  Trust me, this is going to help you analyze text better (but always keep in mind what would be similar...)  The data come from a public health study of Portugese students.  You can read more about the variables (and their interpretation) here: \\
+
+\url{https://www.kaggle.com/uciml/student-alcohol-consumption}
+
+\noindent We're going to model the sum of weekday and weekend drinking activity.    \\
+
+\noindent The data are stored in {\tt StudentDrinking.RData} on the {\tt github}.  The dependent variable is, {\tt alcohol}, which is a measure of alcohol consumption.  The bigger {\tt alcohol} is, the more students drink.  The covariates are stored in {\tt X}.
+
+\section{Comparing Coefficients from OLS, LASSO, Ridge, and Elastic Net}
+
+We first want to explore the behavior of OLS, LASSO, and Ridge applied to the data.
+
+\begin{itemize}
+\item[i)] Fit a linear regression of alcohol on the covariates in the included data
+\item[ii)] Using {\tt cv.glmnet} fit a LASSO regression of alcohol on the covariates
+\item[iii)] Using {\tt cv.glmnet} fit a Ridge regression of alcohol on the covariates
+\item[iv)] Using {\tt cv.glmnet} fit an elastic-net regression of alcohol on the covariates, with $\alpha = 0.5$.  Explain what $\alpha = 0.5$ implies about the model you're fitting.
+\item[v)] Using your models from (i-iv) let's examine the behavior of the coefficient on {\tt male} as $\lambda$ increases
+\begin{itemize}
+\item[a)] Suppose {\tt glmnet.obj} contains the results from applying {\tt cv.glmnet}.  To obtain the coefficient values for the sequence of $\lambda$ values tested in {\tt cv.glmnet}, we use the coefficient function {\tt coef(glmnet.obj, s = glmnet.obj\$lambda)}.  Use this function to obtain a matrix of coefficients for the models used in (ii-iv).
+\item[b)] Using the matrix for each method, plot the coefficient on {\tt male} against the value of $\lambda$ from the models in ii-iv.  Include the coefficient from OLS as a flat line.  What do you notice as $\lambda$ increases?
+\end{itemize}
+\end{itemize}
+
+\section{Cross-Validation, Super Learning and Ensembles}
+
+We're going to assess the performance of five models, an unweighted average, and a super-learning average of the methods.
+
+\begin{itemize}
+\item[i)] First, set the first 20 rows to the side for use as the validation set.
+\item[ii)] We'll first estimate the (unconstrained) super learner weights.
+\begin{itemize}
+\item[a)] On the training data (all but the first 20 rows) perform ten fold cross validation, including (1) linear regression, (2) LASSO, (3) Ridge, (4) Elastic-Net, and (5) Random Forest.  Obtain 5 predictions for each observation in the training set, one from each observation
+\item[b)] Regress the dependent variable on the out of sample prediction, (without including an intercept).
+\item[c)] Store those weights as $\boldsymbol{w}$
+\end{itemize}
+\item[iii)] Now, fit all 5 models from (ii)-(a) to the entire training data set and predict the drinking level from the vallidation set (the data put off to the side).
+\item[iv)]   Obtain two ensemble predictions.
+\begin{itemize}
+\item[a)] Take the unweighted average of the predictions from the methods
+\item[b)] Take the weighted average, using the weights $\boldsymbol{w}$.
+\end{itemize}
+\item[v)] You should have 7 predictions. Store those in a matrix and report the correlation between the predictions
+\item[vi)] Using the average absolute difference as a loss function assess the performance of each method.  Which method performs best?  Which performs the worst?
+
+\noindent The average absolute difference for method $k$ is defined as
+\begin{eqnarray}
+L(\boldsymbol{Y}, \widehat{\boldsymbol{Y}}_{k}) & = & \sum_{i=1}^{N_{\text{validation}}} \frac{|Y_{i} - \widehat{Y}_{ik}| }{ N_{\text{validation}} }\nonumber
+\end{eqnarray}
+where $N_{\text{validation}}$ refers to the number of observations in the validation set $\widehat{\boldsymbol{Y}}_{k}$ refers to the predictions from the $k^{\text{th}}$ method,
+
+
+\end{itemize}
+
+
+
+
+
+
+
+\end{document}
