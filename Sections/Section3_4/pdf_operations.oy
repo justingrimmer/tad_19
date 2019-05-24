@@ -1,0 +1,57 @@
+import PyPDF2 
+import os
+
+os.chdir("C:/Users/mkrup/Dropbox/Misc_files/Docs_Grad_School/Teaching/TAD19")
+
+filename = 'krupenkin_cv.pdf' 
+
+#open allows you to read the file
+
+pdfFileObj = open(filename,'rb')
+
+#The pdfReader variable is a readable object that will be parsed
+
+pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+
+#discerning the number of pages will allow us to parse through all #the pages
+
+num_pages = pdfReader.numPages
+count = 0
+text = ""
+
+#The while loop will read each page
+while count < num_pages:
+    pageObj = pdfReader.getPage(count)
+    count +=1
+    text += pageObj.extractText()
+
+
+# ocr ing images
+try:
+    from PIL import Image
+except ImportError:
+    import Image
+import pytesseract
+
+
+os.chdir("C:/Users/mkrup/Dropbox/Misc_files/Docs_Grad_School/Teaching/TAD19")
+
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+
+# Simple image to string
+print(pytesseract.image_to_string(Image.open('ocr1.png')))
+
+
+# combining PDFs
+
+os.chdir("C:/Users/mkrup/Dropbox/Tax Project/new")
+
+pdfs = ['irs1.pdf','irs2.pdf','irs3.pdf']
+
+merger = PyPDF2.PdfFileMerger()
+
+for pdf in pdfs:
+    merger.append(open(pdf, 'rb'))
+
+with open('mkrupenkin_soi.pdf', 'wb') as fout:
+    merger.write(fout)
